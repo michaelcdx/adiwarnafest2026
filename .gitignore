@@ -4,6 +4,10 @@
 .env.*.local
 .env.local
 
+# Documentation
+deploymentplan.md
+vulnerability.md
+
 # IDE
 .vscode/
 .idea/
