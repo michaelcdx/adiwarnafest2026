@@ -371,3 +371,12 @@ AdiwarnaBackend/appsettings.*.json
 .env
 .env.production
 .env.*.local
+
+# IDE Cache and User Files
+.vs/
+*.csproj.user
+*.sln.user
+
+# REST Client test files
+*.http
+*.rest

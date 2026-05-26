@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace AdiwarnaBackend.Migrations
+namespace AdiwarnaBackend.Data.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration

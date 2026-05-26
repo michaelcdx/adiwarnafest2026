@@ -3,17 +3,20 @@ using System;
 using AdiwarnaBackend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace AdiwarnaBackend.Migrations
+namespace AdiwarnaBackend.Data.Migrations
 {
     [DbContext(typeof(AdiwarnaDbContext))]
-    partial class AdiwarnaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260521020917_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,24 +50,12 @@ namespace AdiwarnaBackend.Migrations
                     b.Property<DateTime>("ScheduledAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("Team1Id")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("Team2Id")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid>("TournamentId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Team1Id");
-
-                    b.HasIndex("Team2Id");
-
-                    b.HasIndex("TournamentId", "Team1Id");
-
-                    b.HasIndex("TournamentId", "Team2Id");
+                    b.HasIndex("TournamentId");
 
                     b.ToTable("Games");
                 });
@@ -280,10 +271,6 @@ namespace AdiwarnaBackend.Migrations
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("GameType")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
@@ -370,27 +357,11 @@ namespace AdiwarnaBackend.Migrations
 
             modelBuilder.Entity("AdiwarnaBackend.Entities.Game", b =>
                 {
-                    b.HasOne("AdiwarnaBackend.Entities.Team", "Team1")
-                        .WithMany()
-                        .HasForeignKey("Team1Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("AdiwarnaBackend.Entities.Team", "Team2")
-                        .WithMany()
-                        .HasForeignKey("Team2Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("AdiwarnaBackend.Entities.Tournament", "Tournament")
                         .WithMany("Games")
                         .HasForeignKey("TournamentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Team1");
-
-                    b.Navigation("Team2");
 
                     b.Navigation("Tournament");
                 });
