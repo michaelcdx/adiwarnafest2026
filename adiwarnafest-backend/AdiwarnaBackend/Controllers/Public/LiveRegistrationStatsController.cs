@@ -1,0 +1,103 @@
+using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
+
+namespace AdiwarnaBackend.Controllers.Public
+{
+    [Route("api/stats/live")]
+    [ApiController]
+    [Tags("Public")]
+    public class LiveRegistrationStatsController : ControllerBase
+    {
+        private readonly HttpClient _httpClient;
+        private static CachedStats? _cachedStats;
+        private static DateTime _lastFetch = DateTime.MinValue;
+
+        public LiveRegistrationStatsController()
+        {
+            _httpClient = new HttpClient();
+        }
+
+        [HttpGet]
+        [EndpointSummary("Get live registration stats from Google Sheets")]
+        [EndpointDescription("Fetches real-time registration data from Google Sheets via Apps Script. Data is cached for 30 seconds.")]
+        public async Task<IActionResult> GetLiveStats()
+        {
+            try
+            {
+                // Return cached data if less than 30 seconds old
+                if (_cachedStats != null && (DateTime.UtcNow - _lastFetch).TotalSeconds < 30)
+                {
+                    return Ok(ConvertToResponse(_cachedStats));
+                }
+
+                const string appsScriptUrl = "https://script.google.com/macros/s/AKfycbxwUHG4PUY5If7wCQwVlkiQ-WNaUvWRwDg3e5bXHBWnlvxyjnjX2UiaCuVzAx5g96ZQ2g/exec";
+
+                var response = await _httpClient.GetStringAsync(appsScriptUrl);
+                _cachedStats = JsonSerializer.Deserialize<CachedStats>(response);
+                _lastFetch = DateTime.UtcNow;
+
+                return Ok(ConvertToResponse(_cachedStats));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = "Failed to fetch live stats", details = ex.Message });
+            }
+        }
+
+        private object ConvertToResponse(CachedStats? stats)
+        {
+            if (stats == null) return new { };
+
+            int totalTeams = stats.Basketball.Teams + stats.Futsal.Teams + stats.MobileLegends.Teams;
+            int totalParticipants = stats.SportParticipants + stats.SimfoniParticipants;
+
+            return new
+            {
+                totalTeams,
+                sportParticipants = stats.SportParticipants,
+                simfoniParticipants = stats.SimfoniParticipants,
+                totalParticipants,
+                basketball = new { teams = stats.Basketball.Teams, players = stats.Basketball.Players },
+                futsal = new { teams = stats.Futsal.Teams, players = stats.Futsal.Players },
+                mobileLegendsStats = new { teams = stats.MobileLegends.Teams, players = stats.MobileLegends.Players },
+                lastUpdated = stats.LastUpdated
+            };
+        }
+    }
+
+    public class CachedStats
+    {
+        [System.Text.Json.Serialization.JsonPropertyName("totalTeams")]
+        public int TotalTeams { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("sportParticipants")]
+        public int SportParticipants { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("simfoniParticipants")]
+        public int SimfoniParticipants { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("totalParticipants")]
+        public int TotalParticipants { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("basketball")]
+        public SportStats Basketball { get; set; } = new();
+
+        [System.Text.Json.Serialization.JsonPropertyName("futsal")]
+        public SportStats Futsal { get; set; } = new();
+
+        [System.Text.Json.Serialization.JsonPropertyName("mobileLegends")]
+        public SportStats MobileLegends { get; set; } = new();
+
+        [System.Text.Json.Serialization.JsonPropertyName("lastUpdated")]
+        public string LastUpdated { get; set; } = "";
+    }
+
+    public class SportStats
+    {
+        [System.Text.Json.Serialization.JsonPropertyName("teams")]
+        public int Teams { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("players")]
+        public int Players { get; set; }
+    }
+}

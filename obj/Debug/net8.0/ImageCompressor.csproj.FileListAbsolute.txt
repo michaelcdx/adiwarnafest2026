@@ -1,0 +1,5 @@
+C:\Users\USER\Desktop\adiwarna\obj\Debug\net8.0\ImageCompressor.csproj.AssemblyReference.cache
+C:\Users\USER\Desktop\adiwarna\obj\Debug\net8.0\ImageCompressor.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\USER\Desktop\adiwarna\obj\Debug\net8.0\ImageCompressor.AssemblyInfoInputs.cache
+C:\Users\USER\Desktop\adiwarna\obj\Debug\net8.0\ImageCompressor.AssemblyInfo.cs
+C:\Users\USER\Desktop\adiwarna\obj\Debug\net8.0\ImageCompressor.csproj.CoreCompileInputs.cache

@@ -1,0 +1,6 @@
+@AdiwarnaBackend_HostAddress = http://localhost:5190
+
+GET {{AdiwarnaBackend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

@@ -1,0 +1,27 @@
+# Environment files
+.env
+.env.production
+.env.*.local
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS
+Thumbs.db
+*.log
+
+# Build artifacts
+dist/
+build/
+.next/
+node_modules/
+
+# Docker
+.dockerignore
+.claude/
