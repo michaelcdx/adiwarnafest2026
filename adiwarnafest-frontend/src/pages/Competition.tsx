@@ -1,31 +1,47 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import {
-  Basketball, SoccerBall, MusicNotes, GameController,
-  CaretRight, Trophy, Clock, MapPin, Code, GearSix,
+  Basketball, SoccerBall, GameController,
+  Clock, MapPin,
 } from "@phosphor-icons/react";
 
-import { scheduleData, standingsData } from "../data/mockData";
-import MaintenanceCompetition from "./MaintenanceCompetition";
+import { tournamentsService } from "../services/tournaments";
+import { publicService } from "../services/public";
+import type { Game } from "../services/games";
+import type { Tournament } from "../services/tournaments";
 
 const MEDALS = ["🥇", "🥈", "🥉"];
 
+// Maps sport tab label → backend gameType value (must match DB stored string exactly)
+const SPORT_TO_GAMETYPE: Record<string, string> = {
+  "Basketball 5x5": "Basketball5v5",
+  "Futsal": "Futsal",
+  "Mobile Legends": "Mobile Legends",
+};
+
+// Format a UTC ISO datetime string as "HH:MM" in local time
+function formatTime(iso: string): string {
+  const d = new Date(iso);
+  return d.toLocaleTimeString("en-MY", { hour: "2-digit", minute: "2-digit", hour12: false });
+}
+
+const MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+// Format a UTC ISO datetime string as "D Month YYYY" matching the dates array (uses local time)
+function formatDate(iso: string): string {
+  const d = new Date(iso);
+  return `${d.getDate()} ${MONTH_NAMES[d.getMonth()]} ${d.getFullYear()}`;
+}
+
 const Competition = () => {
-  const navigate = useNavigate();
   const location = useLocation();
   const [activeDate, setActiveDate] = useState("30 May 2026");
   const [activeSport, setActiveSport] = useState(location.state?.sport || "Basketball 5x5");
   const [visibleMatches, setVisibleMatches] = useState(3);
   const [showFullStandings, setShowFullStandings] = useState(false);
-  const [maintenanceOpen, setMaintenanceOpen] = useState(false);
-  const [updatedSchedules, setUpdatedSchedules] = useState(() => {
-    const saved = localStorage.getItem("editedScheduleData");
-    return saved ? JSON.parse(saved) : scheduleData;
-  });
-  const [updatedStandings, setUpdatedStandings] = useState(() => {
-    const saved = localStorage.getItem("editedStandingsData");
-    return saved ? JSON.parse(saved) : standingsData;
-  });
+  const isFutsal = activeSport === "Futsal";
+  const [tournaments, setTournaments] = useState<Tournament[]>([]);
+  const [games, setGames] = useState<Game[]>([]);
   const prevVisibleRef = useRef(0);
   const sportTabsRef = useRef<HTMLDivElement>(null);
   const [chipScroll, setChipScroll] = useState({ progress: 0, thumbRatio: 1 });
@@ -56,18 +72,23 @@ const Competition = () => {
     if (location.state?.sport) setActiveSport(location.state.sport);
   }, [location.state]);
 
-  // Reload data from localStorage when component mounts or when focus returns
+  // Load all tournaments once
   useEffect(() => {
-    const handleFocus = () => {
-      const saved = localStorage.getItem("editedScheduleData");
-      const savedStandings = localStorage.getItem("editedStandingsData");
-      if (saved) setUpdatedSchedules(JSON.parse(saved) as any);
-      if (savedStandings) setUpdatedStandings(JSON.parse(savedStandings) as any);
-    };
-
-    window.addEventListener("focus", handleFocus);
-    return () => window.removeEventListener("focus", handleFocus);
+    tournamentsService.listTournaments().then(setTournaments).catch(() => setTournaments([]));
   }, []);
+
+  // When sport changes, find the matching tournament and fetch its games
+  useEffect(() => {
+    const gameType = SPORT_TO_GAMETYPE[activeSport];
+    const tournament = tournaments.find(t => t.gameType === gameType);
+    if (!tournament) {
+      setGames([]);
+      return;
+    }
+    publicService.getPublicGames(tournament.id)
+      .then(setGames)
+      .catch(() => setGames([]));
+  }, [activeSport, tournaments]);
 
   useEffect(() => {
     prevVisibleRef.current = 0;
@@ -90,20 +111,60 @@ const Competition = () => {
     setVisibleMatches(3);
   };
 
-  const dates = ["30 May 2026", "31 May 2026"];
+  const dates = ["27 May 2026", "28 May 2026", "29 May 2026", "30 May 2026", "31 May 2026"];
+  const dayNames: { [key: string]: string } = {
+    "27 May 2026": "Wednesday",
+    "28 May 2026": "Thursday",
+    "29 May 2026": "Friday",
+    "30 May 2026": "Saturday",
+    "31 May 2026": "Sunday",
+  };
   const sports = [
     { id: "Basketball 5x5", label: "Basketball 5x5", icon: Basketball },
-    { id: "Basketball 3x3", label: "Basketball 3x3", icon: Basketball },
     { id: "Futsal",         label: "Futsal",         icon: SoccerBall },
-    { id: "Dance",          label: "Dance",          icon: MusicNotes },
     { id: "Mobile Legends", label: "Mobile Legends", icon: GameController },
   ];
 
-  const activeMatches = (updatedSchedules as any)[activeSport]?.[activeDate] || [];
-  const activeStandings = (updatedStandings as any)[activeSport] || [];
-  const sortedMatches = [...activeMatches].sort((a: any, b: any) => a.time.localeCompare(b.time));
+  // Filter games for the active date
+  const activeMatches = games.filter(g => formatDate(g.scheduledAt) === activeDate);
+  const sortedMatches = [...activeMatches].sort((a, b) =>
+    new Date(a.scheduledAt).getTime() - new Date(b.scheduledAt).getTime()
+  );
   const visibleList = sortedMatches.slice(0, visibleMatches);
+
+  // Compute standings from games
+  const gameType = SPORT_TO_GAMETYPE[activeSport];
+  const activeTournament = tournaments.find(t => t.gameType === gameType);
+  const teamStatsMap = new Map<string, { id: string; name: string; p: number; w: number; d: number; l: number; pts: number }>();
+  if (activeTournament) {
+    activeTournament.teams.forEach(t => {
+      teamStatsMap.set(t.teamId, { id: t.teamId.slice(0, 3).toUpperCase(), name: t.teamName, p: 0, w: 0, d: 0, l: 0, pts: 0 });
+    });
+  }
+  games.filter(g => g.gameStatus === "COMPLETED").forEach(g => {
+    const t1 = teamStatsMap.get(g.team1Id);
+    const t2 = teamStatsMap.get(g.team2Id);
+    const isDraw = g.team1Score === g.team2Score;
+    if (t1) {
+      t1.p++;
+      if (isDraw && isFutsal) { t1.d++; t1.pts += 1; }
+      else if (g.team1Score > g.team2Score) { t1.w++; t1.pts += isFutsal ? 3 : 1; }
+      else { t1.l++; }
+    }
+    if (t2) {
+      t2.p++;
+      if (isDraw && isFutsal) { t2.d++; t2.pts += 1; }
+      else if (g.team2Score > g.team1Score) { t2.w++; t2.pts += isFutsal ? 3 : 1; }
+      else { t2.l++; }
+    }
+  });
+  const activeStandings = Array.from(teamStatsMap.values()).sort((a, b) =>
+    isFutsal ? (b.pts - a.pts || b.w - a.w) : (b.w - a.w || b.p - a.p)
+  );
   const standingsSlice = showFullStandings ? activeStandings : activeStandings.slice(0, 5);
+
+  const activeDateIndex = dates.indexOf(activeDate);
+  const buttonWidth = `calc(${100 / dates.length}% - 4px)`;
 
   return (
     <div style={{ fontFamily: "Epilogue, sans-serif", background: "#f8f7f5", minHeight: "100vh", paddingBottom: "110px" }}>
@@ -119,24 +180,29 @@ const Competition = () => {
           <div style={{ position: "relative", display: "inline-flex", background: "white", borderRadius: "999px", padding: "4px", border: "1px solid #e8e5e0", boxShadow: "0 2px 10px rgba(0,0,0,0.07)", overflow: "hidden" }}>
             <div style={{
               position: "absolute", top: "4px",
-              left: activeDate === "30 May 2026" ? "4px" : "calc(50%)",
-              width: "calc(50% - 4px)", height: "calc(100% - 8px)",
+              left: `calc(${activeDateIndex * (100 / dates.length)}% + 4px)`,
+              width: buttonWidth, height: "calc(100% - 8px)",
               background: "var(--color-primary)", borderRadius: "999px",
-              transition: "left 0.3s cubic-bezier(0.4,0,0.2,1)",
+              transition: "left 0.3s cubic-bezier(0.4,0,0.2,1), width 0.3s cubic-bezier(0.4,0,0.2,1)",
               zIndex: 0, boxShadow: "0 2px 8px rgba(144,77,0,0.3)",
             }} />
-            {dates.map(d => (
-              <button key={d} onClick={() => setActiveDate(d)} style={{
-                position: "relative", zIndex: 1,
-                padding: "9px 28px", border: "none", borderRadius: "999px",
-                cursor: "pointer", background: "transparent",
-                color: activeDate === d ? "white" : "#6b7280",
-                fontWeight: 700, fontSize: "14px", whiteSpace: "nowrap",
-                fontFamily: "Epilogue, sans-serif", transition: "color 0.25s",
-              }}>
-                {d}
-              </button>
-            ))}
+            {dates.map(d => {
+              const [day, month] = d.split(' ');
+              return (
+                <button key={d} onClick={() => setActiveDate(d)} style={{
+                  position: "relative", zIndex: 1,
+                  padding: "9px 12px", border: "none", borderRadius: "999px",
+                  cursor: "pointer", background: "transparent",
+                  color: activeDate === d ? "white" : "#6b7280",
+                  fontWeight: 700, fontSize: "12px", whiteSpace: "nowrap",
+                  fontFamily: "Epilogue, sans-serif", transition: "color 0.25s",
+                  flex: `1 1 ${100 / dates.length}%`,
+                  textAlign: "center",
+                }}>
+                  {day} {month}
+                </button>
+              );
+            })}
           </div>
         </div>
 
@@ -196,19 +262,22 @@ const Competition = () => {
         <div style={{ marginBottom: "14px" }}>
           <h3 style={{ margin: 0, fontSize: "20px", fontWeight: 800, color: "#1a1a1a", letterSpacing: "-0.02em" }}>Upcoming Matches</h3>
           <p style={{ margin: "3px 0 0", color: "#9ca3af", fontSize: "13px", fontWeight: 600 }}>
-            {activeDate === "30 May 2026" ? "Saturday" : "Sunday"} · {activeDate}
+            {dayNames[activeDate]} · {activeDate}
           </p>
         </div>
 
         {/* ── Match Cards ── */}
         <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "16px" }}>
           {activeMatches.length > 0 ? (
-            visibleList.map((match: any, idx: number) => {
+            visibleList.map((match, idx) => {
               const isNew = idx >= prevVisibleRef.current;
               const delay = isNew ? (idx - prevVisibleRef.current) * 0.08 : 0;
+              const isCompleted = match.gameStatus === "COMPLETED";
+              const t1Goals = isCompleted ? match.team1Score : null;
+              const t2Goals = isCompleted ? match.team2Score : null;
               return (
                 <div
-                  key={`${match.time}-${match.team1}`}
+                  key={match.id}
                   style={{
                     background: "white", border: "1px solid #f0ece8",
                     borderRadius: "16px", padding: "14px 16px",
@@ -218,28 +287,32 @@ const Competition = () => {
                 >
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "10px" }}>
                     <div style={{ display: "flex", alignItems: "baseline", gap: "4px" }}>
-                      <span style={{ fontSize: "28px", fontWeight: 900, color: "#862C14", letterSpacing: "-2px", lineHeight: 1 }}>{match.time}</span>
+                      <span style={{ fontSize: "28px", fontWeight: 900, color: "#862C14", letterSpacing: "-2px", lineHeight: 1 }}>{formatTime(match.scheduledAt)}</span>
                       <span style={{ fontSize: "9px", fontWeight: 700, color: "#9ca3af", textTransform: "uppercase" }}>MYT</span>
                     </div>
-                    <span style={{ background: "#FEF0E3", color: "#92400e", padding: "3px 10px", borderRadius: "7px", fontSize: "9px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.5px", marginTop: "4px" }}>{match.type}</span>
+                    <span style={{ background: isCompleted ? "#dcfce7" : "#FEF0E3", color: isCompleted ? "#166534" : "#92400e", padding: "3px 10px", borderRadius: "7px", fontSize: "9px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.5px", marginTop: "4px" }}>
+                      {match.remark || match.gameStatus}
+                    </span>
                   </div>
 
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 32px 1fr", alignItems: "center", gap: "6px", marginBottom: "10px" }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 48px 1fr", alignItems: "center", gap: "6px", marginBottom: "10px" }}>
                     <div style={{ textAlign: "center" }}>
-                      <div style={{ fontSize: "15px", fontWeight: 900, color: "#111", letterSpacing: "-0.3px" }}>{match.team1}</div>
-                      {match.seed1 && <div style={{ fontSize: "9px", color: "#bbb", textTransform: "uppercase", letterSpacing: "0.8px", marginTop: "2px" }}>{match.seed1}</div>}
+                      <div style={{ fontSize: "15px", fontWeight: 900, color: "#111", letterSpacing: "-0.3px" }}>{match.team1Name}</div>
+                      {isCompleted && t1Goals !== null && <div style={{ fontSize: "22px", fontWeight: 900, color: t1Goals > t2Goals! ? "#16a34a" : "#dc2626", marginTop: "2px" }}>{t1Goals}</div>}
                     </div>
-                    <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "#f5f4f2", display: "flex", alignItems: "center", justifyContent: "center", color: "#9ca3af", fontSize: "10px", fontWeight: 700, fontStyle: "italic" }}>vs</div>
+                    <div style={{ width: "48px", height: "32px", borderRadius: "50%", background: "#f5f4f2", display: "flex", alignItems: "center", justifyContent: "center", color: "#9ca3af", fontSize: "10px", fontWeight: 700, fontStyle: "italic" }}>vs</div>
                     <div style={{ textAlign: "center" }}>
-                      <div style={{ fontSize: "15px", fontWeight: 900, color: "#111", letterSpacing: "-0.3px" }}>{match.team2}</div>
-                      {match.seed2 && <div style={{ fontSize: "9px", color: "#bbb", textTransform: "uppercase", letterSpacing: "0.8px", marginTop: "2px" }}>{match.seed2}</div>}
+                      <div style={{ fontSize: "15px", fontWeight: 900, color: "#111", letterSpacing: "-0.3px" }}>{match.team2Name}</div>
+                      {isCompleted && t2Goals !== null && <div style={{ fontSize: "22px", fontWeight: 900, color: t2Goals > t1Goals! ? "#16a34a" : "#dc2626", marginTop: "2px" }}>{t2Goals}</div>}
                     </div>
                   </div>
 
-                  <div style={{ borderTop: "1px solid #f5f4f2", paddingTop: "8px", display: "flex", alignItems: "center", gap: "5px" }}>
-                    <MapPin size={11} weight="fill" color="#862C14" />
-                    <span style={{ fontSize: "9px", fontWeight: 700, color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.7px" }}>{match.venue}</span>
-                  </div>
+                  {match.remark && (
+                    <div style={{ borderTop: "1px solid #f5f4f2", paddingTop: "8px", display: "flex", alignItems: "center", gap: "5px" }}>
+                      <MapPin size={11} weight="fill" color="#862C14" />
+                      <span style={{ fontSize: "9px", fontWeight: 700, color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.7px" }}>{match.remark}</span>
+                    </div>
+                  )}
                 </div>
               );
             })
@@ -290,51 +363,24 @@ const Competition = () => {
           </div>
         )}
 
-        {/* ── Full Bracket CTA ── */}
-        <button
-          onClick={() => navigate("/bracket", { state: { sport: activeSport } })}
-          className="comp-bracket-btn"
-          style={{
-            width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between",
-            padding: "16px 20px",
-            background: "linear-gradient(135deg, var(--color-primary) 0%, #c07000 100%)",
-            border: "none", borderRadius: "18px", cursor: "pointer",
-            marginBottom: "28px",
-            boxShadow: "0 6px 20px rgba(144,77,0,0.28)",
-            fontFamily: "Epilogue, sans-serif",
-            transition: "transform 0.2s ease, box-shadow 0.2s ease",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <div style={{ width: "40px", height: "40px", background: "rgba(255,255,255,0.18)", borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              <Trophy size={22} weight="fill" color="white" />
-            </div>
-            <div style={{ textAlign: "left" }}>
-              <div style={{ color: "white", fontWeight: 800, fontSize: "15px", letterSpacing: "-0.02em" }}>View Full Bracket</div>
-              <div style={{ color: "rgba(255,255,255,0.7)", fontSize: "11px", fontWeight: 500, marginTop: "1px" }}>All matchups & results · {activeSport}</div>
-            </div>
-          </div>
-          <CaretRight size={22} weight="bold" color="rgba(255,255,255,0.85)" />
-        </button>
-
-        {/* ── Standings ── */}
+{/* ── Standings ── */}
         <div style={{ marginBottom: "32px" }}>
           <h3 style={{ margin: "0 0 14px", fontSize: "20px", fontWeight: 800, color: "#1a1a1a", letterSpacing: "-0.02em" }}>Standings</h3>
 
           <div style={{ background: "white", borderRadius: "20px", overflow: "hidden", border: "1px solid #f0ece8", boxShadow: "0 2px 12px rgba(0,0,0,0.05)" }}>
             {/* Header row */}
-            <div style={{ display: "grid", gridTemplateColumns: "52px 1fr 40px 40px 40px", padding: "10px 14px", background: "#faf9f7", borderBottom: "1px solid #f0ece8" }}>
-              {(["#", "Team", "P", "W", "L"] as const).map((h, i) => (
+            <div style={{ display: "grid", gridTemplateColumns: isFutsal ? "52px 1fr 40px 40px 40px 40px 48px" : "52px 1fr 40px 40px 40px", padding: "10px 14px", background: "#faf9f7", borderBottom: "1px solid #f0ece8" }}>
+              {(isFutsal ? ["#", "Team", "P", "W", "D", "L", "PTS"] : ["#", "Team", "P", "W", "L"]).map((h, i) => (
                 <div key={h} style={{ fontSize: "10px", fontWeight: 700, color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.7px", textAlign: i > 1 ? "center" : "left" }}>{h}</div>
               ))}
             </div>
 
             {/* Data rows */}
-            {standingsSlice.map((team: any, idx: number) => (
+            {standingsSlice.map((team, idx: number) => (
               <div
                 key={team.id}
                 style={{
-                  display: "grid", gridTemplateColumns: "52px 1fr 40px 40px 40px",
+                  display: "grid", gridTemplateColumns: isFutsal ? "52px 1fr 40px 40px 40px 40px 48px" : "52px 1fr 40px 40px 40px",
                   padding: "12px 14px", alignItems: "center",
                   borderBottom: idx < standingsSlice.length - 1 ? "1px solid #f7f5f3" : "none",
                   background: idx === 0 ? "linear-gradient(90deg,rgba(144,77,0,0.05) 0%,transparent 100%)" : "transparent",
@@ -357,7 +403,9 @@ const Competition = () => {
                 </div>
                 <div style={{ textAlign: "center", fontSize: "13px", fontWeight: 500, color: "#6b7280" }}>{team.p}</div>
                 <div style={{ textAlign: "center", fontSize: "13px", fontWeight: 700, color: idx < 3 ? "#16a34a" : "#374151" }}>{team.w}</div>
+                {isFutsal && <div style={{ textAlign: "center", fontSize: "13px", fontWeight: 500, color: "#6b7280" }}>{team.d}</div>}
                 <div style={{ textAlign: "center", fontSize: "13px", fontWeight: 500, color: idx < 3 ? "#dc2626" : "#9ca3af" }}>{team.l}</div>
+                {isFutsal && <div style={{ textAlign: "center", fontSize: "13px", fontWeight: 700, color: "var(--color-primary)" }}>{team.pts}</div>}
               </div>
             ))}
           </div>
@@ -384,69 +432,6 @@ const Competition = () => {
 
       </main>
 
-      {/* ── Maintenance Button ── */}
-      <button
-        onClick={() => setMaintenanceOpen(true)}
-        title="Maintenance Mode"
-        className="comp-maintenance-btn"
-        style={{
-          position: "fixed", bottom: "150px", right: "18px", zIndex: 9999,
-          display: "flex", alignItems: "center", gap: "8px",
-          padding: "11px 16px",
-          background: "linear-gradient(135deg, #7c2d12 0%, #92400e 100%)",
-          border: "none", borderRadius: "999px", cursor: "pointer",
-          color: "white", fontFamily: "Epilogue, sans-serif",
-          fontWeight: 700, fontSize: "12px", letterSpacing: "0.3px",
-          boxShadow: "0 4px 20px rgba(0,0,0,0.32)",
-          transition: "transform 0.2s ease, box-shadow 0.2s ease",
-        }}
-      >
-        <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
-          <GearSix size={16} weight="bold" />
-          <span style={{
-            position: "absolute", top: "-5px", right: "-5px",
-            width: "7px", height: "7px",
-            background: "#f59e0b", borderRadius: "50%",
-            animation: "devPulse 2s ease-in-out infinite",
-          }} />
-        </div>
-        <span>Maintenance</span>
-      </button>
-
-      {/* ── Dev Mode FAB ── */}
-      <button
-        onClick={() => navigate("/dev")}
-        title="Developer Mode"
-        className="comp-dev-fab"
-        style={{
-          position: "fixed", bottom: "90px", right: "18px", zIndex: 9999,
-          display: "flex", alignItems: "center", gap: "8px",
-          padding: "11px 16px",
-          background: "linear-gradient(135deg, #0f172a 0%, #1e293b 100%)",
-          border: "none", borderRadius: "999px", cursor: "pointer",
-          color: "white", fontFamily: "Epilogue, sans-serif",
-          fontWeight: 700, fontSize: "12px", letterSpacing: "0.3px",
-          boxShadow: "0 4px 20px rgba(0,0,0,0.32)",
-          transition: "transform 0.2s ease, box-shadow 0.2s ease",
-        }}
-      >
-        <div style={{ position: "relative", display: "flex", alignItems: "center" }}>
-          <Code size={16} weight="bold" />
-          <span style={{
-            position: "absolute", top: "-5px", right: "-5px",
-            width: "7px", height: "7px",
-            background: "#22c55e", borderRadius: "50%",
-            animation: "devPulse 2s ease-in-out infinite",
-          }} />
-        </div>
-        <span>Dev Mode</span>
-      </button>
-
-      {/* ── Maintenance Modal ── */}
-      <MaintenanceCompetition
-        isOpen={maintenanceOpen}
-        onClose={() => setMaintenanceOpen(false)}
-      />
 
       <style>{`
         @keyframes slideInCard {
@@ -475,9 +460,6 @@ const Competition = () => {
         /* button hover states */
         .comp-btn-primary:hover { background: var(--color-primary) !important; color: white !important; }
         .comp-btn-ghost:hover   { background: #f3f4f6 !important; }
-        .comp-bracket-btn:hover { transform: translateY(-2px) !important; box-shadow: 0 10px 28px rgba(144,77,0,0.38) !important; }
-        .comp-dev-fab:hover     { transform: translateY(-2px) !important; box-shadow: 0 8px 28px rgba(0,0,0,0.45) !important; }
-        .comp-maintenance-btn:hover { transform: translateY(-2px) !important; box-shadow: 0 8px 28px rgba(146,64,14,0.45) !important; }
       `}</style>
     </div>
   );
