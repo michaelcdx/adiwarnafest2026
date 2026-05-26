@@ -40,21 +40,21 @@ const BOOTHS: Booth[] = [
   {
     id: 'ADIWARNA2026FEST8h7X9kL2mN4pQ6rS8tUvWx',
     name: 'Vendor Booth',
-    location: 'Festival Ground',
+    location: 'B1 - Ground Floor & 1st Floor',
     image: adiwarnaLogo,
     description: 'Purchase any vendor booth offering delicious food, unique accessories, and more. Browse through our diverse selection of vendors and make your purchase to receive a QR code for the lucky draw.'
   },
   {
     id: 'ADIWARNA2026FEST3aB5cD7eF9gH1jK2lM4nO6',
     name: 'GADPA Booth',
-    location: 'Festival Ground',
+    location: 'B1 - 1st Floor',
     image: gadpaLogo,
     description: 'Purchase from our GADPA booth and choose from: 1. Donat, 2. Nutrisasri, or 3. Simfoni Ticket. Complete any of these purchases to receive your QR code for the lucky draw.'
   },
   {
     id: 'ADIWARNA2026FEST5xY2zZ9kL1mN7pQ3rS6tUvWx',
     name: 'Sponsor Booth',
-    location: 'Festival Ground',
+    location: 'B1 - Ground Floor',
     image: anyTimeFitnessLogo,
     description: 'Visit our sponsor booth, Anytime Fitness. Learn about their exclusive services and fitness programs, then claim your QR code to enter the lucky draw.'
   }
@@ -90,7 +90,7 @@ const LuckyDraw: React.FC = () => {
         setScannedBooths(status.scannedBooths.map(s => s.boothId));
         setIsSubmitted(status.hasSubmitted);
       } catch (error) {
-        console.error("Failed to load lucky draw status", error);
+
         toast.current?.show({
           severity: 'error',
           summary: 'Error',
@@ -197,9 +197,8 @@ const LuckyDraw: React.FC = () => {
             handleScanSuccess,
             () => {} // Ignored
           );
-        } catch (err: any) {
-          console.error("Camera error:", err);
-          setCameraError(err.message || "Unable to access camera. Please ensure permissions are granted.");
+        } catch (err: unknown) {
+          setCameraError(err instanceof Error ? err.message : "Unable to access camera. Please ensure permissions are granted.");
         }
       } else if (attempts < maxAttempts) {
         attempts++;
@@ -217,8 +216,8 @@ const LuckyDraw: React.FC = () => {
       try {
         await qrReaderRef.current.stop();
         await qrReaderRef.current.clear();
-      } catch (err) {
-        console.error("Stop scanner error:", err);
+      } catch {
+        // ignore stop errors
       }
     }
     setIsScanning(false);
@@ -244,6 +243,18 @@ const LuckyDraw: React.FC = () => {
       toast.current?.show({ severity: 'warn', summary: 'Agreement Required', detail: 'Please acknowledge the terms and conditions.' });
       return;
     }
+    if (!submissionForm.name.trim() || submissionForm.name.trim().length > 100) {
+      toast.current?.show({ severity: 'error', summary: 'Invalid Name', detail: 'Full name is required and must be under 100 characters.' });
+      return;
+    }
+    if (!/^\+?[0-9\s\-]{7,20}$/.test(submissionForm.phone)) {
+      toast.current?.show({ severity: 'error', summary: 'Invalid Phone', detail: 'Please enter a valid phone number.' });
+      return;
+    }
+    if (!/^@?[A-Za-z0-9._]{1,50}$/.test(submissionForm.instagram)) {
+      toast.current?.show({ severity: 'error', summary: 'Invalid Instagram', detail: 'Please enter a valid Instagram handle.' });
+      return;
+    }
 
     setIsSubmitting(true);
     try {
@@ -264,7 +275,6 @@ const LuckyDraw: React.FC = () => {
       });
     } catch (error) {
       setIsSubmitting(false);
-      console.error("Submission error:", error);
       toast.current?.show({
         severity: 'error',
         summary: 'Submission Failed',
@@ -426,7 +436,7 @@ const LuckyDraw: React.FC = () => {
               color: 'var(--color-primary)',
               border: '2px solid var(--color-primary)'
             }}
-            onClick={() => navigate("/vendormap")}
+            onClick={() => navigate("/map")}
           />
         </section>
 

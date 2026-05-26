@@ -30,7 +30,9 @@ namespace AdiwarnaBackend.Controllers.Games
 
             if (!string.IsNullOrWhiteSpace(request.GameStatus))
             {
-                var gameStatus = ParseGameStatus(request.GameStatus);
+                string gameStatus;
+                try { gameStatus = ParseGameStatus(request.GameStatus); }
+                catch (ArgumentException) { return BadRequest("Invalid GameStatus."); }
                 game.GameStatus = gameStatus;
             }
 
@@ -94,6 +96,8 @@ namespace AdiwarnaBackend.Controllers.Games
                 IsDeleted = game.IsDeleted,
                 DeletedAt = game.DeletedAt,
                 IsLocked = game.IsLocked,
+                Team1Score = game.Team1Score,
+                Team2Score = game.Team2Score,
                 PlayerStats = stats.Select(pgs => new PlayerGameStatDto
                 {
                     PlayerId = pgs.PlayerId,

@@ -26,6 +26,8 @@ export type Game = {
   isDeleted: boolean
   deletedAt: string | null
   isLocked: boolean
+  team1Score: number
+  team2Score: number
   playerStats: PlayerGameStat[]
 }
 
@@ -105,5 +107,17 @@ export const gamesService = {
     apiFetch<Game>(
       `/api/tournaments/${tournamentId}/games/${gameId}/upsert`,
       { method: 'PUT', auth: true, body: payload }
+    ),
+
+  setScore: (
+    tournamentId: string,
+    gameId: string,
+    team1Score: number,
+    team2Score: number,
+    gameStatus: string = 'COMPLETED'
+  ) =>
+    apiFetch<Game>(
+      `/api/tournaments/${tournamentId}/games/${gameId}/score`,
+      { method: 'PATCH', auth: true, body: { team1Score, team2Score, gameStatus } }
     ),
 }

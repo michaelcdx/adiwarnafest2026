@@ -22,7 +22,9 @@ namespace AdiwarnaBackend.Controllers.Tournaments
             if (string.IsNullOrWhiteSpace(request.Name))
                 return BadRequest("Tournament name is required.");
 
-            var tourneyStatus = ParseTourneyStatus(request.TourneyStatus);
+            string tourneyStatus;
+            try { tourneyStatus = ParseTourneyStatus(request.TourneyStatus); }
+            catch (ArgumentException ex) { return BadRequest(ex.Message); }
 
             await using var transaction = await context.Database.BeginTransactionAsync();
 

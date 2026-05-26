@@ -62,6 +62,8 @@ namespace AdiwarnaBackend.Controllers.Games
                 IsDeleted = game.IsDeleted,
                 DeletedAt = game.DeletedAt,
                 IsLocked = game.IsLocked,
+                Team1Score = game.Team1Score,
+                Team2Score = game.Team2Score,
                 PlayerStats = stats.Select(pgs => new PlayerGameStatDto
                 {
                     PlayerId = pgs.PlayerId,

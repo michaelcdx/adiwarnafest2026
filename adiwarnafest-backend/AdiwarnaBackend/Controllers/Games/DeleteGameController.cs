@@ -18,11 +18,13 @@ namespace AdiwarnaBackend.Controllers.Games
         public async Task<IActionResult> DeleteGame(Guid tournamentId, Guid gameId, CancellationToken cancellationToken)
         {
             var game = await context.Games
+                .Include(g => g.PlayerGameStats)
                 .FirstOrDefaultAsync(g => g.Id == gameId && g.TournamentId == tournamentId, cancellationToken);
 
             if (game is null)
                 return NotFound("Game not found.");
 
+            context.PlayerGameStats.RemoveRange(game.PlayerGameStats);
             game.IsDeleted = true;
             game.DeletedAt = DateTime.UtcNow;
             await context.SaveChangesAsync(cancellationToken);

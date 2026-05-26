@@ -67,6 +67,9 @@ export const UpsertGameSidebar = ({
   const [gameStatus, setGameStatus] = useState<string>('UPCOMING')
   const [remark, setRemark] = useState<string>('')
   const [saving, setSaving] = useState(false)
+  const [settingScore, setSettingScore] = useState(false)
+  const [directScore1, setDirectScore1] = useState<number>(0)
+  const [directScore2, setDirectScore2] = useState<number>(0)
   const [tournamentTeams, setTournamentTeams] = useState<TournamentTeamOption[]>([])
 
   const isCreateMode = !game
@@ -124,6 +127,8 @@ export const UpsertGameSidebar = ({
       setGameStatus(game.gameStatus)
       setScheduledAt(new Date(game.scheduledAt))
       setRemark(game.remark ?? '')
+      setDirectScore1(game.team1Score ?? 0)
+      setDirectScore2(game.team2Score ?? 0)
 
       const stats = game.playerStats
       const u1 = stats[0]?.teamId
@@ -161,8 +166,11 @@ export const UpsertGameSidebar = ({
     }
   }
 
+  const team1IsTbc = tournamentTeams.find(t => t.id === team1Id)?.name === 'TBC'
+  const team2IsTbc = tournamentTeams.find(t => t.id === team2Id)?.name === 'TBC'
+
   useEffect(() => {
-    if (team1Id && isCreateMode) {
+    if (team1Id && (isCreateMode || team1IsTbc)) {
       loadPlayers(team1Id, players => {
         setTeam1Stats(players.map(p => ({
           playerId: p.id,
@@ -176,10 +184,10 @@ export const UpsertGameSidebar = ({
         })))
       })
     }
-  }, [team1Id, isCreateMode])
+  }, [team1Id])
 
   useEffect(() => {
-    if (team2Id && isCreateMode) {
+    if (team2Id && (isCreateMode || team2IsTbc)) {
       loadPlayers(team2Id, players => {
         setTeam2Stats(players.map(p => ({
           playerId: p.id,
@@ -193,7 +201,7 @@ export const UpsertGameSidebar = ({
         })))
       })
     }
-  }, [team2Id, isCreateMode])
+  }, [team2Id])
 
   const handleHide = () => {
     setGameType(null)
@@ -284,6 +292,25 @@ export const UpsertGameSidebar = ({
     />
   )
 
+  const handleSetScore = async () => {
+    if (!tournament || !game) return
+    setSettingScore(true)
+    try {
+      await gamesService.setScore(tournament.id, game.id, directScore1, directScore2, gameStatus)
+      toast.current?.show({ severity: 'success', summary: 'Score updated', life: 3000 })
+      onSuccess?.()
+    } catch (error: unknown) {
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: error instanceof Error ? error.message : 'Failed to set score',
+        life: 5000,
+      })
+    } finally {
+      setSettingScore(false)
+    }
+  }
+
   const team1Name = tournamentTeams.find(t => t.id === team1Id)?.name ?? ''
   const team2Name = tournamentTeams.find(t => t.id === team2Id)?.name ?? ''
 
@@ -324,7 +351,7 @@ export const UpsertGameSidebar = ({
                 options={filteredTeamOptions.filter(t => t.value !== team2Id)}
                 placeholder="Select Team 1"
                 onChange={e => setTeam1Id(e.value)}
-                disabled={!isCreateMode}
+                disabled={!isCreateMode && tournamentTeams.find(t => t.id === team1Id)?.name !== 'TBC'}
               />
               <span className="text-xs text-500">{team1Name}</span>
             </div>
@@ -337,7 +364,7 @@ export const UpsertGameSidebar = ({
                 options={filteredTeamOptions.filter(t => t.value !== team1Id)}
                 placeholder="Select Team 2"
                 onChange={e => setTeam2Id(e.value)}
-                disabled={!isCreateMode}
+                disabled={!isCreateMode && tournamentTeams.find(t => t.id === team2Id)?.name !== 'TBC'}
               />
               <span className="text-xs text-500">{team2Name}</span>
             </div>
@@ -380,6 +407,44 @@ export const UpsertGameSidebar = ({
             </div>
           </div>
         </div>
+
+        {/* Direct Score Input (always shown when editing) */}
+        {game && (
+          <>
+            <Divider />
+            <div className="flex flex-column gap-2">
+              <label className="text-sm font-semibold">Score</label>
+              <div className="flex align-items-center gap-3">
+                <div className="flex flex-column gap-1 align-items-center flex-1">
+                  <span className="text-xs text-500">{game.team1Name}</span>
+                  <InputNumber
+                    value={directScore1}
+                    onValueChange={e => setDirectScore1(e.value ?? 0)}
+                    min={0} max={999}
+                    inputStyle={{ width: '80px', textAlign: 'center', fontSize: '22px', fontWeight: 700 }}
+                  />
+                </div>
+                <span className="text-xl font-bold text-400">-</span>
+                <div className="flex flex-column gap-1 align-items-center flex-1">
+                  <span className="text-xs text-500">{game.team2Name}</span>
+                  <InputNumber
+                    value={directScore2}
+                    onValueChange={e => setDirectScore2(e.value ?? 0)}
+                    min={0} max={999}
+                    inputStyle={{ width: '80px', textAlign: 'center', fontSize: '22px', fontWeight: 700 }}
+                  />
+                </div>
+              </div>
+              <Button
+                label={settingScore ? 'Saving...' : 'Set Score'}
+                onClick={handleSetScore}
+                disabled={settingScore}
+                loading={settingScore}
+                style={{ backgroundColor: '#862C14', borderColor: '#862C14' }}
+              />
+            </div>
+          </>
+        )}
 
         {team1Id && (
           <div className="flex flex-column gap-2">

@@ -78,17 +78,18 @@ const Competition = () => {
   }, []);
 
   // When sport changes, find the matching tournament and fetch its games
-  useEffect(() => {
+  const fetchGames = useCallback(() => {
     const gameType = SPORT_TO_GAMETYPE[activeSport];
     const tournament = tournaments.find(t => t.gameType === gameType);
-    if (!tournament) {
-      setGames([]);
-      return;
-    }
-    publicService.getPublicGames(tournament.id)
-      .then(setGames)
-      .catch(() => setGames([]));
+    if (!tournament) { setGames([]); return; }
+    publicService.getPublicGames(tournament.id).then(setGames).catch(() => setGames([]));
   }, [activeSport, tournaments]);
+
+  useEffect(() => {
+    fetchGames();
+    const interval = setInterval(fetchGames, 30000);
+    return () => clearInterval(interval);
+  }, [fetchGames]);
 
   useEffect(() => {
     prevVisibleRef.current = 0;
@@ -137,11 +138,13 @@ const Competition = () => {
   const activeTournament = tournaments.find(t => t.gameType === gameType);
   const teamStatsMap = new Map<string, { id: string; name: string; p: number; w: number; d: number; l: number; pts: number }>();
   if (activeTournament) {
-    activeTournament.teams.forEach(t => {
-      teamStatsMap.set(t.teamId, { id: t.teamId.slice(0, 3).toUpperCase(), name: t.teamName, p: 0, w: 0, d: 0, l: 0, pts: 0 });
-    });
+    activeTournament.teams
+      .filter(t => t.teamName !== "TBC")
+      .forEach(t => {
+        teamStatsMap.set(t.teamId, { id: t.teamId.slice(0, 3).toUpperCase(), name: t.teamName, p: 0, w: 0, d: 0, l: 0, pts: 0 });
+      });
   }
-  games.filter(g => g.gameStatus === "COMPLETED").forEach(g => {
+  games.filter(g => g.gameStatus === "COMPLETED" && g.team1Name !== "TBC" && g.team2Name !== "TBC").forEach(g => {
     const t1 = teamStatsMap.get(g.team1Id);
     const t2 = teamStatsMap.get(g.team2Id);
     const isDraw = g.team1Score === g.team2Score;
@@ -162,6 +165,17 @@ const Competition = () => {
     isFutsal ? (b.pts - a.pts || b.w - a.w) : (b.w - a.w || b.p - a.p)
   );
   const standingsSlice = showFullStandings ? activeStandings : activeStandings.slice(0, 5);
+
+  // Compute dense ranks with tie support (same score = same rank)
+  const standingsRanks: number[] = [];
+  activeStandings.forEach((team, idx) => {
+    if (idx === 0) { standingsRanks.push(1); return; }
+    const prev = activeStandings[idx - 1]!;
+    const tied = isFutsal
+      ? team.pts === prev.pts && team.w === prev.w
+      : team.w === prev.w && team.p === prev.p;
+    standingsRanks.push(tied ? standingsRanks[idx - 1]! : idx + 1);
+  });
 
   const activeDateIndex = dates.indexOf(activeDate);
   const buttonWidth = `calc(${100 / dates.length}% - 4px)`;
@@ -258,12 +272,55 @@ const Competition = () => {
           )}
         </div>
 
+        {/* ── YouTube Live Banner (Mobile Legends only) ── */}
+        {activeSport === "Mobile Legends" && activeDate !== "27 May 2026" && activeDate !== "28 May 2026" && activeDate !== "31 May 2026" && (
+          <a
+            href="https://www.youtube.com/@AdiwarnaFest"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "12px",
+              background: "linear-gradient(135deg, #ff0000 0%, #cc0000 100%)",
+              borderRadius: "14px",
+              padding: "14px 18px",
+              marginBottom: "16px",
+              textDecoration: "none",
+              boxShadow: "0 2px 12px rgba(255,0,0,0.18)",
+            }}
+          >
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+              <path d="M23.5 6.2a3.01 3.01 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3.01 3.01 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3.01 3.01 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3.01 3.01 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.6 15.6V8.4l6.3 3.6-6.3 3.6z"/>
+            </svg>
+            <div>
+              <p style={{ margin: 0, color: "white", fontWeight: 800, fontSize: "15px", fontFamily: "Epilogue, sans-serif" }}>
+                Watch Live on YouTube
+              </p>
+              <p style={{ margin: "2px 0 0", color: "rgba(255,255,255,0.85)", fontSize: "12px", fontWeight: 600, fontFamily: "Epilogue, sans-serif" }}>
+                @AdiwarnaFest · Tap to open
+              </p>
+              <p style={{ margin: "2px 0 0", color: "rgba(255,255,255,0.7)", fontSize: "11px", fontWeight: 500, fontFamily: "Epilogue, sans-serif" }}>
+                Only live on 29 May 2026 &amp; 30 May 2026
+              </p>
+            </div>
+            <svg style={{ marginLeft: "auto" }} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </a>
+        )}
+
         {/* ── Schedule Header ── */}
-        <div style={{ marginBottom: "14px" }}>
-          <h3 style={{ margin: 0, fontSize: "20px", fontWeight: 800, color: "#1a1a1a", letterSpacing: "-0.02em" }}>Upcoming Matches</h3>
-          <p style={{ margin: "3px 0 0", color: "#9ca3af", fontSize: "13px", fontWeight: 600 }}>
-            {dayNames[activeDate]} · {activeDate}
-          </p>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "14px" }}>
+          <div>
+            <h3 style={{ margin: 0, fontSize: "20px", fontWeight: 800, color: "#1a1a1a", letterSpacing: "-0.02em" }}>Upcoming Matches</h3>
+            <p style={{ margin: "3px 0 0", color: "#9ca3af", fontSize: "13px", fontWeight: 600 }}>
+              {dayNames[activeDate]} · {activeDate}
+            </p>
+          </div>
+          <button onClick={fetchGames} style={{ background: "none", border: "1.5px solid #e5e7eb", borderRadius: "999px", padding: "5px 12px", fontSize: "11px", fontWeight: 700, color: "#6b7280", cursor: "pointer", fontFamily: "Epilogue, sans-serif" }}>
+            ↻ Refresh
+          </button>
         </div>
 
         {/* ── Match Cards ── */}
@@ -273,8 +330,8 @@ const Competition = () => {
               const isNew = idx >= prevVisibleRef.current;
               const delay = isNew ? (idx - prevVisibleRef.current) * 0.08 : 0;
               const isCompleted = match.gameStatus === "COMPLETED";
-              const t1Goals = isCompleted ? match.team1Score : null;
-              const t2Goals = isCompleted ? match.team2Score : null;
+              const t1Goals = match.team1Score ?? 0;
+              const t2Goals = match.team2Score ?? 0;
               return (
                 <div
                   key={match.id}
@@ -298,12 +355,12 @@ const Competition = () => {
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 48px 1fr", alignItems: "center", gap: "6px", marginBottom: "10px" }}>
                     <div style={{ textAlign: "center" }}>
                       <div style={{ fontSize: "15px", fontWeight: 900, color: "#111", letterSpacing: "-0.3px" }}>{match.team1Name}</div>
-                      {isCompleted && t1Goals !== null && <div style={{ fontSize: "22px", fontWeight: 900, color: t1Goals > t2Goals! ? "#16a34a" : "#dc2626", marginTop: "2px" }}>{t1Goals}</div>}
+                      <div style={{ fontSize: "22px", fontWeight: 900, color: isCompleted ? (t1Goals > t2Goals ? "#16a34a" : t1Goals < t2Goals ? "#dc2626" : "#6b7280") : "#9ca3af", marginTop: "2px" }}>{t1Goals}</div>
                     </div>
                     <div style={{ width: "48px", height: "32px", borderRadius: "50%", background: "#f5f4f2", display: "flex", alignItems: "center", justifyContent: "center", color: "#9ca3af", fontSize: "10px", fontWeight: 700, fontStyle: "italic" }}>vs</div>
                     <div style={{ textAlign: "center" }}>
                       <div style={{ fontSize: "15px", fontWeight: 900, color: "#111", letterSpacing: "-0.3px" }}>{match.team2Name}</div>
-                      {isCompleted && t2Goals !== null && <div style={{ fontSize: "22px", fontWeight: 900, color: t2Goals > t1Goals! ? "#16a34a" : "#dc2626", marginTop: "2px" }}>{t2Goals}</div>}
+                      <div style={{ fontSize: "22px", fontWeight: 900, color: isCompleted ? (t2Goals > t1Goals ? "#16a34a" : t2Goals < t1Goals ? "#dc2626" : "#6b7280") : "#9ca3af", marginTop: "2px" }}>{t2Goals}</div>
                     </div>
                   </div>
 
@@ -376,38 +433,36 @@ const Competition = () => {
             </div>
 
             {/* Data rows */}
-            {standingsSlice.map((team, idx: number) => (
+            {standingsSlice.map((team, idx: number) => {
+              const rank = standingsRanks[idx] ?? idx + 1;
+              const isTop = rank <= 3;
+              return (
               <div
                 key={team.id}
                 style={{
                   display: "grid", gridTemplateColumns: isFutsal ? "52px 1fr 40px 40px 40px 40px 48px" : "52px 1fr 40px 40px 40px",
                   padding: "12px 14px", alignItems: "center",
                   borderBottom: idx < standingsSlice.length - 1 ? "1px solid #f7f5f3" : "none",
-                  background: idx === 0 ? "linear-gradient(90deg,rgba(144,77,0,0.05) 0%,transparent 100%)" : "transparent",
+                  background: rank === 1 ? "linear-gradient(90deg,rgba(144,77,0,0.05) 0%,transparent 100%)" : "transparent",
                 }}
               >
                 <div>
-                  {idx < 3
-                    ? <span style={{ fontSize: "20px", lineHeight: 1 }}>{MEDALS[idx]}</span>
-                    : <span style={{ fontSize: "13px", fontWeight: 700, color: "#9ca3af" }}>{idx + 1}</span>
+                  {isTop
+                    ? <span style={{ fontSize: "20px", lineHeight: 1 }}>{MEDALS[rank - 1]}</span>
+                    : <span style={{ fontSize: "13px", fontWeight: 700, color: "#6b7280" }}>{rank}</span>
                   }
                 </div>
-                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                  <div style={{
-                    width: "32px", height: "32px", borderRadius: "10px", flexShrink: 0,
-                    background: idx === 0 ? "var(--color-primary)" : idx === 1 ? "#94a3b8" : idx === 2 ? "#d97706" : "#e5e7eb",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    fontSize: "11px", fontWeight: 800, color: idx < 3 ? "white" : "#6b7280",
-                  }}>{team.id}</div>
-                  <span style={{ fontSize: "14px", fontWeight: idx < 3 ? 700 : 500, color: idx < 3 ? "#111" : "#6b7280" }}>{team.name}</span>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <span style={{ fontSize: "14px", fontWeight: isTop ? 700 : 500, color: "#111" }}>{team.name}</span>
                 </div>
                 <div style={{ textAlign: "center", fontSize: "13px", fontWeight: 500, color: "#6b7280" }}>{team.p}</div>
-                <div style={{ textAlign: "center", fontSize: "13px", fontWeight: 700, color: idx < 3 ? "#16a34a" : "#374151" }}>{team.w}</div>
+                <div style={{ textAlign: "center", fontSize: "13px", fontWeight: 700, color: isTop ? "#16a34a" : "#374151" }}>{team.w}</div>
                 {isFutsal && <div style={{ textAlign: "center", fontSize: "13px", fontWeight: 500, color: "#6b7280" }}>{team.d}</div>}
-                <div style={{ textAlign: "center", fontSize: "13px", fontWeight: 500, color: idx < 3 ? "#dc2626" : "#9ca3af" }}>{team.l}</div>
+                <div style={{ textAlign: "center", fontSize: "13px", fontWeight: 500, color: isTop ? "#dc2626" : "#9ca3af" }}>{team.l}</div>
                 {isFutsal && <div style={{ textAlign: "center", fontSize: "13px", fontWeight: 700, color: "var(--color-primary)" }}>{team.pts}</div>}
               </div>
-            ))}
+              );
+            })}
           </div>
 
           {activeStandings.length > 5 && (

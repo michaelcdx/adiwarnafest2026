@@ -46,7 +46,9 @@ namespace AdiwarnaBackend.Controllers.Tournaments
 
                 if (!string.IsNullOrWhiteSpace(request.TourneyStatus))
                 {
-                    var tourneyStatus = ParseTourneyStatus(request.TourneyStatus);
+                    string tourneyStatus;
+                    try { tourneyStatus = ParseTourneyStatus(request.TourneyStatus); }
+                    catch (ArgumentException ex) { return BadRequest(ex.Message); }
                     tournament.TourneyStatus = tourneyStatus;
                 }
 
@@ -55,7 +57,7 @@ namespace AdiwarnaBackend.Controllers.Tournaments
                     if (tournament.TournamentTeams.Any())
                         return BadRequest("Cannot change GameType when tournament has teams.");
 
-                    var validGameTypes = new[] { "Basketball5v5", "Basketball3v3", "Futsal" };
+                    var validGameTypes = new[] { "Basketball5v5", "Futsal", "Mobile Legends" };
                     if (!validGameTypes.Contains(request.GameType))
                         return BadRequest("Invalid GameType.");
 

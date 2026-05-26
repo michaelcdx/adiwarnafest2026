@@ -5,11 +5,8 @@ import Home from './pages/Home'
 import Competition from './pages/Competition'
 import Map from './pages/Map'
 import Login from './pages/Login'
-import Bracket from './pages/Bracket'
-import VendorMap from './pages/vendormap'
 import Committee from './pages/Committee'
 import LuckyDraw from './pages/luckyDraw'
-import DeveloperDashboard from './pages/DeveloperDashboard'
 import Maintenance from './pages/Maintenance'
 import MaintenanceUsers from './pages/MaintenanceUsers'
 import MaintenanceParticipants from './pages/MaintenanceParticipants'
@@ -26,9 +23,7 @@ function App() {
         <Route element={<MainLayout />}>
           <Route index element={<Home />} />
           <Route path="competition" element={<Competition />} />
-          <Route path="bracket" element={<Bracket />} />
           <Route path="map" element={<Map />} />
-          <Route path="vendormap" element={<VendorMap />} />
           <Route path="committee" element={<Committee />} />
           <Route path="lucky-draw" element={<LuckyDraw />} />
           <Route
@@ -81,9 +76,14 @@ function App() {
           />
         </Route>
         <Route path="/login" element={<Login />} />
-        {/* Developer Mode */}
-        <Route path="dev" element={<DeveloperDashboard />} />
-        <Route path="qr-tester" element={<QRCodeTester />} />
+        <Route
+          path="qr-tester"
+          element={
+            <RequireRole allowedRoles={['Admin']}>
+              <QRCodeTester />
+            </RequireRole>
+          }
+        />
       </Routes>
     </LiveScoreProvider>
   )

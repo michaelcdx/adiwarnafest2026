@@ -4,6 +4,7 @@ namespace AdiwarnaBackend.Models.Teams
     {
         public string? Name { get; set; }
         public string? GameType { get; set; }
-        public List<TeamPlayerDto> Players { get; set; } = new();
+        // null = leave players unchanged; [] = remove all players; non-empty = replace player list
+        public List<TeamPlayerDto>? Players { get; set; }
     }
 }

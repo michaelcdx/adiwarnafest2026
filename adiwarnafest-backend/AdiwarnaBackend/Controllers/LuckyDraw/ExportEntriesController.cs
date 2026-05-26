@@ -28,15 +28,16 @@ namespace AdiwarnaBackend.Controllers.LuckyDraw
             var entries = await luckyDrawService.GetAllEntriesAsync();
 
             var csv = new StringBuilder();
-            csv.AppendLine("Full Name,Phone Number,Instagram Handle,Submitted At");
+            csv.AppendLine("Full Name,Phone Number,Instagram Handle,Registered Email,Submitted At");
 
             foreach (var entry in entries)
             {
                 var escapedName = EscapeCsvField(entry.FullName);
                 var escapedPhone = EscapeCsvField(entry.PhoneNumber);
                 var escapedInstagram = EscapeCsvField(entry.InstagramHandle);
+                var escapedEmail = EscapeCsvField(entry.RegisteredEmail);
 
-                csv.AppendLine($"{escapedName},{escapedPhone},{escapedInstagram},{entry.SubmittedAt:yyyy-MM-dd HH:mm:ss}");
+                csv.AppendLine($"{escapedName},{escapedPhone},{escapedInstagram},{escapedEmail},{entry.SubmittedAt:yyyy-MM-dd HH:mm:ss}");
             }
 
             var bytes = Encoding.UTF8.GetBytes(csv.ToString());

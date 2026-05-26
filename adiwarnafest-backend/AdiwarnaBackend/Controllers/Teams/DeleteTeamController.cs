@@ -41,7 +41,7 @@ namespace AdiwarnaBackend.Controllers.Teams
             team.DeletedAt = DateTime.UtcNow;
 
             await context.SaveChangesAsync();
-            return Ok();
+            return NoContent();
         }
     }
 }

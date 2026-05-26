@@ -2,15 +2,18 @@ using AdiwarnaBackend.Data;
 using AdiwarnaBackend.Entities;
 using AdiwarnaBackend.Models.LuckyDraw;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System.Text.Json;
 
 namespace AdiwarnaBackend.Services
 {
-    public class LuckyDrawService(AdiwarnaDbContext dbContext, HttpClient httpClient) : ILuckyDrawService
+    public class LuckyDrawService(AdiwarnaDbContext dbContext, HttpClient httpClient, IConfiguration configuration) : ILuckyDrawService
     {
+        private string GoogleSheetsUrl => configuration["LuckyDraw:GoogleSheetsUrl"]
+            ?? "https://script.google.com/macros/s/AKfycbzPCsBCWRBkQ4O0mAtXHkUtcGII0PM1SSwjJH_ENN3H9JaF6jYhCqEeAF1C1gaAbqY/exec";
+
         public async Task<bool> ScanQrAsync(Guid userId, string boothId)
         {
-            // Check if user has already scanned this booth
             var existingScan = await dbContext.QrScans
                 .FirstOrDefaultAsync(q => q.UserId == userId && q.BoothId == boothId);
 
@@ -40,7 +43,7 @@ namespace AdiwarnaBackend.Services
             var hasSubmitted = await dbContext.LuckyDrawEntries
                 .AnyAsync(l => l.UserId == userId);
 
-            var dto = new LuckyDrawStatusDto
+            return new LuckyDrawStatusDto
             {
                 ScannedBooths = scans.Select(s => new QrScanDto
                 {
@@ -51,20 +54,16 @@ namespace AdiwarnaBackend.Services
                 IsEligible = scans.Count >= 3,
                 HasSubmitted = hasSubmitted
             };
-
-            return dto;
         }
 
         public async Task<bool> SubmitEntryAsync(Guid userId, SubmitLuckyDrawEntryDto dto)
         {
-            // Check if user has already submitted
             var existingEntry = await dbContext.LuckyDrawEntries
                 .FirstOrDefaultAsync(l => l.UserId == userId);
 
             if (existingEntry != null)
                 return false;
 
-            // Check if user has scanned 3 booths
             var scanCount = await dbContext.QrScans
                 .Where(q => q.UserId == userId)
                 .Distinct()
@@ -86,7 +85,6 @@ namespace AdiwarnaBackend.Services
             dbContext.LuckyDrawEntries.Add(entry);
             await dbContext.SaveChangesAsync();
 
-            // Send to Google Sheets (fire-and-forget)
             _ = SendToGoogleSheetsAsync(dto);
 
             return true;
@@ -96,8 +94,6 @@ namespace AdiwarnaBackend.Services
         {
             try
             {
-                const string googleAppsScriptUrl = "https://script.google.com/macros/s/AKfycbzPCsBCWRBkQ4O0mAtXHkUtcGII0PM1SSwjJH_ENN3H9JaF6jYhCqEeAF1C1gaAbqY/exec";
-
                 var json = JsonSerializer.Serialize(new
                 {
                     fullName = dto.FullName,
@@ -106,11 +102,10 @@ namespace AdiwarnaBackend.Services
                 });
 
                 var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
-                await httpClient.PostAsync(googleAppsScriptUrl, content);
+                await httpClient.PostAsync(GoogleSheetsUrl, content);
             }
             catch (Exception ex)
             {
-                // Silently log error - Google Sheets sync is non-critical
                 Console.WriteLine($"Google Sheets sync failed (non-critical): {ex.Message}");
             }
         }
@@ -123,18 +118,18 @@ namespace AdiwarnaBackend.Services
 
         public async Task<List<LuckyDrawEntryExportDto>> GetAllEntriesAsync()
         {
-            var entries = await dbContext.LuckyDrawEntries
+            return await dbContext.LuckyDrawEntries
+                .Include(l => l.User)
                 .OrderByDescending(l => l.SubmittedAt)
                 .Select(l => new LuckyDrawEntryExportDto
                 {
                     FullName = l.FullName,
                     PhoneNumber = l.PhoneNumber,
                     InstagramHandle = l.InstagramHandle,
+                    RegisteredEmail = l.User != null ? l.User.Email : string.Empty,
                     SubmittedAt = l.SubmittedAt
                 })
                 .ToListAsync();
-
-            return entries;
         }
     }
 }

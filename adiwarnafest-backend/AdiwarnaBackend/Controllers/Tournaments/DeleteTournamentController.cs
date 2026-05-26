@@ -28,7 +28,7 @@ namespace AdiwarnaBackend.Controllers.Tournaments
             tournament.DeletedAt = DateTime.UtcNow;
 
             await context.SaveChangesAsync();
-            return Ok();
+            return NoContent();
         }
     }
 }

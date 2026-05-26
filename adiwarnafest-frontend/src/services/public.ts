@@ -1,4 +1,5 @@
 import { apiFetch } from './http'
+import type { Game } from './games'
 
 export type DropdownOption = {
   id: string
@@ -14,4 +15,7 @@ export type DropdownResponse = {
 export const publicService = {
   getDropdownOptions: (type: string) =>
     apiFetch<DropdownResponse[]>(`/api/public/dropdown-options?type=${encodeURIComponent(type)}`),
+
+  getPublicGames: (tournamentId: string) =>
+    apiFetch<Game[]>(`/api/public/tournaments/${tournamentId}/games`),
 }

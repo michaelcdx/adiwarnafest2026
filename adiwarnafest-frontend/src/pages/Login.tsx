@@ -54,12 +54,12 @@ export default function LoginPage() {
       setLoginFrom(from || null);
       await signIn(email, password);
       setHasSignedIn(true);
-    } catch (error: any) {
+    } catch (error: unknown) {
       setLoading(false);
       toast.current?.show({
         severity: 'error',
         summary: 'Login Failed',
-        detail: error?.message || 'Failed to sign in. Please check your credentials.',
+        detail: error instanceof Error ? error.message : 'Failed to sign in. Please check your credentials.',
         life: 3000
       });
     }
@@ -85,10 +85,21 @@ export default function LoginPage() {
     };
   }, []);
 
+  const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault();
 
     if (registrationStep === 'credentials') {
+      if (!EMAIL_REGEX.test(email)) {
+        toast.current?.show({
+          severity: 'error',
+          summary: 'Invalid Email',
+          detail: 'Please enter a valid email address.',
+          life: 3000
+        });
+        return;
+      }
       if (password !== confirmPassword) {
         toast.current?.show({
           severity: 'error',
@@ -103,6 +114,15 @@ export default function LoginPage() {
           severity: 'error',
           summary: 'Weak Password',
           detail: 'Password must be at least 12 characters long.',
+          life: 3000
+        });
+        return;
+      }
+      if (!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[0-9]/.test(password) || !/[^A-Za-z0-9]/.test(password)) {
+        toast.current?.show({
+          severity: 'error',
+          summary: 'Weak Password',
+          detail: 'Password must contain uppercase, lowercase, a digit, and a special character.',
           life: 3000
         });
         return;
@@ -133,11 +153,11 @@ export default function LoginPage() {
       await signIn(email, password);
       const from = (location.state as { from?: string } | null)?.from;
       navigate(from || "/lucky-draw");
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.current?.show({
         severity: 'error',
         summary: 'Registration Failed',
-        detail: error?.message || 'Failed to register account. Please try again.',
+        detail: error instanceof Error ? error.message : 'Failed to register account. Please try again.',
         life: 3000
       });
     } finally {
@@ -193,9 +213,8 @@ export default function LoginPage() {
             handleScanSuccess,
             () => {}
           );
-        } catch (err: any) {
-          console.error("Camera error:", err);
-          setCameraError(err.message || "Unable to access camera. Please grant camera permission.");
+        } catch (err: unknown) {
+          setCameraError(err instanceof Error ? err.message : "Unable to access camera. Please grant camera permission.");
         }
       } else if (attempts < maxAttempts) {
         attempts++;
@@ -213,8 +232,8 @@ export default function LoginPage() {
       try {
         await qrReaderRef.current.stop();
         await qrReaderRef.current.clear();
-      } catch (err) {
-        console.error("Stop scanner error:", err);
+      } catch {
+        // ignore stop errors
       }
     }
     qrReaderRef.current = null;
@@ -249,11 +268,11 @@ export default function LoginPage() {
       setPassword("");
       setIsDeleting(false);
       setTimeout(() => navigate("/"), 2000);
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast.current?.show({
         severity: 'error',
         summary: 'Delete Failed',
-        detail: error?.message || 'Failed to delete account. Please check your credentials.',
+        detail: error instanceof Error ? error.message : 'Failed to delete account. Please check your credentials.',
         life: 3000
       });
     } finally {

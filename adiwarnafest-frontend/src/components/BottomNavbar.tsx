@@ -10,7 +10,6 @@ const navItems = [
 ];
 
 const getActivePath = (pathname: string) => {
-  if (pathname.startsWith('/bracket')) return '/competition';
   if (pathname.startsWith('/vendormap')) return '/map';
   return pathname;
 };

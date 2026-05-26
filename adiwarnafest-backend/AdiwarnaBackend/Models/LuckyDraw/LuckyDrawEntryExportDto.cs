@@ -5,6 +5,7 @@ namespace AdiwarnaBackend.Models.LuckyDraw
         public string FullName { get; set; } = string.Empty;
         public string PhoneNumber { get; set; } = string.Empty;
         public string InstagramHandle { get; set; } = string.Empty;
+        public string RegisteredEmail { get; set; } = string.Empty;
         public DateTime SubmittedAt { get; set; }
     }
 }

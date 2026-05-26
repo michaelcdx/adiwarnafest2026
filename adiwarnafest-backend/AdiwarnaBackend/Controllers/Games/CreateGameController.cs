@@ -51,7 +51,9 @@ namespace AdiwarnaBackend.Controllers.Games
             if (team2.GameType != tournament.GameType)
                 return BadRequest($"Team '{team2.Name}' GameType does not match tournament.");
 
-            var gameStatus = ParseGameStatus(request.GameStatus);
+            string gameStatus;
+            try { gameStatus = ParseGameStatus(request.GameStatus); }
+            catch (ArgumentException) { return BadRequest("Invalid GameStatus."); }
 
             var game = new Entities.Game
             {
@@ -66,11 +68,24 @@ namespace AdiwarnaBackend.Controllers.Games
             context.Games.Add(game);
             await context.SaveChangesAsync(cancellationToken);
 
-            var created = await context.Games
-                .AsNoTracking()
-                .FirstOrDefaultAsync(g => g.Id == game.Id, cancellationToken);
-
-            return Ok(MapToDto(created!, tournament.GameType));
+            return Ok(new GameDto
+            {
+                Id = game.Id,
+                TournamentId = game.TournamentId,
+                Team1Id = game.Team1Id,
+                Team2Id = game.Team2Id,
+                Team1Name = team1.Name,
+                Team2Name = team2.Name,
+                GameStatus = game.GameStatus,
+                ScheduledAt = game.ScheduledAt,
+                Remark = game.Remark,
+                IsDeleted = game.IsDeleted,
+                DeletedAt = game.DeletedAt,
+                IsLocked = game.IsLocked,
+                Team1Score = game.Team1Score,
+                Team2Score = game.Team2Score,
+                PlayerStats = new()
+            });
         }
 
         private static string ParseGameStatus(string status)
@@ -87,40 +102,6 @@ namespace AdiwarnaBackend.Controllers.Games
                 return TournamentStatus.COMPLETED.Name;
 
             throw new ArgumentException("Invalid GameStatus.");
-        }
-
-        private static GameDto MapToDto(Entities.Game game, string tournamentGameType)
-        {
-            var stats = game.PlayerGameStats;
-            var team1Stats = stats.Where(s => s.Player?.TeamId == game.Team1Id).ToList();
-            var team2Stats = stats.Where(s => s.Player?.TeamId == game.Team2Id).ToList();
-
-            return new GameDto
-            {
-                Id = game.Id,
-                TournamentId = game.TournamentId,
-                Team1Id = game.Team1Id,
-                Team2Id = game.Team2Id,
-                Team1Name = team1Stats.FirstOrDefault()?.Player?.Team?.Name ?? string.Empty,
-                Team2Name = team2Stats.FirstOrDefault()?.Player?.Team?.Name ?? string.Empty,
-                GameStatus = game.GameStatus,
-                ScheduledAt = game.ScheduledAt,
-                Remark = game.Remark,
-                IsDeleted = game.IsDeleted,
-                DeletedAt = game.DeletedAt,
-                IsLocked = game.IsLocked,
-                PlayerStats = stats.Select(pgs => new PlayerGameStatDto
-                {
-                    PlayerId = pgs.PlayerId,
-                    PlayerName = pgs.Player?.Name ?? string.Empty,
-                    PlayerNumber = pgs.Player?.PlayerNumber ?? 0,
-                    TeamId = pgs.Player?.TeamId ?? Guid.Empty,
-                    TeamName = pgs.Player?.Team?.Name ?? string.Empty,
-                    Goals = pgs.Goals,
-                    Foul1 = pgs.Foul1,
-                    Foul2 = pgs.Foul2
-                }).ToList()
-            };
         }
     }
 }

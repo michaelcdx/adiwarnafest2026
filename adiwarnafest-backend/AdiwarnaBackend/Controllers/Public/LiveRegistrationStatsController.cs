@@ -6,16 +6,13 @@ namespace AdiwarnaBackend.Controllers.Public
     [Route("api/stats/live")]
     [ApiController]
     [Tags("Public")]
-    public class LiveRegistrationStatsController : ControllerBase
+    public class LiveRegistrationStatsController(IConfiguration configuration, IHttpClientFactory httpClientFactory) : ControllerBase
     {
-        private readonly HttpClient _httpClient;
         private static CachedStats? _cachedStats;
         private static DateTime _lastFetch = DateTime.MinValue;
 
-        public LiveRegistrationStatsController()
-        {
-            _httpClient = new HttpClient();
-        }
+        private string AppsScriptUrl => configuration["LiveStats:GoogleSheetsUrl"]
+            ?? "https://script.google.com/macros/s/AKfycbxwUHG4PUY5If7wCQwVlkiQ-WNaUvWRwDg3e5bXHBWnlvxyjnjX2UiaCuVzAx5g96ZQ2g/exec";
 
         [HttpGet]
         [EndpointSummary("Get live registration stats from Google Sheets")]
@@ -24,23 +21,21 @@ namespace AdiwarnaBackend.Controllers.Public
         {
             try
             {
-                // Return cached data if less than 30 seconds old
                 if (_cachedStats != null && (DateTime.UtcNow - _lastFetch).TotalSeconds < 30)
                 {
                     return Ok(ConvertToResponse(_cachedStats));
                 }
 
-                const string appsScriptUrl = "https://script.google.com/macros/s/AKfycbxwUHG4PUY5If7wCQwVlkiQ-WNaUvWRwDg3e5bXHBWnlvxyjnjX2UiaCuVzAx5g96ZQ2g/exec";
-
-                var response = await _httpClient.GetStringAsync(appsScriptUrl);
+                var _httpClient = httpClientFactory.CreateClient();
+                var response = await _httpClient.GetStringAsync(AppsScriptUrl);
                 _cachedStats = JsonSerializer.Deserialize<CachedStats>(response);
                 _lastFetch = DateTime.UtcNow;
 
                 return Ok(ConvertToResponse(_cachedStats));
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return StatusCode(500, new { error = "Failed to fetch live stats", details = ex.Message });
+                return StatusCode(500, new { error = "Failed to fetch live stats." });
             }
         }
 

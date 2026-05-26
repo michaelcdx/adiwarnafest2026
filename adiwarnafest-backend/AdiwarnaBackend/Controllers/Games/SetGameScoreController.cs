@@ -1,5 +1,4 @@
 using AdiwarnaBackend.Data;
-using AdiwarnaBackend.Enums;
 using AdiwarnaBackend.Models.Games;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,19 +7,25 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AdiwarnaBackend.Controllers.Games
 {
+    public class SetGameScoreDto
+    {
+        public int Team1Score { get; set; }
+        public int Team2Score { get; set; }
+        public string GameStatus { get; set; } = "COMPLETED";
+    }
+
     [Route("api/tournaments/{tournamentId:guid}/games")]
     [ApiController]
     [Authorize(Roles = "Admin,Maintainer")]
     [Tags("Games")]
-    public class GetGameController(AdiwarnaDbContext context) : ControllerBase
+    public class SetGameScoreController(AdiwarnaDbContext context) : ControllerBase
     {
-        [HttpGet("{gameId:guid}")]
-        [EndpointSummary("Get game")]
-        [EndpointDescription("Get a single game with player stats. Requires Admin or Maintainer.")]
-        public async Task<IActionResult> GetGame(Guid tournamentId, Guid gameId, CancellationToken cancellationToken)
+        [HttpPatch("{gameId:guid}/score")]
+        [EndpointSummary("Set game score")]
+        [EndpointDescription("Directly set the score for a game. Game must be unlocked. Requires Admin or Maintainer.")]
+        public async Task<IActionResult> SetScore(Guid tournamentId, Guid gameId, [FromBody] SetGameScoreDto request, CancellationToken cancellationToken)
         {
             var game = await context.Games
-                .AsNoTracking()
                 .Include(g => g.Team1)
                 .Include(g => g.Team2)
                 .Include(g => g.PlayerGameStats)
@@ -31,7 +36,22 @@ namespace AdiwarnaBackend.Controllers.Games
             if (game is null)
                 return NotFound("Game not found.");
 
-            var stats = game.PlayerGameStats;
+            if (game.IsLocked)
+                return StatusCode(403, "Game is locked and cannot be modified.");
+
+            game.Team1Score = request.Team1Score;
+            game.Team2Score = request.Team2Score;
+
+            if (!string.IsNullOrWhiteSpace(request.GameStatus))
+            {
+                var trimmed = request.GameStatus.Trim();
+                if (trimmed != "UPCOMING" && trimmed != "ONGOING" && trimmed != "COMPLETED")
+                    return BadRequest("Invalid GameStatus. Must be UPCOMING, ONGOING, or COMPLETED.");
+                game.GameStatus = trimmed;
+            }
+
+            await context.SaveChangesAsync(cancellationToken);
+
             return Ok(new GameDto
             {
                 Id = game.Id,
@@ -48,7 +68,7 @@ namespace AdiwarnaBackend.Controllers.Games
                 IsLocked = game.IsLocked,
                 Team1Score = game.Team1Score,
                 Team2Score = game.Team2Score,
-                PlayerStats = stats.Select(pgs => new PlayerGameStatDto
+                PlayerStats = game.PlayerGameStats.Select(pgs => new PlayerGameStatDto
                 {
                     PlayerId = pgs.PlayerId,
                     PlayerName = pgs.Player?.Name ?? string.Empty,

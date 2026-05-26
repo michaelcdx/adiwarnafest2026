@@ -356,40 +356,31 @@ const MaintenanceTeams = () => {
         className="px-4 py-4 mx-auto w-full"
         style={{ maxWidth: '1100px' }}
       >
-        <header className="flex align-items-center justify-content-between mb-4">
+        <header className="flex flex-column gap-3 mb-4">
           <div>
             <h1 className="m-0 text-2xl font-bold" style={{ color: '#1a1a1a' }}>
               Teams
             </h1>
             <p className="m-0 text-600 text-sm">Manage teams and standings.</p>
           </div>
-          <div className="flex align-items-center gap-3">
+          <div className="flex flex-wrap align-items-center gap-3">
             <div className="flex align-items-center gap-2">
               <InputSwitch
                 checked={includeDeleted}
                 onChange={e => setIncludeDeleted(Boolean(e.value))}
               />
-              <span
-                className="text-sm font-semibold"
-                style={{ color: '#374151' }}
-              >
+              <span className="text-sm font-semibold" style={{ color: '#374151' }}>
                 Include deleted
               </span>
             </div>
-            <div className="flex gap-2">
-              <Button label="New Team" onClick={openCreate} />
-              <Button
-                label="Refresh"
-                onClick={() => loadTeams(includeDeleted)}
-                outlined
-              />
-            </div>
+            <Button label="New Team" onClick={openCreate} />
+            <Button label="Refresh" onClick={() => loadTeams(includeDeleted)} outlined />
           </div>
         </header>
 
         <div
           className="border-round-2xl p-3 shadow-2"
-          style={{ backgroundColor: '#fff', border: '1px solid #eee' }}
+          style={{ backgroundColor: '#fff', border: '1px solid #eee', overflowX: 'auto' }}
         >
           <DataTable
             value={teams}

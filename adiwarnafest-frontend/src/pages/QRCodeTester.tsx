@@ -18,7 +18,6 @@ const QRCodeTester: React.FC = () => {
         }
         setQrCodes(codes);
       } catch (error) {
-        console.error('Error generating QR codes:', error);
         toast.current?.show({
           severity: 'error',
           summary: 'Error',

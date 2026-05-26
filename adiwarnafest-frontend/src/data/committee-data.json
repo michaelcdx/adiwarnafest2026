@@ -2,15 +2,15 @@
   {
     "id": "executive",
     "label": "Executive",
-    "headingPhoto": "/comboard_photos/Heading_Photo/OC VOC Mentor.jpg",
+    "headingPhoto": "/comboard_photos/OC VOC Mentor.jpg",
     "tiers": [
       {
         "label": "Mentor",
         "subtitle": "Guiding the vision of Adiwarna Fest 2026",
         "color": "#d0aa2f",
         "members": [
-          { "name": "Jocelyn Valentine Johnyong", "role": "Mentor", "photo": "/comboard_photos/Individual_Photo/Executive/Mentor_Jocelyn.jpg" },
-          { "name": "Jeffwinson Tanary", "role": "Mentor", "photo": "/comboard_photos/Individual_Photo/Executive/Mentor_Jeffwinson.jpg" }
+          { "name": "Jocelyn Valentine Johnyong", "role": "Mentor", "photo": "/comboard_photos/Mentor_Jocelyn.jpg" },
+          { "name": "Jeffwinson Tanary", "role": "Mentor", "photo": "/comboard_photos/Mentor_Jeffwinson.jpg" }
         ]
       },
       {
@@ -18,9 +18,9 @@
         "subtitle": "Leading the three pillars of Adiwarna Fest",
         "color": "#904d00",
         "members": [
-          { "name": "Michael", "role": "OC — Sports", "photo": "/comboard_photos/Individual_Photo/Executive/OC_Michael.jpg" },
-          { "name": "Surjoraharjo Riakudu Vittorios", "role": "OC — Performance", "photo": "/comboard_photos/Individual_Photo/Executive/OC_Vitto.jpg" },
-          { "name": "Janessa Sevilla Meliora", "role": "OC — Bazaar", "photo": "/comboard_photos/Individual_Photo/Executive/OC_Janessa Sevilla Meliora.jpg" }
+          { "name": "Michael", "role": "OC — Sports", "photo": "/comboard_photos/OC_Michael.jpg" },
+          { "name": "Surjoraharjo Riakudu Vittorios", "role": "OC — Performance", "photo": "/comboard_photos/OC_Vitto.jpg" },
+          { "name": "Janessa Sevilla Meliora", "role": "OC — Bazaar", "photo": "/comboard_photos/OC_Janessa Sevilla Meliora.jpg" }
         ]
       },
       {
@@ -28,11 +28,11 @@
         "subtitle": "Coordinating all divisions across the event",
         "color": "#006492",
         "members": [
-          { "name": "Darrell Sebastian Cahyadi", "role": "VOC Sports Coordinator", "photo": "/comboard_photos/Individual_Photo/Executive/VOC_Darrell.jpg" },
-          { "name": "Felicia Leonora Purnama", "role": "VOC Vendor & Sponsorship", "photo": "/comboard_photos/Individual_Photo/Executive/VOC_Feli.jpg" },
-          { "name": "Avrill Lauryn Flo Muljono", "role": "VOC Event Planner & General Affairs", "photo": "/comboard_photos/Individual_Photo/Executive/VOC_Avrill.jpg" },
-          { "name": "Jessica Teenajaya Setiawan", "role": "VOC Performance Team", "photo": "/comboard_photos/Individual_Photo/Executive/VOC_Jessica.jpg" },
-          { "name": "Yonatan Lohanjaya", "role": "VOC Multimedia", "photo": "/comboard_photos/Individual_Photo/Executive/VOC_Yonatan.jpg" }
+          { "name": "Darrell Sebastian Cahyadi", "role": "VOC Sports Coordinator", "photo": "/comboard_photos/VOC_Darrell.jpg" },
+          { "name": "Felicia Leonora Purnama", "role": "VOC Vendor & Sponsorship", "photo": "/comboard_photos/VOC_Feli.jpg" },
+          { "name": "Avrill Lauryn Flo Muljono", "role": "VOC Event Planner & General Affairs", "photo": "/comboard_photos/VOC_Avrill.jpg" },
+          { "name": "Jessica Teenajaya Setiawan", "role": "VOC Performance Team", "photo": "/comboard_photos/VOC_Jessica.jpg" },
+          { "name": "Yonatan Lohanjaya", "role": "VOC Multimedia", "photo": "/comboard_photos/VOC_Yonatan.jpg" }
         ]
       }
     ]
@@ -40,143 +40,143 @@
   {
     "id": "secretary-treasurer",
     "label": "Secretary & Treasurer",
-    "headingPhoto": "/comboard_photos/Heading_Photo/SECRETARY & TREASURER.jpg",
+    "headingPhoto": "/comboard_photos/SECRETARY & TREASURER.jpg",
     "members": [
-      { "name": "Kevin Martinus Havindra", "role": "Secretary", "photo": "/comboard_photos/Individual_Photo/SECRE + TREA/Secretary_Kevin.jpg" },
-      { "name": "Emmanuelle Natasha Christy", "role": "Secretary", "photo": "/comboard_photos/Individual_Photo/SECRE + TREA/Secretary_Emmanuelle Natasha Christy.jpg" },
-      { "name": "Amanda Gabriela Chandra", "role": "Secretary", "photo": "/comboard_photos/Individual_Photo/SECRE + TREA/Secretary_Amanda Gabriela Chandra.jpg" },
-      { "name": "Kenny Keitaro Budiman", "role": "Treasurer", "photo": "/comboard_photos/Individual_Photo/SECRE + TREA/Treasurer_Kenny Keitaro Budiman.jpg" },
-      { "name": "Kezia Eliora Warokka", "role": "Treasurer", "photo": "/comboard_photos/Individual_Photo/SECRE + TREA/Treasurer_Kezia.jpg" }
+      { "name": "Kevin Martinus Havindra", "role": "Secretary", "photo": "/comboard_photos/Secretary_Kevin.jpg" },
+      { "name": "Emmanuelle Natasha Christy", "role": "Secretary", "photo": "/comboard_photos/Secretary_Emmanuelle Natasha Christy.jpg" },
+      { "name": "Amanda Gabriela Chandra", "role": "Secretary", "photo": "/comboard_photos/Secretary_Amanda Gabriela Chandra.jpg" },
+      { "name": "Kenny Keitaro Budiman", "role": "Treasurer", "photo": "/comboard_photos/Treasurer_Kenny Keitaro Budiman.jpg" },
+      { "name": "Kezia Eliora Warokka", "role": "Treasurer", "photo": "/comboard_photos/Treasurer_Kezia.jpg" }
     ]
   },
   {
     "id": "marketing",
     "label": "Marketing",
-    "headingPhoto": "/comboard_photos/Heading_Photo/Marketing.jpg",
+    "headingPhoto": "/comboard_photos/Marketing.jpg",
     "members": [
-      { "name": "Sherline Hernita", "role": "Head of Marketing", "photo": "/comboard_photos/Individual_Photo/MARKETING/Marketing_Sherline.jpg", "isHead": true },
-      { "name": "Sahnon Savaa Archard", "role": "Marketing", "photo": "/comboard_photos/Individual_Photo/MARKETING/Marketing_Sahnon Savaa Archard.jpg" },
-      { "name": "Rebecca Fileani Tedjasukmana", "role": "Marketing", "photo": "/comboard_photos/Individual_Photo/MARKETING/MARKETING_Rebecca.jpg" },
-      { "name": "Levina Joice Miracle", "role": "Marketing", "photo": "/comboard_photos/Individual_Photo/MARKETING/MARKETING_Levina Joice.jpg" },
-      { "name": "Sisylia Mutiara", "role": "Marketing", "photo": "/comboard_photos/Individual_Photo/MARKETING/Marketing_Sisylia.jpg" },
-      { "name": "Florence Augusta Hernando", "role": "Marketing", "photo": "/comboard_photos/Individual_Photo/MARKETING/MARKETING_Florence.jpg" },
-      { "name": "Marsha Joycinian Tanoto", "role": "Marketing", "photo": "/comboard_photos/Individual_Photo/MARKETING/Marketing_Marsha Joycinian Tanoto.jpg" },
-      { "name": "Sherina Kristianti", "role": "Marketing", "photo": "/comboard_photos/Individual_Photo/MARKETING/Marketing_Sherina.jpg" }
+      { "name": "Sherline Hernita", "role": "Head of Marketing", "photo": "/comboard_photos/Marketing_Sherline.jpg", "isHead": true },
+      { "name": "Sahnon Savaa Archard", "role": "Marketing", "photo": "/comboard_photos/Marketing_Sahnon Savaa Archard.jpg" },
+      { "name": "Rebecca Fileani Tedjasukmana", "role": "Marketing", "photo": "/comboard_photos/MARKETING_Rebecca.jpg" },
+      { "name": "Levina Joice Miracle", "role": "Marketing", "photo": "/comboard_photos/MARKETING_Levina Joice.jpg" },
+      { "name": "Sisylia Mutiara", "role": "Marketing", "photo": "/comboard_photos/Marketing_Sisylia.jpg" },
+      { "name": "Florence Augusta Hernando", "role": "Marketing", "photo": "/comboard_photos/MARKETING_Florence.jpg" },
+      { "name": "Marsha Joycinian Tanoto", "role": "Marketing", "photo": "/comboard_photos/Marketing_Marsha Joycinian Tanoto.jpg" },
+      { "name": "Sherina Kristianti", "role": "Marketing", "photo": "/comboard_photos/Marketing_Sherina.jpg" }
     ]
   },
   {
     "id": "design",
     "label": "Design",
-    "headingPhoto": "/comboard_photos/Heading_Photo/Design.jpg",
+    "headingPhoto": "/comboard_photos/Design.jpg",
     "members": [
-      { "name": "Leonardo Frans", "role": "Head of Design", "photo": "/comboard_photos/Individual_Photo/DESIGN/DSC03415.jpg", "isHead": true },
-      { "name": "Ellena Gazali", "role": "Design", "photo": "/comboard_photos/Individual_Photo/DESIGN/Design_Ellena.jpg" },
-      { "name": "Wulan Yulia Cantika", "role": "Design", "photo": "/comboard_photos/Individual_Photo/DESIGN/DSC03565.jpg" },
-      { "name": "Jennifer Clarence Irawan", "role": "Design", "photo": "/comboard_photos/Individual_Photo/DESIGN/Design_Jennifer.jpg" },
-      { "name": "Kenderson", "role": "Design", "photo": "/comboard_photos/Individual_Photo/DESIGN/DSC03451.jpg" },
-      { "name": "Cathryne Angelica", "role": "Design", "photo": "/comboard_photos/Individual_Photo/DESIGN/Design_Cathryne.jpg" }
+      { "name": "Leonardo Frans", "role": "Head of Design", "photo": "/comboard_photos/DSC03415.jpg", "isHead": true },
+      { "name": "Ellena Gazali", "role": "Design", "photo": "/comboard_photos/Design_Ellena.jpg" },
+      { "name": "Wulan Yulia Cantika", "role": "Design", "photo": "/comboard_photos/DSC03565.jpg" },
+      { "name": "Jennifer Clarence Irawan", "role": "Design", "photo": "/comboard_photos/Design_Jennifer.jpg" },
+      { "name": "Kenderson", "role": "Design", "photo": "/comboard_photos/DSC03451.jpg" },
+      { "name": "Cathryne Angelica", "role": "Design", "photo": "/comboard_photos/Design_Cathryne.jpg" }
     ]
   },
   {
     "id": "ep",
     "label": "Event Planner",
-    "headingPhoto": "/comboard_photos/Heading_Photo/EP.jpg",
+    "headingPhoto": "/comboard_photos/EP.jpg",
     "members": [
-      { "name": "Lael Charity Verina", "role": "Head of Event Planner", "photo": "/comboard_photos/Individual_Photo/EP/EP_lael.jpg", "isHead": true },
-      { "name": "Aurel Carita Limantono", "role": "Event Planner", "photo": "/comboard_photos/Individual_Photo/EP/ep_ aurel.jpg" },
-      { "name": "Cuarsa Christian", "role": "Event Planner", "photo": "/comboard_photos/Individual_Photo/EP/EP_Christian Cuarsa.jpg" },
-      { "name": "Theresa Naomi Pontoh", "role": "Event Planner", "photo": "/comboard_photos/Individual_Photo/EP/EP_Naomi.jpg" }
+      { "name": "Lael Charity Verina", "role": "Head of Event Planner", "photo": "/comboard_photos/EP_lael.jpg", "isHead": true },
+      { "name": "Aurel Carita Limantono", "role": "Event Planner", "photo": "/comboard_photos/ep_ aurel.jpg" },
+      { "name": "Cuarsa Christian", "role": "Event Planner", "photo": "/comboard_photos/EP_Christian Cuarsa.jpg" },
+      { "name": "Theresa Naomi Pontoh", "role": "Event Planner", "photo": "/comboard_photos/EP_Naomi.jpg" }
     ]
   },
   {
     "id": "ga",
     "label": "General Affairs",
-    "headingPhoto": "/comboard_photos/Heading_Photo/GA.jpg",
+    "headingPhoto": "/comboard_photos/GA.jpg",
     "members": [
-      { "name": "Alexander Devin Hadiwijono", "role": "Head of General Affairs", "photo": "/comboard_photos/Individual_Photo/GA/GA_Alexander Devin.jpg", "isHead": true },
-      { "name": "Gabriella Bianca Karja", "role": "General Affairs", "photo": "/comboard_photos/Individual_Photo/GA/GA - Gabriella .jpg" },
-      { "name": "Deryl Kristofer Cahyadi", "role": "General Affairs", "photo": "/comboard_photos/Individual_Photo/GA/GA- Deryl Kristofer Cahyadi.jpg" },
-      { "name": "Sharen Mirella Salim", "role": "General Affairs", "photo": "/comboard_photos/Individual_Photo/GA/General Affairs_Sharen Mirella.jpg" },
-      { "name": "Enzo Schyler Kurniawan", "role": "General Affairs", "photo": "/comboard_photos/Individual_Photo/GA/GA_Enzo Schyler Kurniawan.jpg" },
-      { "name": "Charlene Angelique Hadyanto", "role": "General Affairs", "photo": "/comboard_photos/Individual_Photo/GA/General Affairs _ Charlene Angelique .jpg" }
+      { "name": "Alexander Devin Hadiwijono", "role": "Head of General Affairs", "photo": "/comboard_photos/GA_Alexander Devin.jpg", "isHead": true },
+      { "name": "Gabriella Bianca Karja", "role": "General Affairs", "photo": "/comboard_photos/GA - Gabriella .jpg" },
+      { "name": "Deryl Kristofer Cahyadi", "role": "General Affairs", "photo": "/comboard_photos/GA- Deryl Kristofer Cahyadi.jpg" },
+      { "name": "Sharen Mirella Salim", "role": "General Affairs", "photo": "/comboard_photos/General Affairs_Sharen Mirella.jpg" },
+      { "name": "Enzo Schyler Kurniawan", "role": "General Affairs", "photo": "/comboard_photos/GA_Enzo Schyler Kurniawan.jpg" },
+      { "name": "Charlene Angelique Hadyanto", "role": "General Affairs", "photo": "/comboard_photos/General Affairs _ Charlene Angelique .jpg" }
     ]
   },
   {
     "id": "ml-dance",
     "label": "Mobile Legends & Dance",
-    "headingPhoto": "/comboard_photos/Heading_Photo/ML & Dance.jpg",
+    "headingPhoto": "/comboard_photos/ML & Dance.jpg",
     "members": [
-      { "name": "Maximillion Cang", "role": "PIC of Mobile Legends", "photo": "/comboard_photos/Individual_Photo/ML & DANCE/ML_Max.jpg", "isHead": true },
-      { "name": "William Christiansen", "role": "Mobile Legends", "photo": "/comboard_photos/Individual_Photo/ML & DANCE/ML_William .jpg" },
-      { "name": "Yovela Ellen Karunia", "role": "Mobile Legends", "photo": "/comboard_photos/Individual_Photo/ML & DANCE/ML_Yovela.jpg" },
-      { "name": "Jyovanie Regina Hermawan", "role": "PIC of Dance", "photo": "/comboard_photos/Individual_Photo/ML & DANCE/Dance_jyo .jpg", "isHead": true },
-      { "name": "Nelsen Then", "role": "Dance", "photo": "/comboard_photos/Individual_Photo/ML & DANCE/Dance_nelsen.jpg" },
-      { "name": "Charine Lau", "role": "Dance", "photo": "/comboard_photos/Individual_Photo/ML & DANCE/Dance_Charine.jpg" }
+      { "name": "Maximillion Cang", "role": "PIC of Mobile Legends", "photo": "/comboard_photos/ML_Max.jpg", "isHead": true },
+      { "name": "William Christiansen", "role": "Mobile Legends", "photo": "/comboard_photos/ML_William .jpg" },
+      { "name": "Yovela Ellen Karunia", "role": "Mobile Legends", "photo": "/comboard_photos/ML_Yovela.jpg" },
+      { "name": "Jyovanie Regina Hermawan", "role": "PIC of Dance", "photo": "/comboard_photos/Dance_jyo .jpg", "isHead": true },
+      { "name": "Nelsen Then", "role": "Dance", "photo": "/comboard_photos/Dance_nelsen.jpg" },
+      { "name": "Charine Lau", "role": "Dance", "photo": "/comboard_photos/Dance_Charine.jpg" }
     ]
   },
   {
     "id": "pgvg",
     "label": "PGVG",
-    "headingPhoto": "/comboard_photos/Heading_Photo/PGVG.jpg",
+    "headingPhoto": "/comboard_photos/PGVG.jpg",
     "members": [
-      { "name": "Darren Ryusa Mulianto", "role": "Head of PGVG", "photo": "/comboard_photos/Individual_Photo/PGVG/PGVG_Darren.jpg", "isHead": true },
-      { "name": "Elios Gavrila Oriana", "role": "PGVG", "photo": "/comboard_photos/Individual_Photo/PGVG/PGVG_Elios.jpg" },
-      { "name": "Emilie Septrina Santoso", "role": "PGVG", "photo": "/comboard_photos/Individual_Photo/PGVG/PGVG_Lili.jpg" },
-      { "name": "Ryan Setyawan Prayogo", "role": "PGVG", "photo": "/comboard_photos/Individual_Photo/PGVG/PGVG_RYAN.jpg" },
-      { "name": "Stella Yulia Kesumo", "role": "PGVG", "photo": "/comboard_photos/Individual_Photo/PGVG/PGVG_Stella.jpg" }
+      { "name": "Darren Ryusa Mulianto", "role": "Head of PGVG", "photo": "/comboard_photos/PGVG_Darren.jpg", "isHead": true },
+      { "name": "Elios Gavrila Oriana", "role": "PGVG", "photo": "/comboard_photos/PGVG_Elios.jpg" },
+      { "name": "Emilie Septrina Santoso", "role": "PGVG", "photo": "/comboard_photos/PGVG_Lili.jpg" },
+      { "name": "Ryan Setyawan Prayogo", "role": "PGVG", "photo": "/comboard_photos/PGVG_RYAN.jpg" },
+      { "name": "Stella Yulia Kesumo", "role": "PGVG", "photo": "/comboard_photos/PGVG_Stella.jpg" }
     ]
   },
   {
     "id": "basketball-futsal",
     "label": "Basketball & Futsal",
-    "headingPhoto": "/comboard_photos/Heading_Photo/basket futsal.jpg",
+    "headingPhoto": "/comboard_photos/basket futsal.jpg",
     "members": [
-      { "name": "Vincent Richardo Darmawan", "role": "PIC of Basketball", "photo": "/comboard_photos/Individual_Photo/Basketball & Futsal/Basket Ming.jpg", "isHead": true },
-      { "name": "Marcellino Verrel Budianto", "role": "Basketball", "photo": "/comboard_photos/Individual_Photo/Basketball & Futsal/Basket - verrel.jpg" },
-      { "name": "Michelle Emmanuela Cakramurti", "role": "Basketball", "photo": "/comboard_photos/Individual_Photo/Basketball & Futsal/Basket_Michelle.jpg" },
-      { "name": "Graciela Natasha Sugandha", "role": "Basketball", "photo": "/comboard_photos/Individual_Photo/Basketball & Futsal/BASKET - GRACIELA.jpg" },
-      { "name": "Putri Azaliyya Pahlevi", "role": "Basketball", "photo": "/comboard_photos/Individual_Photo/Basketball & Futsal/basket - Putri Azaliyya Pahlevi.jpg" },
-      { "name": "Benaya Jedidiah Kwee", "role": "PIC of Futsal", "photo": "/comboard_photos/Individual_Photo/Basketball & Futsal/futsal-benaya.jpg", "isHead": true },
-      { "name": "Christopher Bertrand", "role": "Futsal", "photo": "/comboard_photos/Individual_Photo/Basketball & Futsal/DSC03077.jpg" },
-      { "name": "Christhoper Tancredi", "role": "Futsal", "photo": "/comboard_photos/Individual_Photo/Basketball & Futsal/Futsal-Christhoper tancredi.jpg" },
-      { "name": "Gregorius Marvel Wicaksana", "role": "Futsal", "photo": "/comboard_photos/Individual_Photo/Basketball & Futsal/Futsal-Gregorius Marvel Wicaksana.jpg" }
+      { "name": "Vincent Richardo Darmawan", "role": "PIC of Basketball", "photo": "/comboard_photos/Basket Ming.jpg", "isHead": true },
+      { "name": "Marcellino Verrel Budianto", "role": "Basketball", "photo": "/comboard_photos/Basket - verrel.jpg" },
+      { "name": "Michelle Emmanuela Cakramurti", "role": "Basketball", "photo": "/comboard_photos/Basket_Michelle.jpg" },
+      { "name": "Graciela Natasha Sugandha", "role": "Basketball", "photo": "/comboard_photos/BASKET - GRACIELA.jpg" },
+      { "name": "Putri Azaliyya Pahlevi", "role": "Basketball", "photo": "/comboard_photos/basket - Putri Azaliyya Pahlevi.jpg" },
+      { "name": "Benaya Jedidiah Kwee", "role": "PIC of Futsal", "photo": "/comboard_photos/futsal-benaya.jpg", "isHead": true },
+      { "name": "Christopher Bertrand", "role": "Futsal", "photo": "/comboard_photos/DSC03077.jpg" },
+      { "name": "Christhoper Tancredi", "role": "Futsal", "photo": "/comboard_photos/Futsal-Christhoper tancredi.jpg" },
+      { "name": "Gregorius Marvel Wicaksana", "role": "Futsal", "photo": "/comboard_photos/Futsal-Gregorius Marvel Wicaksana.jpg" }
     ]
   },
   {
     "id": "performance",
     "label": "Performance Team",
-    "headingPhoto": "/comboard_photos/Heading_Photo/Performance Team.jpg",
+    "headingPhoto": "/comboard_photos/Performance Team.jpg",
     "members": [
-      { "name": "Heddey Mellisa Handojo", "role": "Head of Performance Team", "photo": "/comboard_photos/Individual_Photo/PERFORMANCE TEAM/Performance Team_Heddey.jpg", "isHead": true },
-      { "name": "Cecilia Wijaya", "role": "Performance Team", "photo": "/comboard_photos/Individual_Photo/PERFORMANCE TEAM/Performance team_Cecilia Wijaya.jpg" },
-      { "name": "Marvin Loemanto", "role": "Performance Team", "photo": "/comboard_photos/Individual_Photo/PERFORMANCE TEAM/Performance_Marvin Loemanto.jpg" },
-      { "name": "Laurensia Angela Valerie", "role": "Performance Team", "photo": "/comboard_photos/Individual_Photo/PERFORMANCE TEAM/PerformanceTeam_Lauren.jpg" },
-      { "name": "Helen Gabriela", "role": "Performance Team", "photo": "/comboard_photos/Individual_Photo/PERFORMANCE TEAM/Performance_Helen Gabriela.jpg" },
-      { "name": "Jason Christivan Nugroho", "role": "Performance Team", "photo": "/comboard_photos/Individual_Photo/PERFORMANCE TEAM/Performance_Wenwen.jpg" }
+      { "name": "Heddey Mellisa Handojo", "role": "Head of Performance Team", "photo": "/comboard_photos/Performance Team_Heddey.jpg", "isHead": true },
+      { "name": "Cecilia Wijaya", "role": "Performance Team", "photo": "/comboard_photos/Performance team_Cecilia Wijaya.jpg" },
+      { "name": "Marvin Loemanto", "role": "Performance Team", "photo": "/comboard_photos/Performance_Marvin Loemanto.jpg" },
+      { "name": "Laurensia Angela Valerie", "role": "Performance Team", "photo": "/comboard_photos/PerformanceTeam_Lauren.jpg" },
+      { "name": "Helen Gabriela", "role": "Performance Team", "photo": "/comboard_photos/Performance_Helen Gabriela.jpg" },
+      { "name": "Jason Christivan Nugroho", "role": "Performance Team", "photo": "/comboard_photos/Performance_Wenwen.jpg" }
     ]
   },
   {
     "id": "sponsor",
     "label": "Sponsorship",
-    "headingPhoto": "/comboard_photos/Heading_Photo/Sponsor.jpg",
+    "headingPhoto": "/comboard_photos/Sponsor.jpg",
     "members": [
-      { "name": "Ivane Pricilia", "role": "Head of Sponsorship", "photo": "/comboard_photos/Individual_Photo/SPONSOR/Sponsorship_Ivane.jpg", "isHead": true },
-      { "name": "Joey Iphigenia Lee", "role": "Sponsorship", "photo": "/comboard_photos/Individual_Photo/SPONSOR/Sponsorship_Joey.jpg" },
-      { "name": "Othniel Vilosanto", "role": "Sponsorship", "photo": "/comboard_photos/Individual_Photo/SPONSOR/Sponsorship_Othniel.jpg" },
-      { "name": "Gleanna Santana", "role": "Sponsorship", "photo": "/comboard_photos/Individual_Photo/SPONSOR/Sponsorship_Gleanna.jpg" },
-      { "name": "Levina Rachel Santoso", "role": "Sponsorship", "photo": "/comboard_photos/Individual_Photo/SPONSOR/Sponsorship_Levina Rachel Santoso.jpg" },
-      { "name": "Riena Basuki", "role": "Sponsorship", "photo": "/comboard_photos/Individual_Photo/SPONSOR/Sponsor_Riena.jpg" }
+      { "name": "Ivane Pricilia", "role": "Head of Sponsorship", "photo": "/comboard_photos/Sponsorship_Ivane.jpg", "isHead": true },
+      { "name": "Joey Iphigenia Lee", "role": "Sponsorship", "photo": "/comboard_photos/Sponsorship_Joey.jpg" },
+      { "name": "Othniel Vilosanto", "role": "Sponsorship", "photo": "/comboard_photos/Sponsorship_Othniel.jpg" },
+      { "name": "Gleanna Santana", "role": "Sponsorship", "photo": "/comboard_photos/Sponsorship_Gleanna.jpg" },
+      { "name": "Levina Rachel Santoso", "role": "Sponsorship", "photo": "/comboard_photos/Sponsorship_Levina Rachel Santoso.jpg" },
+      { "name": "Riena Basuki", "role": "Sponsorship", "photo": "/comboard_photos/Sponsor_Riena.jpg" }
     ]
   },
   {
     "id": "vendor",
     "label": "Vendor",
-    "headingPhoto": "/comboard_photos/Heading_Photo/Vendor.jpg",
+    "headingPhoto": "/comboard_photos/Vendor.jpg",
     "members": [
-      { "name": "Ivonna Valerie Sugondo", "role": "Head of Vendor", "photo": "/comboard_photos/Individual_Photo/VENDOR/Vendor_Ivon.jpg", "isHead": true },
-      { "name": "Pricilla Nadya Sukanto", "role": "Vendor", "photo": "/comboard_photos/Individual_Photo/VENDOR/Vendor_Nadya.jpg" },
-      { "name": "Evander Owen Halim", "role": "Vendor", "photo": "/comboard_photos/Individual_Photo/VENDOR/DSC02089.jpg" },
-      { "name": "Jennifer Evangeline", "role": "Vendor", "photo": "/comboard_photos/Individual_Photo/VENDOR/Vendor_Jennifer Evangeline.jpg" }
+      { "name": "Ivonna Valerie Sugondo", "role": "Head of Vendor", "photo": "/comboard_photos/Vendor_Ivon.jpg", "isHead": true },
+      { "name": "Pricilla Nadya Sukanto", "role": "Vendor", "photo": "/comboard_photos/Vendor_Nadya.jpg" },
+      { "name": "Evander Owen Halim", "role": "Vendor", "photo": "/comboard_photos/DSC02089.jpg" },
+      { "name": "Jennifer Evangeline", "role": "Vendor", "photo": "/comboard_photos/Vendor_Jennifer Evangeline.jpg" }
     ]
   }
 ]

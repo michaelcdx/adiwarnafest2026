@@ -1,7 +1,5 @@
-import React from 'react';
 import basketballPortal from '../image/Basketball_Portal.jpg';
 import futsalPortal from '../image/Futsal_Portal.jpg';
-import dancePortal from '../image/Dance_Portal.png';
 import mlbbPortal from '../image/MLBB_Portal.png';
 
 // Map Directory Data
@@ -34,7 +32,7 @@ export const mapLocations = [
         type: 'bazaar'
       },
       {
-        name: 'Basketball and Dance Competition',
+        name: '5x5 Men Basketball',
         date: '30-31 May 2026',
         venue: 'B1 - Indoor Basketball',
         type: 'competition'
@@ -52,15 +50,11 @@ export const mapLocations = [
 export const sportsSlides = [
   {
     image: basketballPortal,
-    subtitle: <React.Fragment>5x5 Men Basketball<br />3x3 Women Basketball</React.Fragment>
+    subtitle: '5x5 Men Basketball'
   },
   {
     image: futsalPortal,
     subtitle: 'Futsal Competition'
-  },
-  {
-    image: dancePortal,
-    subtitle: 'Dance Competition'
   },
   {
     image: mlbbPortal,
@@ -85,21 +79,6 @@ export const sportsDetails = [
     ]
   },
   {
-    id: '3x3',
-    title: '3x3 Women Basketball',
-    date: '30-31 May 2026',
-    location: 'Xiamen University Malaysia',
-    venue: 'B1 - Indoor Basketball Court',
-    tnc: '#',
-    fee: 'RM155/Team',
-    prize: 'RM800',
-    prizeBreakdown: [
-      { rank: 'Champion', details: 'RM 450 + Medals + Certificate' },
-      { rank: '1st Runner-up', details: 'RM 250 + Medals + Certificate' },
-      { rank: '2nd Runner-up', details: 'RM 100 + Medals + Certificate' }
-    ]
-  },
-  {
     id: 'futsal',
     title: 'Futsal Competition',
     date: '30-31 May 2026',
@@ -112,21 +91,6 @@ export const sportsDetails = [
       { rank: 'Champion', details: 'RM 500 + Medals + Certificate' },
       { rank: '1st Runner-up', details: 'RM 300 + Medals + Certificate' },
       { rank: '2nd Runner-up', details: 'RM 200 + Medals + Certificate' }
-    ]
-  },
-  {
-    id: 'dance',
-    title: 'Dance Competition',
-    date: '31 May 2026',
-    location: 'Xiamen University Malaysia',
-    venue: 'Main Stage',
-    tnc: '#',
-    fee: 'RM105/Group',
-    prize: 'RM500',
-    prizeBreakdown: [
-      { rank: 'Champion', details: 'RM 250 + Trophy + Certificate' },
-      { rank: '1st Runner-up', details: 'RM 150 + Trophy + Certificate' },
-      { rank: '2nd Runner-up', details: 'RM 100 + Trophy + Certificate' }
     ]
   },
   {
@@ -146,5 +110,3 @@ export const sportsDetails = [
   }
 ];
 
-export const scheduleData = {};
-export const standingsData = {};

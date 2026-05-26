@@ -17,6 +17,11 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
 
   backend:
     build: ./adiwarnafest-backend
@@ -25,14 +30,28 @@ services:
         condition: service_healthy
     environment:
       ConnectionStrings__AdiwarnaDatabase: Host=postgres;Port=5432;Database=${POSTGRES_DB:-adiwarna};Username=${POSTGRES_USER:-postgres};Password=${POSTGRES_PASSWORD:-postgres};SSL Mode=Disable
-      AppSettings__Token: ${JWT_SECRET:-your-very-long-secret-key-change-this-in-production-must-be-at-least-64-chars-for-HS512-algorithm!!}
+      AppSettings__Token: ${JWT_SECRET}
       AppSettings__Issuer: ${JWT_ISSUER:-http://localhost}
       AppSettings__Audience: ${JWT_AUDIENCE:-http://localhost}
+      LuckyDraw__GoogleSheetsUrl: ${LUCKY_DRAW_SHEETS_URL:-https://script.google.com/macros/s/AKfycbzPCsBCWRBkQ4O0mAtXHkUtcGII0PM1SSwjJH_ENN3H9JaF6jYhCqEeAF1C1gaAbqY/exec}
+      LiveStats__GoogleSheetsUrl: ${LIVE_STATS_SHEETS_URL:-https://script.google.com/macros/s/AKfycbxwUHG4PUY5If7wCQwVlkiQ-WNaUvWRwDg3e5bXHBWnlvxyjnjX2UiaCuVzAx5g96ZQ2g/exec}
       ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://0.0.0.0:5190
     ports:
       - "8080:5190"
     networks:
       - adiwarna-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5190/api/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 512M
 
   frontend:
     build: ./adiwarnafest-frontend
@@ -42,6 +61,17 @@ services:
       - "5173:80"
     networks:
       - adiwarna-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:80/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
 
   nginx:
     image: nginx:alpine
@@ -54,6 +84,16 @@ services:
       - frontend
     networks:
       - adiwarna-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:80/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 128M
 
 volumes:
   postgres_data:

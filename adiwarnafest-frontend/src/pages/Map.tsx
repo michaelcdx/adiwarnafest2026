@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { MagnifyingGlass, X } from "@phosphor-icons/react";
+import { MagnifyingGlass, X, Info, MapPin, Storefront } from "@phosphor-icons/react";
+import { Scroll } from "@phosphor-icons/react/dist/csr/Scroll";
+import { Image } from "@phosphor-icons/react/dist/csr/Image";
+import { Tag } from "@phosphor-icons/react/dist/csr/Tag";
 import { vendorsData } from "../data/vendorMockData";
 import type { Vendor } from "../data/vendorMockData";
 
@@ -260,7 +263,10 @@ interface InfoModalProps {
 }
 
 const InfoModal: React.FC<InfoModalProps> = ({ vendor, onClose, onViewImage }) => {
+  const [activeTab, setActiveTab] = useState<"overview" | "menu" | "flyer">("overview");
   const hasImage = !!vendor.localImage;
+  const menuCount = vendor.menu?.length ?? 0;
+
 
   return (
     <div
@@ -270,162 +276,356 @@ const InfoModal: React.FC<InfoModalProps> = ({ vendor, onClose, onViewImage }) =
       style={{
         position: "fixed",
         inset: 0,
-        background: "rgba(20,10,5,0.55)",
-        backdropFilter: "blur(4px)",
-        WebkitBackdropFilter: "blur(4px)",
+        background: "rgba(20,10,5,0.6)",
+        backdropFilter: "blur(6px)",
+        WebkitBackdropFilter: "blur(6px)",
         zIndex: 9999,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         padding: "20px",
-        animation: "adiFadeIn 0.15s ease",
+        animation: "adiFadeIn 0.2s ease",
       }}
     >
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
           background: P.card,
-          borderRadius: "20px",
-          maxWidth: "480px",
+          borderRadius: "24px",
+          maxWidth: "520px",
           width: "100%",
           overflow: "hidden",
-          boxShadow: "0 32px 80px rgba(0,0,0,0.28), 0 0 0 1px rgba(161,64,0,0.08)",
-          animation: "adiSlideUp 0.22s cubic-bezier(0.16,1,0.3,1)",
-          maxHeight: "90vh",
+          boxShadow: "0 24px 64px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(161, 64, 0, 0.08)",
+          animation: "adiSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+          maxHeight: "85vh",
           display: "flex",
           flexDirection: "column",
+          position: "relative",
         }}
       >
-        <div
-          style={{
-            padding: "18px 20px 14px",
-            borderBottom: `1px solid rgba(161,64,0,0.07)`,
-            display: "flex",
-            alignItems: "flex-start",
-            justifyContent: "space-between",
-            gap: "12px",
-            flexShrink: 0,
-          }}
-        >
-          <div style={{ flex: 1 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px", flexWrap: "wrap" }}>
-              <span
-                style={{
-                  background: vendor.isSpecial ? "#8a6a00" : P.primary,
-                  color: "#fff",
-                  fontSize: "11px",
-                  fontWeight: 800,
-                  letterSpacing: "0.06em",
-                  padding: "4px 11px",
-                  borderRadius: "7px",
-                }}
-              >
-                {vendor.isSpecial ? (vendor.id_display ?? vendor.id) : formatBadge(vendor.id)}
-              </span>
-              <span
-                style={{
-                  fontSize: "11px",
-                  color: P.muted,
-                  fontWeight: 600,
-                  background: "rgba(112,90,73,0.08)",
-                  padding: "4px 10px",
-                  borderRadius: "999px",
-                }}
-              >
-                {vendor.floor === "1st" ? "1st Floor" : "Ground Floor"}
-              </span>
-            </div>
-            <h3
-              style={{
-                margin: 0,
-                fontSize: "18px",
-                fontWeight: 800,
-                color: P.primary,
-                fontFamily: "Epilogue, sans-serif",
-                letterSpacing: "-0.02em",
-                lineHeight: 1.2,
-              }}
-            >
-              {vendor.name}
-            </h3>
-          </div>
+        {/* Banner Header — 200px for more visual impact */}
+        <div style={{ position: "relative", height: "200px", width: "100%", flexShrink: 0, overflow: "hidden" }}>
+          {hasImage ? (
+            <>
+              <img
+                src={vendor.localImage}
+                alt={vendor.name}
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              />
+              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.78) 100%)" }} />
+            </>
+          ) : (
+            <>
+              <div style={{ width: "100%", height: "100%", background: `linear-gradient(135deg, ${P.primary} 0%, #d66a22 50%, ${P.accent} 100%)` }} />
+              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.55) 100%)" }} />
+              <div style={{
+                position: "absolute", inset: 0, opacity: 0.07, pointerEvents: "none",
+                backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)",
+                backgroundSize: "32px 32px",
+              }} />
+            </>
+          )}
+
+          {/* Close Button */}
           <button
             onClick={onClose}
             aria-label="Close"
             style={{
-              background: "rgba(161,64,0,0.07)",
-              border: "none",
-              borderRadius: "50%",
-              width: "34px",
-              height: "34px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              flexShrink: 0,
-              transition: "background 0.15s",
+              position: "absolute", top: "16px", right: "16px",
+              background: "rgba(255,255,255,0.2)", backdropFilter: "blur(4px)",
+              border: "1px solid rgba(255,255,255,0.3)", borderRadius: "50%",
+              width: "36px", height: "36px",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              cursor: "pointer", zIndex: 10, transition: "all 0.2s ease",
             }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(161,64,0,0.14)")}
-            onMouseLeave={(e) => (e.currentTarget.style.background = "rgba(161,64,0,0.07)")}
+            onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.4)"; e.currentTarget.style.transform = "scale(1.05)"; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.2)"; e.currentTarget.style.transform = "scale(1)"; }}
           >
-            <X size={16} weight="bold" color={P.primary} />
+            <X size={18} weight="bold" color="#fff" />
           </button>
+
+          {/* Heading overlay */}
+          <div style={{ position: "absolute", bottom: "18px", left: "20px", right: "60px", color: "#fff" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px", flexWrap: "wrap" }}>
+              <span style={{
+                background: vendor.isSpecial ? "#D4AF37" : P.accent,
+                color: vendor.isSpecial ? "#0A0A0B" : "#3a1800",
+                fontSize: "10px", fontWeight: 900, letterSpacing: "0.08em",
+                padding: "3px 9px", borderRadius: "6px", boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+              }}>
+                {vendor.isSpecial ? (vendor.id_display ?? vendor.id) : formatBadge(vendor.id)}
+              </span>
+              <span style={{
+                fontSize: "10px", color: "#fff", fontWeight: 700,
+                background: "rgba(255,255,255,0.18)", border: "1px solid rgba(255,255,255,0.25)",
+                padding: "3px 9px", borderRadius: "999px",
+              }}>
+                {vendor.floor === "1st" ? "First Floor" : "Ground Floor"}
+              </span>
+            </div>
+            <h3 style={{
+              margin: 0, fontSize: "22px", fontWeight: 900,
+              fontFamily: "Epilogue, sans-serif", letterSpacing: "-0.02em",
+              textShadow: "0 2px 8px rgba(0,0,0,0.6)", lineHeight: 1.2,
+            }}>
+              {vendor.name}
+            </h3>
+          </div>
         </div>
 
-        <div style={{ padding: "16px 20px", overflowY: "auto", flex: 1 }}>
-          <p style={{ margin: "0 0 16px", fontSize: "13px", lineHeight: 1.7, color: P.muted }}>{vendor.description}</p>
+        {/* Tab Navbar */}
+        <div style={{
+          display: "flex", borderBottom: "1px solid rgba(161,64,0,0.08)",
+          background: "rgba(161,64,0,0.02)", padding: "0 12px", flexShrink: 0,
+        }}>
+          <button
+            onClick={() => setActiveTab("overview")}
+            style={{
+              flex: 1, padding: "13px 8px", background: "none", border: "none",
+              borderBottom: `3px solid ${activeTab === "overview" ? P.primary : "transparent"}`,
+              color: activeTab === "overview" ? P.primary : P.muted,
+              fontSize: "12px", fontWeight: 800, cursor: "pointer",
+              display: "flex", alignItems: "center", justifyContent: "center", gap: "5px",
+              transition: "all 0.2s ease",
+            }}
+          >
+            <Info size={16} weight={activeTab === "overview" ? "fill" : "regular"} />
+            Overview
+          </button>
 
-          {vendor.tags && vendor.tags.length > 0 && (
-            <div style={{ marginBottom: hasImage ? "16px" : 0 }}>
-              <p style={{ margin: "0 0 8px", fontSize: "10px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.09em", color: P.muted, opacity: 0.55 }}>What They Sell</p>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
-                {vendor.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    style={{
-                      background: "rgba(161,64,0,0.07)",
-                      color: P.primary,
-                      fontSize: "11px",
-                      fontWeight: 600,
-                      padding: "4px 11px",
-                      borderRadius: "999px",
-                      letterSpacing: "0.01em",
-                    }}
-                  >
-                    {tag}
+          <button
+            onClick={() => setActiveTab("menu")}
+            style={{
+              flex: 1, padding: "13px 8px", background: "none", border: "none",
+              borderBottom: `3px solid ${activeTab === "menu" ? P.primary : "transparent"}`,
+              color: activeTab === "menu" ? P.primary : P.muted,
+              fontSize: "12px", fontWeight: 800, cursor: "pointer",
+              display: "flex", alignItems: "center", justifyContent: "center", gap: "5px",
+              transition: "all 0.2s ease",
+            }}
+          >
+            <Scroll size={16} weight={activeTab === "menu" ? "fill" : "regular"} />
+            Menu Guide
+            {menuCount > 0 && (
+              <span style={{
+                background: activeTab === "menu" ? P.primary : "rgba(112,90,73,0.12)",
+                color: activeTab === "menu" ? "#fff" : P.muted,
+                fontSize: "10px", fontWeight: 800,
+                padding: "1px 6px", borderRadius: "999px", lineHeight: 1.6,
+                transition: "all 0.2s ease",
+              }}>
+                {menuCount}
+              </span>
+            )}
+          </button>
+
+          {hasImage && (
+            <button
+              onClick={() => setActiveTab("flyer")}
+              style={{
+                flex: 1, padding: "13px 8px", background: "none", border: "none",
+                borderBottom: `3px solid ${activeTab === "flyer" ? P.primary : "transparent"}`,
+                color: activeTab === "flyer" ? P.primary : P.muted,
+                fontSize: "12px", fontWeight: 800, cursor: "pointer",
+                display: "flex", alignItems: "center", justifyContent: "center", gap: "5px",
+                transition: "all 0.2s ease",
+              }}
+            >
+              <Image size={16} weight={activeTab === "flyer" ? "fill" : "regular"} />
+              Menu Flyer
+            </button>
+          )}
+        </div>
+
+        {/* Scrollable Tab Content */}
+        <div style={{ padding: "20px 24px", overflowY: "auto", flex: 1, minHeight: "200px" }}>
+
+          {/* Overview Tab */}
+          {activeTab === "overview" && (
+            <div style={{ animation: "adiFadeIn 0.2s ease-out" }}>
+              {/* Quick-info strip */}
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "18px" }}>
+                <span style={{
+                  display: "flex", alignItems: "center", gap: "5px",
+                  background: "rgba(161,64,0,0.06)", border: "1px solid rgba(161,64,0,0.1)",
+                  color: P.primary, fontSize: "11px", fontWeight: 700,
+                  padding: "5px 11px", borderRadius: "999px",
+                }}>
+                  <MapPin size={12} weight="fill" />
+                  {vendor.floor === "1st" ? "1st Floor" : "Ground Floor"}
+                </span>
+                {menuCount > 0 && (
+                  <span style={{
+                    display: "flex", alignItems: "center", gap: "5px",
+                    background: "rgba(161,64,0,0.06)", border: "1px solid rgba(161,64,0,0.1)",
+                    color: P.primary, fontSize: "11px", fontWeight: 700,
+                    padding: "5px 11px", borderRadius: "999px",
+                  }}>
+                    <Storefront size={12} weight="fill" />
+                    {menuCount} item{menuCount !== 1 ? "s" : ""}
                   </span>
-                ))}
+                )}
               </div>
+
+              <p style={{ margin: "0 0 20px", fontSize: "14px", lineHeight: 1.7, color: P.muted, textAlign: "justify" }}>
+                {vendor.description}
+              </p>
+
+              <div style={{
+                display: "flex", alignItems: "center", gap: "10px",
+                padding: "12px 16px", borderRadius: "14px",
+                background: "rgba(161,64,0,0.04)", border: "1px solid rgba(161,64,0,0.08)", marginBottom: "20px",
+              }}>
+                <MapPin size={18} weight="fill" color={P.primary} />
+                <div>
+                  <p style={{ margin: 0, fontSize: "10px", fontWeight: 700, color: P.muted, textTransform: "uppercase" }}>Location</p>
+                  <p style={{ margin: 0, fontSize: "13px", fontWeight: 800, color: P.primary }}>
+                    {vendor.floor === "1st" ? "1st Floor (Upstairs)" : "Ground Floor"} — Booth {vendor.isSpecial ? (vendor.id_display ?? vendor.id) : formatBadge(vendor.id)}
+                  </p>
+                </div>
+              </div>
+
+              {vendor.tags && vendor.tags.length > 0 && (
+                <div>
+                  <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "10px" }}>
+                    <Tag size={14} weight="bold" color={P.muted} />
+                    <p style={{ margin: 0, fontSize: "11px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.06em", color: P.muted }}>Featured Tags</p>
+                  </div>
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                    {vendor.tags.map((tag) => (
+                      <span key={tag} style={{
+                        background: "rgba(161,64,0,0.06)", color: P.primary,
+                        fontSize: "11.5px", fontWeight: 700, padding: "5px 12px",
+                        borderRadius: "10px", border: "1px solid rgba(161,64,0,0.08)",
+                        transition: "all 0.2s ease",
+                      }}>
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Menu Tab */}
+          {activeTab === "menu" && (
+            <div style={{ animation: "adiFadeIn 0.2s ease-out" }}>
+              {/* Header row with item count + price range */}
+              <div style={{
+                display: "flex", alignItems: "center", justifyContent: "space-between",
+                marginBottom: "16px", gap: "8px", flexWrap: "wrap",
+              }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                  <Storefront size={16} weight="fill" color={P.primary} />
+                  <p style={{ margin: 0, fontSize: "11px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.06em", color: P.muted }}>
+                    Menu Guide
+                  </p>
+                </div>
+              </div>
+
+              {vendor.menu && vendor.menu.length > 0 ? (
+                <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                  {vendor.menu.map((item, idx) => (
+                    <div
+                      key={idx}
+                      style={{
+                        display: "flex", alignItems: "center", justifyContent: "space-between",
+                        padding: "13px 16px", background: "#fff", borderRadius: "14px",
+                        border: "1px solid rgba(161,64,0,0.06)",
+                        borderLeft: `4px solid ${P.primary}`,
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.02)",
+                        transition: "all 0.2s ease", gap: "12px",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = "translateX(4px)";
+                        e.currentTarget.style.boxShadow = "0 4px 16px rgba(161,64,0,0.09)";
+                        e.currentTarget.style.background = "#faf9f6";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = "translateX(0)";
+                        e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.02)";
+                        e.currentTarget.style.background = "#fff";
+                      }}
+                    >
+                      <span style={{ fontSize: "13.5px", fontWeight: 700, color: "#1f2937", lineHeight: 1.3 }}>{item.name}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div style={{ textAlign: "center", padding: "40px 10px" }}>
+                  <div style={{
+                    width: "44px", height: "44px", borderRadius: "12px",
+                    background: "rgba(161,64,0,0.06)",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    margin: "0 auto 12px",
+                  }}>
+                    <Storefront size={20} weight="regular" color={P.muted} />
+                  </div>
+                  <p style={{ margin: "0 0 4px", fontSize: "14px", fontWeight: 700, color: P.primary }}>No Menu Available</p>
+                  <p style={{ margin: 0, fontSize: "12px", color: P.muted, opacity: 0.7 }}>Visit the booth for details.</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Flyer Tab */}
+          {activeTab === "flyer" && hasImage && (
+            <div style={{ animation: "adiFadeIn 0.2s ease-out", display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <div style={{
+                width: "100%", borderRadius: "16px", overflow: "hidden",
+                border: "1px solid rgba(161,64,0,0.08)", boxShadow: "0 8px 24px rgba(0,0,0,0.05)",
+                background: "#fff", lineHeight: 0, marginBottom: "16px",
+              }}>
+                <img
+                  src={vendor.localImage}
+                  alt={`${vendor.name} menu flyer`}
+                  style={{ width: "100%", maxHeight: "350px", objectFit: "contain", display: "block" }}
+                />
+              </div>
+              <button
+                onClick={onViewImage}
+                style={{
+                  padding: "10px 20px", background: P.primary, color: "#fff",
+                  border: "none", borderRadius: "12px", fontSize: "13px", fontWeight: 800,
+                  cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
+                  gap: "8px", transition: "background 0.15s, transform 0.15s",
+                  boxShadow: "0 4px 12px rgba(161,64,0,0.2)",
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "#8a3500"; e.currentTarget.style.transform = "scale(1.02)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = P.primary; e.currentTarget.style.transform = "scale(1)"; }}
+              >
+                <MagnifyingGlass size={16} weight="bold" />
+                View Fullscreen Flyer
+              </button>
             </div>
           )}
         </div>
 
-        {hasImage && (
-          <div style={{ padding: "14px 20px", borderTop: `1px solid rgba(161,64,0,0.07)`, flexShrink: 0 }}>
+        {/* Sticky flyer CTA — pinned at modal bottom when not on flyer tab */}
+        {hasImage && activeTab !== "flyer" && (
+          <div style={{
+            borderTop: "1px solid rgba(161,64,0,0.08)",
+            padding: "11px 20px",
+            background: "rgba(161,64,0,0.02)",
+            flexShrink: 0,
+            display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px",
+          }}>
+            <p style={{ margin: 0, fontSize: "11px", color: P.muted, opacity: 0.65 }}>Menu flyer available for this booth</p>
             <button
-              onClick={onViewImage}
+              onClick={() => setActiveTab("flyer")}
               style={{
-                width: "100%",
-                padding: "10px 18px",
-                background: P.primary,
-                color: "#fff",
-                border: "none",
-                borderRadius: "12px",
-                fontSize: "13px",
-                fontWeight: 700,
-                cursor: "pointer",
-                fontFamily: "Plus Jakarta Sans, sans-serif",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "6px",
-                transition: "background 0.15s",
+                background: "none", border: `1px solid rgba(161,64,0,0.22)`,
+                borderRadius: "10px", padding: "7px 14px",
+                color: P.primary, fontSize: "12px", fontWeight: 800,
+                cursor: "pointer", display: "flex", alignItems: "center", gap: "5px",
+                transition: "all 0.15s ease", whiteSpace: "nowrap",
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = "#8a3500")}
-              onMouseLeave={(e) => (e.currentTarget.style.background = P.primary)}
+              onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(161,64,0,0.06)"; e.currentTarget.style.borderColor = P.primary; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = "none"; e.currentTarget.style.borderColor = "rgba(161,64,0,0.22)"; }}
             >
-              <MagnifyingGlass size={15} weight="bold" />
-              View Menu Image 🔍
+              <Image size={13} weight="bold" />
+              View Flyer
             </button>
           </div>
         )}
@@ -656,16 +856,15 @@ const GADPACard: React.FC<GADPACardProps> = ({ vendor, onViewInfo }) => (
 
 interface BoothCardProps {
   vendor: Vendor;
-  onViewImage: () => void;
+  onViewInfo: () => void;
 }
 
-const BoothCard: React.FC<BoothCardProps> = ({ vendor, onViewImage }) => {
+const BoothCard: React.FC<BoothCardProps> = ({ vendor, onViewInfo }) => {
   const [hovered, setHovered] = useState(false);
-  const [linkHovered, setLinkHovered] = useState(false);
-  const hasImage = !!vendor.localImage;
 
   return (
     <div
+      onClick={onViewInfo}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
@@ -679,7 +878,7 @@ const BoothCard: React.FC<BoothCardProps> = ({ vendor, onViewImage }) => {
         height: "100%",
         transform: hovered ? "translateY(-4px)" : "translateY(0)",
         transition: "all 0.3s ease-in-out",
-        cursor: "default",
+        cursor: "pointer",
       }}
     >
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "14px", gap: "8px" }}>
@@ -739,35 +938,6 @@ const BoothCard: React.FC<BoothCardProps> = ({ vendor, onViewImage }) => {
         {vendor.description}
       </p>
 
-      {hasImage && (
-        <button
-          onClick={onViewImage}
-          onMouseEnter={() => setLinkHovered(true)}
-          onMouseLeave={() => setLinkHovered(false)}
-          style={{
-            background: "none",
-            border: "none",
-            padding: 0,
-            marginBottom: vendor.tags && vendor.tags.length > 0 ? "14px" : 0,
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "5px",
-            color: linkHovered ? P.accent : P.primary,
-            fontSize: "13px",
-            fontWeight: 600,
-            cursor: "pointer",
-            fontFamily: "Plus Jakarta Sans, sans-serif",
-            textDecoration: linkHovered ? "underline" : "none",
-            textDecorationColor: P.accent,
-            textUnderlineOffset: "3px",
-            transition: "color 0.2s ease",
-            alignSelf: "flex-start",
-          }}
-        >
-          <MagnifyingGlass size={14} weight="bold" />
-          View Menu Image 🔍
-        </button>
-      )}
 
       {vendor.tags && vendor.tags.length > 0 && (
         <div>
@@ -829,14 +999,29 @@ const Map: React.FC = () => {
   // ── Filtering ────────────────────────────────────────────────────────────
   const regularVendors = useMemo(() => vendorsData.filter((v) => !v.isSpecial), []);
 
-  const floorVendors = useMemo(() => regularVendors.filter((v) => v.floor === activeFloor), [regularVendors, activeFloor]);
+  const floorVendors = useMemo(() => {
+    const seen = new Set<string>();
+    return regularVendors.filter((v) => {
+      if (v.floor !== activeFloor) return false;
+      const key = v.name + v.floor;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }, [regularVendors, activeFloor]);
 
   const searchResults = useMemo(() => {
     if (!isSearching) return [];
     const q = searchQuery.toLowerCase();
+    const seen = new Set<string>();
     return regularVendors.filter((v) => {
       const num = v.id.replace("B", "");
-      return v.name.toLowerCase().includes(q) || v.description.toLowerCase().includes(q) || num.includes(q) || formatBadge(v.id).toLowerCase().includes(q) || (v.tags ?? []).some((t) => t.toLowerCase().includes(q));
+      const matches = v.name.toLowerCase().includes(q) || v.description.toLowerCase().includes(q) || num.includes(q) || formatBadge(v.id).toLowerCase().includes(q) || (v.tags ?? []).some((t) => t.toLowerCase().includes(q));
+      if (!matches) return false;
+      const key = v.name + v.floor;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
     });
   }, [isSearching, searchQuery, regularVendors]);
 
@@ -1187,7 +1372,7 @@ const Map: React.FC = () => {
             {displayVendors.length > 0 ? (
               <div className="booth-grid">
                 {displayVendors.map((vendor) => (
-                  <BoothCard key={vendor.id} vendor={vendor} onViewImage={() => setImageVendor(vendor)} />
+                  <BoothCard key={vendor.id} vendor={vendor} onViewInfo={() => setInfoVendor(vendor)} />
                 ))}
               </div>
             ) : (

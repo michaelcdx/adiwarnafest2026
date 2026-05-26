@@ -14,6 +14,8 @@ namespace AdiwarnaBackend.Models.Games
         public bool IsDeleted { get; set; }
         public DateTime? DeletedAt { get; set; }
         public bool IsLocked { get; set; }
+        public int Team1Score { get; set; }
+        public int Team2Score { get; set; }
         public List<PlayerGameStatDto> PlayerStats { get; set; } = new();
     }
 

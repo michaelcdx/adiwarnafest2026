@@ -188,8 +188,8 @@ export const CreateTournamentSidebar = ({
             value={form.gameType}
             options={[
               { label: 'Basketball 5v5', value: 'Basketball5v5' },
-              { label: 'Basketball 3v3', value: 'Basketball3v3' },
               { label: 'Futsal', value: 'Futsal' },
+              { label: 'Mobile Legends', value: 'MobileLegends' },
             ]}
             placeholder="Select game type"
             onChange={e => setForm(prev => ({ ...prev, gameType: e.value as GameType }))}
@@ -268,6 +268,8 @@ export const CreateTournamentSidebar = ({
               placeholder="Add a team..."
               onChange={e => handleAddTeam(e.value)}
               className="w-full"
+              scrollHeight="250px"
+              style={{ maxHeight: '250px' }}
             />
           </div>
         )}

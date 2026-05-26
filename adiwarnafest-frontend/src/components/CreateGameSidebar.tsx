@@ -71,7 +71,7 @@ export const CreateGameSidebar = ({
     try {
       const data = await publicService.getDropdownOptions('gametype')
       const options = data.find(d => d.type.toLowerCase() === 'gametype')?.options ?? []
-      setGameTypeOptions(options.map(o => ({ label: o.code, value: o.code })))
+      setGameTypeOptions(options.map(o => ({ label: o.description || o.code, value: o.id || o.code })))
     } catch {
       setGameTypeOptions([])
     }

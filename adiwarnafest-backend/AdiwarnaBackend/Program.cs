@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using System.Text;
@@ -38,7 +39,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("DevCors", policy =>
     {
-        policy.WithOrigins("http://localhost:5173", "http://10.72.158.116:5173")
+        policy.WithOrigins("http://localhost:5173", "http://localhost")
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -58,7 +59,11 @@ if (string.IsNullOrWhiteSpace(tokenAudience))
     throw new InvalidOperationException("AppSettings:Audience is missing.");
 
 builder.Services.AddDbContext<AdiwarnaDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("AdiwarnaDatabase")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("AdiwarnaDatabase"),
+        npgsql => npgsql.CommandTimeout(30))
+    .ConfigureWarnings(w => w
+        .Ignore(RelationalEventId.PendingModelChangesWarning)
+        .Default(WarningBehavior.Log)));
 
 builder.Services.AddRateLimiter(options =>
 {

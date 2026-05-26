@@ -15,7 +15,8 @@ const VERIFIED_DESTINATIONS: Record<string, string> = {
   // B1 Area Specifics
   "B1 Area": "2.832441,101.706593",
   "Indoor Bazaar": "2.832441,101.706593",
-  "Basketball and Dance Competition": "2.832536,101.7066468",
+  "Basketball Court": "2.832536,101.7066468",
+  "Basketball 5v5": "2.832536,101.7066468",
   "Futsal Court": "2.8315012,101.7066642",
   "Futsal Area": "2.8315012,101.7066642",
   

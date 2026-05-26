@@ -12,7 +12,7 @@ export type TournamentTeamDto = {
   gameType: string
 }
 
-export type GameType = 'Basketball5v5' | 'Basketball3v3' | 'Futsal'
+export type GameType = 'Basketball5v5' | 'Basketball3v3' | 'Futsal' | 'MobileLegends'
 
 export type Tournament = {
   id: string

@@ -14,6 +14,8 @@ namespace AdiwarnaBackend.Entities
         public bool IsDeleted { get; set; }
         public DateTime? DeletedAt { get; set; }
         public bool IsLocked { get; set; } = false;
+        public int Team1Score { get; set; } = 0;
+        public int Team2Score { get; set; } = 0;
 
         public Tournament Tournament { get; set; } = null!;
         public Team Team1 { get; set; } = null!;

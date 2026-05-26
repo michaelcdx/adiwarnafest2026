@@ -22,7 +22,9 @@ namespace AdiwarnaBackend.Controllers.Teams
             if (string.IsNullOrWhiteSpace(request.Name))
                 return BadRequest("Team name is required.");
 
-            var gameType = ParseGameType(request.GameType);
+            GameType gameType;
+            try { gameType = ParseGameType(request.GameType); }
+            catch (ArgumentException ex) { return BadRequest(ex.Message); }
 
             await using var transaction = await context.Database.BeginTransactionAsync();
 
@@ -88,10 +90,10 @@ namespace AdiwarnaBackend.Controllers.Teams
             var trimmed = gameType.Trim();
             if (string.Equals(trimmed, GameType.Basketball5v5.Value, StringComparison.OrdinalIgnoreCase))
                 return GameType.Basketball5v5;
-            if (string.Equals(trimmed, GameType.Basketball3v3.Value, StringComparison.OrdinalIgnoreCase))
-                return GameType.Basketball3v3;
             if (string.Equals(trimmed, GameType.Futsal.Value, StringComparison.OrdinalIgnoreCase))
                 return GameType.Futsal;
+            if (string.Equals(trimmed, GameType.MobileLegends.Value, StringComparison.OrdinalIgnoreCase))
+                return GameType.MobileLegends;
 
             throw new ArgumentException("Invalid GameType.");
         }

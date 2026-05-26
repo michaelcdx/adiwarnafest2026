@@ -35,9 +35,8 @@ const Maintenance = () => {
       })
     } catch (error) {
       const message = error instanceof ApiError
-        ? `${error.status}: ${error.message}`
+        ? 'Failed to load entries.'
         : 'Failed to load entries. Check that the backend is running.'
-      console.error('Error loading entries:', error)
       setEntries([])
       toast.current?.show({
         severity: 'error',
@@ -84,8 +83,7 @@ const Maintenance = () => {
       link.parentNode?.removeChild(link)
       window.URL.revokeObjectURL(url)
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'CSV download failed.'
-      console.error('Download error:', error)
+      const message = error instanceof Error ? 'CSV download failed.' : 'CSV download failed.'
       toast.current?.show({
         severity: 'error',
         summary: 'Download Failed',
@@ -262,6 +260,7 @@ const Maintenance = () => {
           />
         </div>
 
+        <div style={{ overflowX: 'auto' }}>
         <DataTable
           value={entries}
           paginator
@@ -280,6 +279,7 @@ const Maintenance = () => {
             body={(rowData) => new Date(rowData.submittedAt).toLocaleString()}
           />
         </DataTable>
+        </div>
       </Dialog>
     </div>
   )

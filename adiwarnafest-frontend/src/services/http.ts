@@ -40,11 +40,25 @@ export const configureAuth = (handlers: Partial<AuthHandlers>) => {
 
 const getApiBaseUrl = () => {
   const baseUrl = import.meta.env.VITE_API_BASE_URL as string | undefined
-  return baseUrl?.trim() ? baseUrl : DEFAULT_API_BASE_URL
+  if (!baseUrl?.trim()) {
+    if (import.meta.env.PROD) {
+      console.warn('VITE_API_BASE_URL is not set. API calls may fail in production.')
+    }
+    return DEFAULT_API_BASE_URL
+  }
+  return baseUrl.trim()
 }
 
+const ALLOWED_API_BASE = getApiBaseUrl()
+
 const buildUrl = (path: string) => {
-  if (path.startsWith('http://') || path.startsWith('https://')) return path
+  if (path.startsWith('http://') || path.startsWith('https://')) {
+    const allowed = ALLOWED_API_BASE || window.location.origin
+    if (!path.startsWith(allowed)) {
+      throw new Error(`Blocked request to unexpected domain: ${path}`)
+    }
+    return path
+  }
   return `${getApiBaseUrl()}${path.startsWith('/') ? '' : '/'}${path}`
 }
 

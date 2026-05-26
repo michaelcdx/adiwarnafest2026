@@ -128,16 +128,11 @@ const MaintenanceGames = () => {
       </div>
     )
 
-  const scoresTemplate = (game: Game) => {
-    const stats = game.playerStats
-    const team1Goals = stats.filter(s => s.teamId === game.team1Id).reduce((sum, s) => sum + s.goals, 0)
-    const team2Goals = stats.filter(s => s.teamId === game.team2Id).reduce((sum, s) => sum + s.goals, 0)
-    return (
-      <span className="text-sm font-semibold" style={{ color: '#1f2937' }}>
-        {team1Goals} - {team2Goals}
-      </span>
-    )
-  }
+  const scoresTemplate = (game: Game) => (
+    <span className="text-sm font-semibold" style={{ color: '#1f2937' }}>
+      {game.team1Score} - {game.team2Score}
+    </span>
+  )
 
   const lockedTemplate = (game: Game) => (
     <Button
@@ -267,14 +262,14 @@ const MaintenanceGames = () => {
         className="px-4 py-4 mx-auto w-full"
         style={{ maxWidth: '1100px' }}
       >
-        <header className="flex align-items-center justify-content-between mb-4">
+        <header className="flex flex-column gap-3 mb-4">
           <div>
             <h1 className="m-0 text-2xl font-bold" style={{ color: '#1a1a1a' }}>
               Games
             </h1>
             <p className="m-0 text-600 text-sm">Manage games within tournaments.</p>
           </div>
-          <div className="flex align-items-center gap-3">
+          <div className="flex flex-wrap align-items-center gap-3">
             <div className="flex align-items-center gap-2">
               <InputSwitch
                 checked={includeDeleted}
@@ -284,19 +279,17 @@ const MaintenanceGames = () => {
                 Include deleted
               </span>
             </div>
-            <div className="flex gap-2">
-              <Button
-                label="New Game"
-                onClick={openCreate}
-                disabled={!selectedTournamentId}
-              />
-              <Button
-                label="Refresh"
-                onClick={refresh}
-                outlined
-                disabled={!selectedTournamentId}
-              />
-            </div>
+            <Button
+              label="New Game"
+              onClick={openCreate}
+              disabled={!selectedTournamentId}
+            />
+            <Button
+              label="Refresh"
+              onClick={refresh}
+              outlined
+              disabled={!selectedTournamentId}
+            />
           </div>
         </header>
 
@@ -318,7 +311,7 @@ const MaintenanceGames = () => {
 
         <div
           className="border-round-2xl p-3 shadow-2"
-          style={{ backgroundColor: '#fff', border: '1px solid #eee' }}
+          style={{ backgroundColor: '#fff', border: '1px solid #eee', overflowX: 'auto' }}
         >
           <DataTable
             value={games}

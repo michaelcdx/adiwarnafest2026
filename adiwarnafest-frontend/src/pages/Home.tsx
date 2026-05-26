@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Calendar, MapPin, Star, Basketball, MusicNotes, Storefront, Crown, X, CaretDown, Trophy, Medal, UsersThree } from "@phosphor-icons/react";
+import { YoutubeLogo } from "@phosphor-icons/react/dist/csr/YoutubeLogo";
+import { InstagramLogo } from "@phosphor-icons/react/dist/csr/InstagramLogo";
 
 // Imported Images
 import plainBackground from "../image/Plain_Background.png";
@@ -39,7 +41,6 @@ const Home: React.FC = () => {
         setStats(data);
       } catch (error) {
         const errorMsg = error instanceof Error ? error.message : "Failed to fetch registration stats";
-        console.error("Failed to fetch registration stats:", error);
         setStatsError(errorMsg);
       }
     };
@@ -354,8 +355,8 @@ const Home: React.FC = () => {
                     {sportsSlides[currentSportImg].subtitle}
                   </p>
                 </div>
-                <button onClick={() => setIsSportsModalOpen(true)} className="w-full py-3 bg-white text-900 font-bold border-round-xl border-none cursor-pointer shadow-2 transition-colors hover:surface-200">
-                  Register Now
+                <button disabled className="w-full py-3 font-bold border-round-xl border-none cursor-not-allowed shadow-2 text-white" style={{ backgroundColor: "#dc2626" }}>
+                  Registration Closed
                 </button>
               </div>
             </div>
@@ -571,6 +572,127 @@ const Home: React.FC = () => {
                   <span className="text-[10px] font-bold text-500 uppercase tracking-wider text-center px-2">{sponsor.name}</span>
                 </div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Social Media */}
+        <section className="px-3 mt-5 mb-6">
+          <div className="luxury-obsidian-panel border-round-2xl p-5 md:p-6 shadow-6 relative overflow-hidden">
+            {/* Decorative gold shimmers */}
+            <div className="absolute border-circle" style={{ width: "120px", height: "120px", background: "radial-gradient(circle, rgba(212,175,55,0.08) 0%, transparent 70%)", top: "-20px", right: "-20px", pointerEvents: "none" }} />
+            <div className="absolute border-circle" style={{ width: "160px", height: "160px", background: "radial-gradient(circle, rgba(212,175,55,0.05) 0%, transparent 70%)", bottom: "-40px", left: "-40px", pointerEvents: "none" }} />
+
+            <div className="relative z-1 mb-5 flex flex-column align-items-center text-center sm:align-items-start sm:text-left">
+              <span className="inline-block px-3 py-1 border-round-3xl mb-2 text-[10px] font-black uppercase tracking-widest" style={{ background: "rgba(212,175,55,0.1)", border: "1px solid rgba(212,175,55,0.35)", color: "#D4AF37" }}>
+                Stay Connected
+              </span>
+              <h2 className="m-0 text-3xl font-black text-white" style={{ fontFamily: "Epilogue, sans-serif", letterSpacing: "-0.01em" }}>
+                Follow Our Social Media
+              </h2>
+              <p className="m-0 text-xs font-semibold text-400 mt-2">
+                Join our digital community for exclusive updates, live ceremony streams, and daily snapshots!
+              </p>
+            </div>
+
+            <div className="grid gap-4 mt-2">
+              {/* YouTube Card */}
+              <div className="col-12 md:col-6">
+                <a
+                  href="https://www.youtube.com/@AdiwarnaFest"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex flex-column justify-content-between p-4 border-round-2xl h-full transition-all duration-300 relative overflow-hidden"
+                  style={{
+                    background: "linear-gradient(135deg, rgba(255, 0, 0, 0.08) 0%, rgba(20, 10, 10, 0.95) 100%)",
+                    border: "1px solid rgba(255, 0, 0, 0.25)",
+                    minHeight: "180px",
+                    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
+                    textDecoration: "none",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-5px)";
+                    e.currentTarget.style.borderColor = "rgba(255, 0, 0, 0.6)";
+                    e.currentTarget.style.boxShadow = "0 12px 30px rgba(255, 0, 0, 0.2)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.borderColor = "rgba(255, 0, 0, 0.25)";
+                    e.currentTarget.style.boxShadow = "0 4px 20px rgba(0, 0, 0, 0.3)";
+                  }}
+                >
+                  {/* Background Logo */}
+                  <YoutubeLogo size={130} weight="fill" className="absolute" style={{ right: "-20px", bottom: "-20px", opacity: 0.04, color: "#FF0000", transform: "rotate(-10deg)" }} />
+                  
+                  <div className="flex align-items-center justify-content-between relative z-1 mb-3">
+                    <div className="flex align-items-center justify-content-center border-circle" style={{ width: "42px", height: "42px", backgroundColor: "rgba(255, 0, 0, 0.15)", border: "1px solid rgba(255, 0, 0, 0.3)" }}>
+                      <YoutubeLogo size={24} weight="fill" color="#FF0000" />
+                    </div>
+                    <span className="text-[9px] font-black uppercase tracking-widest text-400" style={{ letterSpacing: "0.15em" }}>
+                      Official Channel
+                    </span>
+                  </div>
+
+                  <div className="relative z-1">
+                    <h3 className="m-0 text-xl font-bold text-white mb-2" style={{ fontFamily: "Epilogue, sans-serif" }}>YouTube</h3>
+                    <p className="m-0 text-xs text-400 line-height-3 mb-4">
+                      Watch our official trailers, promotional teasers, dynamic sports competition reels, and the live award ceremony streams!
+                    </p>
+                    <span className="inline-flex align-items-center gap-2 text-xs font-bold text-white transition-colors" style={{ color: "#FF3B30" }}>
+                      Subscribe Now ➜
+                    </span>
+                  </div>
+                </a>
+              </div>
+
+              {/* Instagram Card */}
+              <div className="col-12 md:col-6">
+                <a
+                  href="https://www.instagram.com/adiwarnafest/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex flex-column justify-content-between p-4 border-round-2xl h-full transition-all duration-300 relative overflow-hidden"
+                  style={{
+                    background: "linear-gradient(135deg, rgba(228, 64, 95, 0.08) 0%, rgba(20, 10, 15, 0.95) 100%)",
+                    border: "1px solid rgba(228, 64, 95, 0.25)",
+                    minHeight: "180px",
+                    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
+                    textDecoration: "none",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = "translateY(-5px)";
+                    e.currentTarget.style.borderColor = "rgba(228, 64, 95, 0.6)";
+                    e.currentTarget.style.boxShadow = "0 12px 30px rgba(228, 64, 95, 0.2)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = "translateY(0)";
+                    e.currentTarget.style.borderColor = "rgba(228, 64, 95, 0.25)";
+                    e.currentTarget.style.boxShadow = "0 4px 20px rgba(0, 0, 0, 0.3)";
+                  }}
+                >
+                  {/* Background Logo */}
+                  <InstagramLogo size={130} weight="fill" className="absolute" style={{ right: "-20px", bottom: "-20px", opacity: 0.04, color: "#E4405F", transform: "rotate(10deg)" }} />
+
+                  <div className="flex align-items-center justify-content-between relative z-1 mb-3">
+                    <div className="flex align-items-center justify-content-center border-circle" style={{ width: "42px", height: "42px", backgroundColor: "rgba(228, 64, 95, 0.15)", border: "1px solid rgba(228, 64, 95, 0.3)" }}>
+                      <InstagramLogo size={24} weight="fill" color="#E4405F" />
+                    </div>
+                    <span className="text-[9px] font-black uppercase tracking-widest text-400" style={{ letterSpacing: "0.15em" }}>
+                      Latest Updates
+                    </span>
+                  </div>
+
+                  <div className="relative z-1">
+                    <h3 className="m-0 text-xl font-bold text-white mb-2" style={{ fontFamily: "Epilogue, sans-serif" }}>Instagram</h3>
+                    <p className="m-0 text-xs text-400 line-height-3 mb-4">
+                      Catch daily snapshot updates, behind-the-scenes committee interviews, vibrant event photos, and direct story feeds!
+                    </p>
+                    <span className="inline-flex align-items-center gap-2 text-xs font-bold text-white transition-colors" style={{ color: "#E4405F" }}>
+                      Follow Us ➜
+                    </span>
+                  </div>
+                </a>
+              </div>
             </div>
           </div>
         </section>

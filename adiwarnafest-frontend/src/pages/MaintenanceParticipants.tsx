@@ -155,11 +155,11 @@ const MaintenanceParticipants = () => {
         life: 3000
       })
       setNewPassword('')
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.current?.show({
         severity: 'error',
         summary: 'Reset Failed',
-        detail: err?.message || 'Failed to reset password.',
+        detail: err instanceof Error ? err.message : 'Failed to reset password.',
         life: 3000
       })
     } finally {
@@ -213,7 +213,7 @@ const MaintenanceParticipants = () => {
           <Button label="Refresh" onClick={loadParticipants} outlined />
         </div>
 
-        <div className="border-round-2xl p-3 shadow-2" style={{ backgroundColor: '#fff', border: '1px solid #eee' }}>
+        <div className="border-round-2xl p-3 shadow-2" style={{ backgroundColor: '#fff', border: '1px solid #eee', overflowX: 'auto' }}>
           <DataTable
             value={filteredParticipants}
             paginator
