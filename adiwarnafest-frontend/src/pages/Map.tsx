@@ -52,7 +52,7 @@ const MAP_POSITIONS: Record<string, MarkerPos> = {
   B18: { x: 39, y: 42 },
   B17: { x: 42, y: 42 },
   B16: { x: 47, y: 42 },
-  B15: { x: 50, y: 42 },
+  B15: { x: 49, y: 42, w: 6.0 },
   B14: { x: 55, y: 42 },
   B13: { x: 58, y: 42 },
   B12: { x: 63, y: 42 },
@@ -88,41 +88,55 @@ interface InteractiveMapProps {
 
 const InteractiveMap: React.FC<InteractiveMapProps> = ({ floor, vendors, onMarkerClick, fading }) => {
   const [zoom, setZoom] = useState(1);
-  const [lastDistance, setLastDistance] = useState(0);
-  const mapRef = React.useRef<HTMLDivElement>(null);
+  const zoomRef = React.useRef(zoom);
+  const lastDistanceRef = React.useRef(0);
+  const scrollRef = React.useRef<HTMLDivElement>(null);
 
-  const getDistance = (touches: React.TouchList) => {
-    if (touches.length < 2) return 0;
-    const dx = touches[0]!.clientX - touches[1]!.clientX;
-    const dy = touches[0]!.clientY - touches[1]!.clientY;
-    return Math.sqrt(dx * dx + dy * dy);
-  };
+  // Keep ref in sync so the non-React touch handler can read latest zoom
+  useEffect(() => { zoomRef.current = zoom; }, [zoom]);
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (e.touches.length === 2) {
-      setLastDistance(getDistance(e.touches));
-    }
-  };
+  // Register passive:false touchmove so preventDefault actually works for pinch
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
 
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (e.touches.length === 2) {
+    const getDistance = (touches: TouchList) => {
+      if (touches.length < 2) return 0;
+      const dx = touches[0]!.clientX - touches[1]!.clientX;
+      const dy = touches[0]!.clientY - touches[1]!.clientY;
+      return Math.sqrt(dx * dx + dy * dy);
+    };
+
+    const onTouchStart = (e: TouchEvent) => {
+      if (e.touches.length === 2) lastDistanceRef.current = getDistance(e.touches);
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      if (e.touches.length !== 2) return;
       e.preventDefault();
-      const currentDistance = getDistance(e.touches);
-      if (lastDistance > 0) {
-        const ratio = currentDistance / lastDistance;
+      const dist = getDistance(e.touches);
+      if (lastDistanceRef.current > 0) {
+        const ratio = dist / lastDistanceRef.current;
         if (ratio > 1.01 || ratio < 0.99) {
           setZoom((prev) => Math.max(1, Math.min(prev * ratio, 4)));
-          setLastDistance(currentDistance);
+          lastDistanceRef.current = dist;
         }
       } else {
-        setLastDistance(currentDistance);
+        lastDistanceRef.current = dist;
       }
-    }
-  };
+    };
 
-  const handleTouchEnd = () => {
-    setLastDistance(0);
-  };
+    const onTouchEnd = () => { lastDistanceRef.current = 0; };
+
+    el.addEventListener("touchstart", onTouchStart, { passive: true });
+    el.addEventListener("touchmove", onTouchMove, { passive: false });
+    el.addEventListener("touchend", onTouchEnd, { passive: true });
+    return () => {
+      el.removeEventListener("touchstart", onTouchStart);
+      el.removeEventListener("touchmove", onTouchMove);
+      el.removeEventListener("touchend", onTouchEnd);
+    };
+  }, []);
 
   return (
     <div
@@ -152,103 +166,107 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ floor, vendors, onMarke
         <p style={{ margin: 0, fontSize: "11px", color: P.muted, opacity: 0.6, fontStyle: "italic" }}>Tap booth • Pinch to zoom</p>
       </div>
 
+      {/* Scrollable viewport — expands when zoomed so you can pan */}
       <div
-        ref={mapRef}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
+        ref={scrollRef}
         style={{
-          position: "relative",
+          overflow: zoom > 1 ? "auto" : "hidden",
           background: "#faf7f5",
           lineHeight: 0,
-          aspectRatio: floor === "1st" ? "2366/1251" : "2377/1811",
-          transform: `scale(${zoom})`,
-          transformOrigin: "center top",
-          transition: zoom === 1 ? "transform 0.3s ease-out" : "none",
-          touchAction: "none",
-          overflow: zoom > 1 ? "auto" : "hidden",
-        }}
+          touchAction: zoom > 1 ? "pan-x pan-y" : "none",
+          WebkitOverflowScrolling: "touch",
+        } as React.CSSProperties}
       >
-        {zoom > 1 && (
-          <div
-            style={{
-              position: "absolute",
-              top: "10px",
-              right: "10px",
-              background: "rgba(0,0,0,0.5)",
-              color: "#fff",
-              padding: "4px 8px",
-              borderRadius: "4px",
-              fontSize: "12px",
-              zIndex: 100,
-              pointerEvents: "none",
-            }}
-          >
-            {(zoom * 100).toFixed(0)}%
-          </div>
-        )}
-
-        <img
-          src={floor === "1st" ? FIRST_FLOOR_MAP : GROUND_FLOOR_MAP}
-          alt={`${floor === "1st" ? "1st" : "Ground"} Floor venue map`}
-          style={{ width: "100%", height: "100%", display: "block", userSelect: "none", objectFit: "cover" }}
-          draggable={false}
-        />
-
-        {vendors.map((vendor) => {
-          const pos = MAP_POSITIONS[vendor.id];
-          if (!pos) return null;
-          const width = pos.w ?? 3.0;
-          const height = pos.h ?? 5.0;
-          const label = vendor.isSpecial ? (vendor.id_display ?? vendor.id) : vendor.id.replace("B", "");
-
-          return (
-            <div key={vendor.id}>
-              <button
-                className={`booth-overlay ${vendor.isSpecial ? "booth-special" : ""} ${vendor.id === "GADPA" ? "booth-gadpa" : ""} ${vendor.id === "B30" ? "booth-anytime" : ""}`}
-                onClick={() => onMarkerClick(vendor)}
-                aria-label={`View ${vendor.name} (Booth ${vendor.id_display ?? formatBadge(vendor.id)})`}
-                title={`${formatBadge(vendor.id)} — ${vendor.name}`}
-                style={{
-                  left: `${pos.x}%`,
-                  top: `${pos.y}%`,
-                  width: `${width}%`,
-                  height: `${height}%`,
-                }}
-              >
-                <span className="booth-label">{label}</span>
-              </button>
-              {vendor.id === "GADPA" && (
-                <img
-                  src={GADPA_LOGO}
-                  alt="GADPA Logo"
-                  style={{
-                    position: "absolute",
-                    left: `${pos.x + 2.5}%`,
-                    top: `${pos.y}%`,
-                    width: "2.5%",
-                    height: "auto",
-                    maxHeight: "15%",
-                  }}
-                />
-              )}
-              {vendor.id === "B30" && (
-                <img
-                  src={ANYTIME_FITNESS_LOGO}
-                  alt="Anytime Fitness Logo"
-                  style={{
-                    position: "absolute",
-                    left: `${pos.x - 1}%`,
-                    top: `${pos.y + 2.5}%`,
-                    width: "3.0%",
-                    height: "auto",
-                    maxHeight: "12%",
-                  }}
-                />
-              )}
+        {/* Inner map — grows with zoom; buttons stay % positioned so they scale too */}
+        <div
+          style={{
+            position: "relative",
+            width: `${zoom * 100}%`,
+            aspectRatio: floor === "1st" ? "2366/1251" : "2377/1811",
+            lineHeight: 0,
+          }}
+        >
+          {zoom > 1 && (
+            <div
+              style={{
+                position: "absolute",
+                top: "10px",
+                right: "10px",
+                background: "rgba(0,0,0,0.5)",
+                color: "#fff",
+                padding: "4px 8px",
+                borderRadius: "4px",
+                fontSize: "12px",
+                zIndex: 100,
+                pointerEvents: "none",
+              }}
+            >
+              {(zoom * 100).toFixed(0)}%
             </div>
-          );
-        })}
+          )}
+
+          <img
+            src={floor === "1st" ? FIRST_FLOOR_MAP : GROUND_FLOOR_MAP}
+            alt={`${floor === "1st" ? "1st" : "Ground"} Floor venue map`}
+            style={{ width: "100%", height: "100%", display: "block", userSelect: "none", objectFit: "cover" }}
+            draggable={false}
+          />
+
+          {vendors.map((vendor) => {
+            const pos = MAP_POSITIONS[vendor.id];
+            if (!pos) return null;
+            const width = pos.w ?? 3.0;
+            const height = pos.h ?? 5.0;
+            const label = vendor.id_display ?? (vendor.isSpecial ? vendor.id : vendor.id.replace("B", ""));
+
+            return (
+              <div key={vendor.id}>
+                <button
+                  className={`booth-overlay ${vendor.isSpecial ? "booth-special" : ""} ${vendor.id === "GADPA" ? "booth-gadpa" : ""} ${vendor.id === "B30" ? "booth-anytime" : ""}`}
+                  onClick={() => onMarkerClick(vendor)}
+                  aria-label={`View ${vendor.name} (Booth ${vendor.id_display ?? formatBadge(vendor.id)})`}
+                  title={`${formatBadge(vendor.id)} — ${vendor.name}`}
+                  style={{
+                    left: `${pos.x}%`,
+                    top: `${pos.y}%`,
+                    width: `${width}%`,
+                    height: `${height}%`,
+                  }}
+                >
+                  <span className="booth-label">{label}</span>
+                </button>
+                {vendor.id === "GADPA" && (
+                  <img
+                    src={GADPA_LOGO}
+                    alt="GADPA Logo"
+                    style={{
+                      position: "absolute",
+                      left: `${pos.x + 2.5}%`,
+                      top: `${pos.y}%`,
+                      width: "2.5%",
+                      height: "auto",
+                      maxHeight: "15%",
+                    }}
+                  />
+                )}
+                {vendor.id === "B30" && (
+                  <img
+                    src={ANYTIME_FITNESS_LOGO}
+                    alt="Anytime Fitness Logo"
+                    style={{
+                      position: "absolute",
+                      left: `${pos.x - 1}%`,
+                      top: `${pos.y + 2.5}%`,
+                      width: "3.0%",
+                      height: "auto",
+                      maxHeight: "12%",
+                    }}
+                  />
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
@@ -266,7 +284,6 @@ const InfoModal: React.FC<InfoModalProps> = ({ vendor, onClose, onViewImage }) =
   const [activeTab, setActiveTab] = useState<"overview" | "menu" | "flyer">("overview");
   const hasImage = !!vendor.localImage;
   const menuCount = vendor.menu?.length ?? 0;
-
 
   return (
     <div
@@ -307,22 +324,23 @@ const InfoModal: React.FC<InfoModalProps> = ({ vendor, onClose, onViewImage }) =
         <div style={{ position: "relative", height: "200px", width: "100%", flexShrink: 0, overflow: "hidden" }}>
           {hasImage ? (
             <>
-              <img
-                src={vendor.localImage}
-                alt={vendor.name}
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />
+              <img src={vendor.localImage} alt={vendor.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.78) 100%)" }} />
             </>
           ) : (
             <>
               <div style={{ width: "100%", height: "100%", background: `linear-gradient(135deg, ${P.primary} 0%, #d66a22 50%, ${P.accent} 100%)` }} />
               <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.55) 100%)" }} />
-              <div style={{
-                position: "absolute", inset: 0, opacity: 0.07, pointerEvents: "none",
-                backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)",
-                backgroundSize: "32px 32px",
-              }} />
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  opacity: 0.07,
+                  pointerEvents: "none",
+                  backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)",
+                  backgroundSize: "32px 32px",
+                }}
+              />
             </>
           )}
 
@@ -331,15 +349,30 @@ const InfoModal: React.FC<InfoModalProps> = ({ vendor, onClose, onViewImage }) =
             onClick={onClose}
             aria-label="Close"
             style={{
-              position: "absolute", top: "16px", right: "16px",
-              background: "rgba(255,255,255,0.2)", backdropFilter: "blur(4px)",
-              border: "1px solid rgba(255,255,255,0.3)", borderRadius: "50%",
-              width: "36px", height: "36px",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              cursor: "pointer", zIndex: 10, transition: "all 0.2s ease",
+              position: "absolute",
+              top: "16px",
+              right: "16px",
+              background: "rgba(255,255,255,0.2)",
+              backdropFilter: "blur(4px)",
+              border: "1px solid rgba(255,255,255,0.3)",
+              borderRadius: "50%",
+              width: "36px",
+              height: "36px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              zIndex: 10,
+              transition: "all 0.2s ease",
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.4)"; e.currentTarget.style.transform = "scale(1.05)"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.2)"; e.currentTarget.style.transform = "scale(1)"; }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "rgba(255,255,255,0.4)";
+              e.currentTarget.style.transform = "scale(1.05)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "rgba(255,255,255,0.2)";
+              e.currentTarget.style.transform = "scale(1)";
+            }}
           >
             <X size={18} weight="bold" color="#fff" />
           </button>
@@ -347,45 +380,83 @@ const InfoModal: React.FC<InfoModalProps> = ({ vendor, onClose, onViewImage }) =
           {/* Heading overlay */}
           <div style={{ position: "absolute", bottom: "18px", left: "20px", right: "60px", color: "#fff" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px", flexWrap: "wrap" }}>
-              <span style={{
-                background: vendor.isSpecial ? "#D4AF37" : P.accent,
-                color: vendor.isSpecial ? "#0A0A0B" : "#3a1800",
-                fontSize: "10px", fontWeight: 900, letterSpacing: "0.08em",
-                padding: "3px 9px", borderRadius: "6px", boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
-              }}>
-                {vendor.isSpecial ? (vendor.id_display ?? vendor.id) : formatBadge(vendor.id)}
+              <span
+                style={{
+                  background: vendor.isSpecial ? "#D4AF37" : P.accent,
+                  color: vendor.isSpecial ? "#0A0A0B" : "#3a1800",
+                  fontSize: "10px",
+                  fontWeight: 900,
+                  letterSpacing: "0.08em",
+                  padding: "3px 9px",
+                  borderRadius: "6px",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.2)",
+                }}
+              >
+                {vendor.isSpecial
+                  ? (vendor.id_display ?? vendor.id)
+                  : vendor.id_display
+                    ? vendor.id_display
+                        .split(" & ")
+                        .map((n) => `#${n.padStart(2, "0")}`)
+                        .join(" & ")
+                    : formatBadge(vendor.id)}
               </span>
-              <span style={{
-                fontSize: "10px", color: "#fff", fontWeight: 700,
-                background: "rgba(255,255,255,0.18)", border: "1px solid rgba(255,255,255,0.25)",
-                padding: "3px 9px", borderRadius: "999px",
-              }}>
+              <span
+                style={{
+                  fontSize: "10px",
+                  color: "#fff",
+                  fontWeight: 700,
+                  background: "rgba(255,255,255,0.18)",
+                  border: "1px solid rgba(255,255,255,0.25)",
+                  padding: "3px 9px",
+                  borderRadius: "999px",
+                }}
+              >
                 {vendor.floor === "1st" ? "First Floor" : "Ground Floor"}
               </span>
             </div>
-            <h3 style={{
-              margin: 0, fontSize: "22px", fontWeight: 900,
-              fontFamily: "Epilogue, sans-serif", letterSpacing: "-0.02em",
-              textShadow: "0 2px 8px rgba(0,0,0,0.6)", lineHeight: 1.2,
-            }}>
+            <h3
+              style={{
+                margin: 0,
+                fontSize: "22px",
+                fontWeight: 900,
+                fontFamily: "Epilogue, sans-serif",
+                letterSpacing: "-0.02em",
+                textShadow: "0 2px 8px rgba(0,0,0,0.6)",
+                lineHeight: 1.2,
+              }}
+            >
               {vendor.name}
             </h3>
           </div>
         </div>
 
         {/* Tab Navbar */}
-        <div style={{
-          display: "flex", borderBottom: "1px solid rgba(161,64,0,0.08)",
-          background: "rgba(161,64,0,0.02)", padding: "0 12px", flexShrink: 0,
-        }}>
+        <div
+          style={{
+            display: "flex",
+            borderBottom: "1px solid rgba(161,64,0,0.08)",
+            background: "rgba(161,64,0,0.02)",
+            padding: "0 12px",
+            flexShrink: 0,
+          }}
+        >
           <button
             onClick={() => setActiveTab("overview")}
             style={{
-              flex: 1, padding: "13px 8px", background: "none", border: "none",
+              flex: 1,
+              padding: "13px 8px",
+              background: "none",
+              border: "none",
               borderBottom: `3px solid ${activeTab === "overview" ? P.primary : "transparent"}`,
               color: activeTab === "overview" ? P.primary : P.muted,
-              fontSize: "12px", fontWeight: 800, cursor: "pointer",
-              display: "flex", alignItems: "center", justifyContent: "center", gap: "5px",
+              fontSize: "12px",
+              fontWeight: 800,
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "5px",
               transition: "all 0.2s ease",
             }}
           >
@@ -396,24 +467,37 @@ const InfoModal: React.FC<InfoModalProps> = ({ vendor, onClose, onViewImage }) =
           <button
             onClick={() => setActiveTab("menu")}
             style={{
-              flex: 1, padding: "13px 8px", background: "none", border: "none",
+              flex: 1,
+              padding: "13px 8px",
+              background: "none",
+              border: "none",
               borderBottom: `3px solid ${activeTab === "menu" ? P.primary : "transparent"}`,
               color: activeTab === "menu" ? P.primary : P.muted,
-              fontSize: "12px", fontWeight: 800, cursor: "pointer",
-              display: "flex", alignItems: "center", justifyContent: "center", gap: "5px",
+              fontSize: "12px",
+              fontWeight: 800,
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "5px",
               transition: "all 0.2s ease",
             }}
           >
             <Scroll size={16} weight={activeTab === "menu" ? "fill" : "regular"} />
             Menu Guide
             {menuCount > 0 && (
-              <span style={{
-                background: activeTab === "menu" ? P.primary : "rgba(112,90,73,0.12)",
-                color: activeTab === "menu" ? "#fff" : P.muted,
-                fontSize: "10px", fontWeight: 800,
-                padding: "1px 6px", borderRadius: "999px", lineHeight: 1.6,
-                transition: "all 0.2s ease",
-              }}>
+              <span
+                style={{
+                  background: activeTab === "menu" ? P.primary : "rgba(112,90,73,0.12)",
+                  color: activeTab === "menu" ? "#fff" : P.muted,
+                  fontSize: "10px",
+                  fontWeight: 800,
+                  padding: "1px 6px",
+                  borderRadius: "999px",
+                  lineHeight: 1.6,
+                  transition: "all 0.2s ease",
+                }}
+              >
                 {menuCount}
               </span>
             )}
@@ -423,11 +507,19 @@ const InfoModal: React.FC<InfoModalProps> = ({ vendor, onClose, onViewImage }) =
             <button
               onClick={() => setActiveTab("flyer")}
               style={{
-                flex: 1, padding: "13px 8px", background: "none", border: "none",
+                flex: 1,
+                padding: "13px 8px",
+                background: "none",
+                border: "none",
                 borderBottom: `3px solid ${activeTab === "flyer" ? P.primary : "transparent"}`,
                 color: activeTab === "flyer" ? P.primary : P.muted,
-                fontSize: "12px", fontWeight: 800, cursor: "pointer",
-                display: "flex", alignItems: "center", justifyContent: "center", gap: "5px",
+                fontSize: "12px",
+                fontWeight: 800,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "5px",
                 transition: "all 0.2s ease",
               }}
             >
@@ -439,48 +531,76 @@ const InfoModal: React.FC<InfoModalProps> = ({ vendor, onClose, onViewImage }) =
 
         {/* Scrollable Tab Content */}
         <div style={{ padding: "20px 24px", overflowY: "auto", flex: 1, minHeight: "200px" }}>
-
           {/* Overview Tab */}
           {activeTab === "overview" && (
             <div style={{ animation: "adiFadeIn 0.2s ease-out" }}>
               {/* Quick-info strip */}
               <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", marginBottom: "18px" }}>
-                <span style={{
-                  display: "flex", alignItems: "center", gap: "5px",
-                  background: "rgba(161,64,0,0.06)", border: "1px solid rgba(161,64,0,0.1)",
-                  color: P.primary, fontSize: "11px", fontWeight: 700,
-                  padding: "5px 11px", borderRadius: "999px",
-                }}>
+                <span
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "5px",
+                    background: "rgba(161,64,0,0.06)",
+                    border: "1px solid rgba(161,64,0,0.1)",
+                    color: P.primary,
+                    fontSize: "11px",
+                    fontWeight: 700,
+                    padding: "5px 11px",
+                    borderRadius: "999px",
+                  }}
+                >
                   <MapPin size={12} weight="fill" />
                   {vendor.floor === "1st" ? "1st Floor" : "Ground Floor"}
                 </span>
                 {menuCount > 0 && (
-                  <span style={{
-                    display: "flex", alignItems: "center", gap: "5px",
-                    background: "rgba(161,64,0,0.06)", border: "1px solid rgba(161,64,0,0.1)",
-                    color: P.primary, fontSize: "11px", fontWeight: 700,
-                    padding: "5px 11px", borderRadius: "999px",
-                  }}>
+                  <span
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "5px",
+                      background: "rgba(161,64,0,0.06)",
+                      border: "1px solid rgba(161,64,0,0.1)",
+                      color: P.primary,
+                      fontSize: "11px",
+                      fontWeight: 700,
+                      padding: "5px 11px",
+                      borderRadius: "999px",
+                    }}
+                  >
                     <Storefront size={12} weight="fill" />
                     {menuCount} item{menuCount !== 1 ? "s" : ""}
                   </span>
                 )}
               </div>
 
-              <p style={{ margin: "0 0 20px", fontSize: "14px", lineHeight: 1.7, color: P.muted, textAlign: "justify" }}>
-                {vendor.description}
-              </p>
+              <p style={{ margin: "0 0 20px", fontSize: "14px", lineHeight: 1.7, color: P.muted, textAlign: "justify" }}>{vendor.description}</p>
 
-              <div style={{
-                display: "flex", alignItems: "center", gap: "10px",
-                padding: "12px 16px", borderRadius: "14px",
-                background: "rgba(161,64,0,0.04)", border: "1px solid rgba(161,64,0,0.08)", marginBottom: "20px",
-              }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  padding: "12px 16px",
+                  borderRadius: "14px",
+                  background: "rgba(161,64,0,0.04)",
+                  border: "1px solid rgba(161,64,0,0.08)",
+                  marginBottom: "20px",
+                }}
+              >
                 <MapPin size={18} weight="fill" color={P.primary} />
                 <div>
                   <p style={{ margin: 0, fontSize: "10px", fontWeight: 700, color: P.muted, textTransform: "uppercase" }}>Location</p>
                   <p style={{ margin: 0, fontSize: "13px", fontWeight: 800, color: P.primary }}>
-                    {vendor.floor === "1st" ? "1st Floor (Upstairs)" : "Ground Floor"} — Booth {vendor.isSpecial ? (vendor.id_display ?? vendor.id) : formatBadge(vendor.id)}
+                    {vendor.floor === "1st" ? "1st Floor (Upstairs)" : "Ground Floor"} — Booth{" "}
+                    {vendor.isSpecial
+                      ? (vendor.id_display ?? vendor.id)
+                      : vendor.id_display
+                        ? vendor.id_display
+                            .split(" & ")
+                            .map((n) => `#${n.padStart(2, "0")}`)
+                            .join(" & ")
+                        : formatBadge(vendor.id)}
                   </p>
                 </div>
               </div>
@@ -493,12 +613,19 @@ const InfoModal: React.FC<InfoModalProps> = ({ vendor, onClose, onViewImage }) =
                   </div>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
                     {vendor.tags.map((tag) => (
-                      <span key={tag} style={{
-                        background: "rgba(161,64,0,0.06)", color: P.primary,
-                        fontSize: "11.5px", fontWeight: 700, padding: "5px 12px",
-                        borderRadius: "10px", border: "1px solid rgba(161,64,0,0.08)",
-                        transition: "all 0.2s ease",
-                      }}>
+                      <span
+                        key={tag}
+                        style={{
+                          background: "rgba(161,64,0,0.06)",
+                          color: P.primary,
+                          fontSize: "11.5px",
+                          fontWeight: 700,
+                          padding: "5px 12px",
+                          borderRadius: "10px",
+                          border: "1px solid rgba(161,64,0,0.08)",
+                          transition: "all 0.2s ease",
+                        }}
+                      >
                         {tag}
                       </span>
                     ))}
@@ -512,15 +639,19 @@ const InfoModal: React.FC<InfoModalProps> = ({ vendor, onClose, onViewImage }) =
           {activeTab === "menu" && (
             <div style={{ animation: "adiFadeIn 0.2s ease-out" }}>
               {/* Header row with item count + price range */}
-              <div style={{
-                display: "flex", alignItems: "center", justifyContent: "space-between",
-                marginBottom: "16px", gap: "8px", flexWrap: "wrap",
-              }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  marginBottom: "16px",
+                  gap: "8px",
+                  flexWrap: "wrap",
+                }}
+              >
                 <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                   <Storefront size={16} weight="fill" color={P.primary} />
-                  <p style={{ margin: 0, fontSize: "11px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.06em", color: P.muted }}>
-                    Menu Guide
-                  </p>
+                  <p style={{ margin: 0, fontSize: "11px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.06em", color: P.muted }}>Menu Guide</p>
                 </div>
               </div>
 
@@ -530,12 +661,17 @@ const InfoModal: React.FC<InfoModalProps> = ({ vendor, onClose, onViewImage }) =
                     <div
                       key={idx}
                       style={{
-                        display: "flex", alignItems: "center", justifyContent: "space-between",
-                        padding: "13px 16px", background: "#fff", borderRadius: "14px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        padding: "13px 16px",
+                        background: "#fff",
+                        borderRadius: "14px",
                         border: "1px solid rgba(161,64,0,0.06)",
                         borderLeft: `4px solid ${P.primary}`,
                         boxShadow: "0 2px 8px rgba(0,0,0,0.02)",
-                        transition: "all 0.2s ease", gap: "12px",
+                        transition: "all 0.2s ease",
+                        gap: "12px",
                       }}
                       onMouseEnter={(e) => {
                         e.currentTarget.style.transform = "translateX(4px)";
@@ -554,12 +690,18 @@ const InfoModal: React.FC<InfoModalProps> = ({ vendor, onClose, onViewImage }) =
                 </div>
               ) : (
                 <div style={{ textAlign: "center", padding: "40px 10px" }}>
-                  <div style={{
-                    width: "44px", height: "44px", borderRadius: "12px",
-                    background: "rgba(161,64,0,0.06)",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    margin: "0 auto 12px",
-                  }}>
+                  <div
+                    style={{
+                      width: "44px",
+                      height: "44px",
+                      borderRadius: "12px",
+                      background: "rgba(161,64,0,0.06)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      margin: "0 auto 12px",
+                    }}
+                  >
                     <Storefront size={20} weight="regular" color={P.muted} />
                   </div>
                   <p style={{ margin: "0 0 4px", fontSize: "14px", fontWeight: 700, color: P.primary }}>No Menu Available</p>
@@ -572,28 +714,46 @@ const InfoModal: React.FC<InfoModalProps> = ({ vendor, onClose, onViewImage }) =
           {/* Flyer Tab */}
           {activeTab === "flyer" && hasImage && (
             <div style={{ animation: "adiFadeIn 0.2s ease-out", display: "flex", flexDirection: "column", alignItems: "center" }}>
-              <div style={{
-                width: "100%", borderRadius: "16px", overflow: "hidden",
-                border: "1px solid rgba(161,64,0,0.08)", boxShadow: "0 8px 24px rgba(0,0,0,0.05)",
-                background: "#fff", lineHeight: 0, marginBottom: "16px",
-              }}>
-                <img
-                  src={vendor.localImage}
-                  alt={`${vendor.name} menu flyer`}
-                  style={{ width: "100%", maxHeight: "350px", objectFit: "contain", display: "block" }}
-                />
+              <div
+                style={{
+                  width: "100%",
+                  borderRadius: "16px",
+                  overflow: "hidden",
+                  border: "1px solid rgba(161,64,0,0.08)",
+                  boxShadow: "0 8px 24px rgba(0,0,0,0.05)",
+                  background: "#fff",
+                  lineHeight: 0,
+                  marginBottom: "16px",
+                }}
+              >
+                <img src={vendor.localImage} alt={`${vendor.name} menu flyer`} style={{ width: "100%", maxHeight: "350px", objectFit: "contain", display: "block" }} />
               </div>
               <button
                 onClick={onViewImage}
                 style={{
-                  padding: "10px 20px", background: P.primary, color: "#fff",
-                  border: "none", borderRadius: "12px", fontSize: "13px", fontWeight: 800,
-                  cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center",
-                  gap: "8px", transition: "background 0.15s, transform 0.15s",
+                  padding: "10px 20px",
+                  background: P.primary,
+                  color: "#fff",
+                  border: "none",
+                  borderRadius: "12px",
+                  fontSize: "13px",
+                  fontWeight: 800,
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "8px",
+                  transition: "background 0.15s, transform 0.15s",
                   boxShadow: "0 4px 12px rgba(161,64,0,0.2)",
                 }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = "#8a3500"; e.currentTarget.style.transform = "scale(1.02)"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = P.primary; e.currentTarget.style.transform = "scale(1)"; }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "#8a3500";
+                  e.currentTarget.style.transform = "scale(1.02)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = P.primary;
+                  e.currentTarget.style.transform = "scale(1)";
+                }}
               >
                 <MagnifyingGlass size={16} weight="bold" />
                 View Fullscreen Flyer
@@ -604,25 +764,44 @@ const InfoModal: React.FC<InfoModalProps> = ({ vendor, onClose, onViewImage }) =
 
         {/* Sticky flyer CTA — pinned at modal bottom when not on flyer tab */}
         {hasImage && activeTab !== "flyer" && (
-          <div style={{
-            borderTop: "1px solid rgba(161,64,0,0.08)",
-            padding: "11px 20px",
-            background: "rgba(161,64,0,0.02)",
-            flexShrink: 0,
-            display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px",
-          }}>
+          <div
+            style={{
+              borderTop: "1px solid rgba(161,64,0,0.08)",
+              padding: "11px 20px",
+              background: "rgba(161,64,0,0.02)",
+              flexShrink: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: "12px",
+            }}
+          >
             <p style={{ margin: 0, fontSize: "11px", color: P.muted, opacity: 0.65 }}>Menu flyer available for this booth</p>
             <button
               onClick={() => setActiveTab("flyer")}
               style={{
-                background: "none", border: `1px solid rgba(161,64,0,0.22)`,
-                borderRadius: "10px", padding: "7px 14px",
-                color: P.primary, fontSize: "12px", fontWeight: 800,
-                cursor: "pointer", display: "flex", alignItems: "center", gap: "5px",
-                transition: "all 0.15s ease", whiteSpace: "nowrap",
+                background: "none",
+                border: `1px solid rgba(161,64,0,0.22)`,
+                borderRadius: "10px",
+                padding: "7px 14px",
+                color: P.primary,
+                fontSize: "12px",
+                fontWeight: 800,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "5px",
+                transition: "all 0.15s ease",
+                whiteSpace: "nowrap",
               }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(161,64,0,0.06)"; e.currentTarget.style.borderColor = P.primary; }}
-              onMouseLeave={(e) => { e.currentTarget.style.background = "none"; e.currentTarget.style.borderColor = "rgba(161,64,0,0.22)"; }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "rgba(161,64,0,0.06)";
+                e.currentTarget.style.borderColor = P.primary;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "none";
+                e.currentTarget.style.borderColor = "rgba(161,64,0,0.22)";
+              }}
             >
               <Image size={13} weight="bold" />
               View Flyer
@@ -683,8 +862,13 @@ const ImageModal: React.FC<ImageModalProps> = ({ vendor, onClose }) => (
         }}
       >
         <div>
-          <span style={{ fontSize: "10px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.09em", color: P.primary, display: "block", marginBottom: "2px" }}>
-            {formatBadge(vendor.id)} · {vendor.floor === "1st" ? "1st Floor" : "Ground Floor"}
+          <span style={{ fontSize: "10px", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.09em", color: P.primary, display: "flex", alignItems: "center", flexWrap: "wrap", gap: "4px", marginBottom: "2px" }}>
+            {vendor.id_display
+              ? vendor.id_display.split(" & ").map((n) => (
+                  <span key={n} style={{ background: "rgba(161,64,0,0.08)", borderRadius: "4px", padding: "1px 5px" }}>{`#${n.padStart(2, "0")}`}</span>
+                ))
+              : formatBadge(vendor.id)}
+            {" "}· {vendor.floor === "1st" ? "1st Floor" : "Ground Floor"}
           </span>
           <h3 style={{ margin: 0, fontSize: "17px", fontWeight: 800, color: "#111827", fontFamily: "Epilogue, sans-serif", letterSpacing: "-0.02em" }}>{vendor.name}</h3>
         </div>
@@ -894,7 +1078,13 @@ const BoothCard: React.FC<BoothCardProps> = ({ vendor, onViewInfo }) => {
             flexShrink: 0,
           }}
         >
-          {formatBadge(vendor.id)}
+          {vendor.id_display ? (
+            <span style={{ display: "flex", gap: "4px" }}>
+              {vendor.id_display.split(" & ").map((n) => (
+                <span key={n}>{`#${n.padStart(2, "0")}`}</span>
+              ))}
+            </span>
+          ) : formatBadge(vendor.id)}
         </span>
         <span
           style={{
@@ -937,7 +1127,6 @@ const BoothCard: React.FC<BoothCardProps> = ({ vendor, onViewInfo }) => {
       >
         {vendor.description}
       </p>
-
 
       {vendor.tags && vendor.tags.length > 0 && (
         <div>

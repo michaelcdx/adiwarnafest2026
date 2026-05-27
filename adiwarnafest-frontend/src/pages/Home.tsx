@@ -555,7 +555,6 @@ const Home: React.FC = () => {
                 { name: "Dengkil Steam Fish Head", logo: "/DengkilSteamFishHead_Logo.jpg" },
                 { name: "Anytime Fitness", logo: "/Anytime_fitness_logo.jpeg" },
                 { name: "Sai Ngon", logo: "/Sai_Ngon_logo.jpg" },
-                { name: "Printcious", logo: "/printcious_logo.png" },
               ].map((sponsor, idx) => (
                 <div key={idx} className="flex flex-column align-items-center gap-2 p-2 transition-all duration-300 hover:transform-y-1" style={{ width: "calc(50% - 1.5rem)", maxWidth: "160px" }}>
                   <div className="border-round-xl flex align-items-center justify-content-center p-3 w-full bg-white shadow-1 border-1" style={{ height: "100px", borderColor: "rgba(0,0,0,0.03)" }}>
@@ -590,14 +589,12 @@ const Home: React.FC = () => {
               <h2 className="m-0 text-3xl font-black text-white" style={{ fontFamily: "Epilogue, sans-serif", letterSpacing: "-0.01em" }}>
                 Follow Our Social Media
               </h2>
-              <p className="m-0 text-xs font-semibold text-400 mt-2">
-                Join our digital community for exclusive updates, live ceremony streams, and daily snapshots!
-              </p>
+              <p className="m-0 text-xs font-semibold text-400 mt-2">Join our digital community for exclusive updates, live ceremony streams, and daily snapshots!</p>
             </div>
 
-            <div className="grid gap-4 mt-2">
+            <div className="flex flex-column md:flex-row gap-4 mt-2">
               {/* YouTube Card */}
-              <div className="col-12 md:col-6">
+              <div className="flex-1">
                 <a
                   href="https://www.youtube.com/@AdiwarnaFest"
                   target="_blank"
@@ -623,7 +620,7 @@ const Home: React.FC = () => {
                 >
                   {/* Background Logo */}
                   <YoutubeLogo size={130} weight="fill" className="absolute" style={{ right: "-20px", bottom: "-20px", opacity: 0.04, color: "#FF0000", transform: "rotate(-10deg)" }} />
-                  
+
                   <div className="flex align-items-center justify-content-between relative z-1 mb-3">
                     <div className="flex align-items-center justify-content-center border-circle" style={{ width: "42px", height: "42px", backgroundColor: "rgba(255, 0, 0, 0.15)", border: "1px solid rgba(255, 0, 0, 0.3)" }}>
                       <YoutubeLogo size={24} weight="fill" color="#FF0000" />
@@ -634,10 +631,10 @@ const Home: React.FC = () => {
                   </div>
 
                   <div className="relative z-1">
-                    <h3 className="m-0 text-xl font-bold text-white mb-2" style={{ fontFamily: "Epilogue, sans-serif" }}>YouTube</h3>
-                    <p className="m-0 text-xs text-400 line-height-3 mb-4">
-                      Watch our official trailers, promotional teasers, dynamic sports competition reels, and the live award ceremony streams!
-                    </p>
+                    <h3 className="m-0 text-xl font-bold text-white mb-2" style={{ fontFamily: "Epilogue, sans-serif" }}>
+                      YouTube
+                    </h3>
+                    <p className="m-0 text-xs text-400 line-height-3 mb-4">Watch the Mobile Legends live competition streams right here on our official channel!</p>
                     <span className="inline-flex align-items-center gap-2 text-xs font-bold text-white transition-colors" style={{ color: "#FF3B30" }}>
                       Subscribe Now ➜
                     </span>
@@ -646,7 +643,7 @@ const Home: React.FC = () => {
               </div>
 
               {/* Instagram Card */}
-              <div className="col-12 md:col-6">
+              <div className="flex-1">
                 <a
                   href="https://www.instagram.com/adiwarnafest/"
                   target="_blank"
@@ -683,10 +680,10 @@ const Home: React.FC = () => {
                   </div>
 
                   <div className="relative z-1">
-                    <h3 className="m-0 text-xl font-bold text-white mb-2" style={{ fontFamily: "Epilogue, sans-serif" }}>Instagram</h3>
-                    <p className="m-0 text-xs text-400 line-height-3 mb-4">
-                      Catch daily snapshot updates, behind-the-scenes committee interviews, vibrant event photos, and direct story feeds!
-                    </p>
+                    <h3 className="m-0 text-xl font-bold text-white mb-2" style={{ fontFamily: "Epilogue, sans-serif" }}>
+                      Instagram
+                    </h3>
+                    <p className="m-0 text-xs text-400 line-height-3 mb-4">Catch daily snapshot updates, behind-the-scenes committee interviews, vibrant event photos, and direct story feeds!</p>
                     <span className="inline-flex align-items-center gap-2 text-xs font-bold text-white transition-colors" style={{ color: "#E4405F" }}>
                       Follow Us ➜
                     </span>

@@ -208,6 +208,7 @@ export const vendorsData: Vendor[] = [
   },
   {
     id: "B15",
+    id_display: "15 & 16",
     name: "吃飯糰 and Celebrate Dessert",
     description:
       "Two amazing concepts come together in one massive double-booth! Fuel up with hearty, comforting, traditionally wrapped rice balls from 吃飯糰, then head right over to Celebrate Dessert to treat yourself to an exquisite celebratory sweet finish. The perfect savory-and-sweet tag team!",

@@ -348,7 +348,7 @@ const Competition = () => {
                       <span style={{ fontSize: "9px", fontWeight: 700, color: "#9ca3af", textTransform: "uppercase" }}>MYT</span>
                     </div>
                     <span style={{ background: isCompleted ? "#dcfce7" : "#FEF0E3", color: isCompleted ? "#166534" : "#92400e", padding: "3px 10px", borderRadius: "7px", fontSize: "9px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.5px", marginTop: "4px" }}>
-                      {match.remark || match.gameStatus}
+                      {match.gameStatus}
                     </span>
                   </div>
 

@@ -17,6 +17,7 @@ import type { UserSummary, UpdateUserPayload, RoleDescriptor } from '../services
 const MaintenanceParticipants = () => {
   const { role } = useAuth()
   const isAdmin = role === 'Admin'
+  const isMaintainer = role === 'Maintainer'
   const toast = useRef<Toast>(null)
   const [participants, setParticipants] = useState<UserSummary[]>([])
   const [loading, setLoading] = useState(true)
@@ -168,12 +169,16 @@ const MaintenanceParticipants = () => {
   }
 
   const actionTemplate = (user: UserSummary) => (
-    <Button
-      label="Manage"
-      text
-      onClick={() => openEdit(user)}
-      style={{ color: '#7c3aed' }}
-    />
+    isAdmin || isMaintainer ? (
+      <Button
+        label={isAdmin ? 'Manage' : 'Reset Password'}
+        text
+        onClick={() => openEdit(user)}
+        style={{ color: '#7c3aed' }}
+      />
+    ) : (
+      <span style={{ fontSize: '12px', color: '#9ca3af' }}>View only</span>
+    )
   )
 
   const emptyMessage = useMemo(() => {
@@ -248,32 +253,36 @@ const MaintenanceParticipants = () => {
             </div>
           )}
           <div className="flex flex-column gap-3">
-            <div className="flex flex-column gap-2">
-              <label className="text-sm font-semibold">Username</label>
-              <InputText
-                value={editForm.username || ''}
-                onChange={(e) => setEditForm(prev => ({ ...prev, username: e.target.value }))}
-              />
-            </div>
-            <div className="flex align-items-center gap-2">
-              <Checkbox
-                inputId="disable-participant"
-                checked={Boolean(editForm.isDisabled)}
-                onChange={(e) => setEditForm(prev => ({ ...prev, isDisabled: e.checked }))}
-              />
-              <label htmlFor="disable-participant" className="text-sm font-semibold">Disable participant</label>
-            </div>
-            {editForm.isDisabled && (
-              <div className="flex flex-column gap-2">
-                <label className="text-sm font-semibold">Disabled reason</label>
-                <InputText
-                  value={editForm.disabledReason || ''}
-                  onChange={(e) => setEditForm(prev => ({ ...prev, disabledReason: e.target.value }))}
-                />
-              </div>
+            {isAdmin && (
+              <>
+                <div className="flex flex-column gap-2">
+                  <label className="text-sm font-semibold">Username</label>
+                  <InputText
+                    value={editForm.username || ''}
+                    onChange={(e) => setEditForm(prev => ({ ...prev, username: e.target.value }))}
+                  />
+                </div>
+                <div className="flex align-items-center gap-2">
+                  <Checkbox
+                    inputId="disable-participant"
+                    checked={Boolean(editForm.isDisabled)}
+                    onChange={(e) => setEditForm(prev => ({ ...prev, isDisabled: e.checked }))}
+                  />
+                  <label htmlFor="disable-participant" className="text-sm font-semibold">Disable participant</label>
+                </div>
+                {editForm.isDisabled && (
+                  <div className="flex flex-column gap-2">
+                    <label className="text-sm font-semibold">Disabled reason</label>
+                    <InputText
+                      value={editForm.disabledReason || ''}
+                      onChange={(e) => setEditForm(prev => ({ ...prev, disabledReason: e.target.value }))}
+                    />
+                  </div>
+                )}
+              </>
             )}
 
-            {isAdmin && (
+            {(isAdmin || isMaintainer) && (
               <div className="border-round-lg p-3 mt-2" style={{ backgroundColor: 'rgba(220, 38, 38, 0.04)', border: '1px solid rgba(220, 38, 38, 0.15)' }}>
                 <div className="flex align-items-center gap-2 mb-2">
                   <Key size={18} weight="bold" color="#dc2626" />
@@ -309,16 +318,18 @@ const MaintenanceParticipants = () => {
               </div>
             )}
 
-            <div className="flex gap-2 pt-2">
-              <Button label="Save" onClick={handleEdit} disabled={loading} style={{ backgroundColor: '#7c3aed', borderColor: '#7c3aed' }} />
-              <Button
-                label="Delete"
-                severity="danger"
-                text
-                onClick={showDeleteConfirm}
-                disabled={loading}
-              />
-            </div>
+            {isAdmin && (
+              <div className="flex gap-2 pt-2">
+                <Button label="Save" onClick={handleEdit} disabled={loading} style={{ backgroundColor: '#7c3aed', borderColor: '#7c3aed' }} />
+                <Button
+                  label="Delete"
+                  severity="danger"
+                  text
+                  onClick={showDeleteConfirm}
+                  disabled={loading}
+                />
+              </div>
+            )}
           </div>
         </Sidebar>
 

@@ -8,7 +8,7 @@ namespace AdiwarnaBackend.Controllers.Users
 {
     [Route("api/users")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Maintainer")]
     [Tags("Users")]
     public class ResetUserPasswordController(IUserManagementService userManagementService) : ControllerBase
     {
