@@ -1,6 +1,5 @@
 using AdiwarnaBackend.Data;
 using AdiwarnaBackend.Models.LiveYoutubes;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,13 +7,12 @@ namespace AdiwarnaBackend.Controllers.LiveYoutubes
 {
     [Route("api/live-youtubes")]
     [ApiController]
-    [Authorize(Roles = "Admin,Maintainer")]
     [Tags("LiveYoutubes")]
     public class ListLiveYoutubesController(AdiwarnaDbContext context) : ControllerBase
     {
         [HttpGet]
         [EndpointSummary("List live YouTube entries")]
-        [EndpointDescription("List all live YouTube entries. Requires Admin or Maintainer.")]
+        [EndpointDescription("List all live YouTube entries. Public endpoint.")]
         public async Task<IActionResult> GetLiveYoutubes(CancellationToken cancellationToken)
         {
             var entries = await context.LiveYoutubes

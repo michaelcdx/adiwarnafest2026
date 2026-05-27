@@ -11,6 +11,8 @@ import gadpaLogo from "../image/gadpa_xmum_logo.png";
 
 import { sportsSlides, sportsDetails } from "../data/mockData";
 import { registrationService, type RegistrationStats } from "../services/registration";
+import { liveYoutubeService, extractYouTubeId } from "../services/liveYoutube";
+import type { LiveYoutube } from "../services/liveYoutube";
 
 const Home: React.FC = () => {
   const [currentSportImg, setCurrentSportImg] = useState(0);
@@ -23,6 +25,7 @@ const Home: React.FC = () => {
   const [stats, setStats] = useState<RegistrationStats | null>(null);
   const [statsError, setStatsError] = useState<string | null>(null);
   const [isPrizeModalOpen, setIsPrizeModalOpen] = useState(false);
+  const [liveEntries, setLiveEntries] = useState<LiveYoutube[]>([]);
   const portalRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -46,6 +49,22 @@ const Home: React.FC = () => {
     };
 
     fetchStats();
+  }, []);
+
+  useEffect(() => {
+    const fetchLiveEntries = async () => {
+      try {
+        const data = await liveYoutubeService.listLiveYoutubes();
+        const ongoing = data.filter(entry => entry.status === 'ONGOING' && !entry.isDeleted);
+        setLiveEntries(ongoing);
+      } catch {
+        setLiveEntries([]);
+      }
+    };
+
+    fetchLiveEntries();
+    const interval = setInterval(fetchLiveEntries, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -269,6 +288,72 @@ const Home: React.FC = () => {
             </div>
           </div>
         </section>
+
+        {/* Live Now Section */}
+        {liveEntries.length > 0 && (
+          <section className="px-3 mt-4">
+            <div className="bg-white border-round-2xl p-4 shadow-2 border-1" style={{ borderColor: "var(--color-border)" }}>
+              <div className="flex align-items-center gap-3 mb-3">
+                <div className="flex align-items-center justify-content-center border-circle" style={{ width: "40px", height: "40px", backgroundColor: "rgba(255, 0, 0, 0.1)", color: "#FF0000" }}>
+                  <YoutubeLogo size={20} weight="fill" />
+                </div>
+                <div className="flex-1">
+                  <p className="m-0 text-[10px] font-bold uppercase" style={{ color: "#FF0000", letterSpacing: "0.05em" }}>
+                    Live Now
+                  </p>
+                  <h2 className="m-0 text-lg font-bold text-900">Watch Live on YouTube</h2>
+                </div>
+                <a
+                  href="/live"
+                  className="flex align-items-center gap-1 text-sm font-semibold text-decoration-none"
+                  style={{ color: "#FF0000" }}
+                >
+                  View All
+                </a>
+              </div>
+
+              <div className="grid gap-3">
+                {liveEntries.slice(0, 2).map(entry => {
+                  const videoId = extractYouTubeId(entry.filePath);
+                  return (
+                    <div key={entry.id} className="col-12 md:col-6">
+                      <div className="border-round-xl overflow-hidden shadow-1 border-1" style={{ borderColor: "rgba(0,0,0,0.06)" }}>
+                        {videoId ? (
+                          <div style={{ position: "relative", paddingBottom: "56.25%", height: 0 }}>
+                            <iframe
+                              src={`https://www.youtube.com/embed/${videoId}`}
+                              title={entry.title}
+                              frameBorder="0"
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowFullScreen
+                              style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}
+                            />
+                          </div>
+                        ) : (
+                          <div className="flex align-items-center justify-content-center" style={{ height: "180px", backgroundColor: "#f3f4f6" }}>
+                            <div className="text-500 text-sm">Unable to embed</div>
+                          </div>
+                        )}
+                        <div className="p-2 flex align-items-center justify-content-between">
+                          <span className="text-sm font-semibold text-900 truncate" style={{ maxWidth: "70%" }}>{entry.title}</span>
+                          <a
+                            href={entry.filePath}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs font-bold text-decoration-none"
+                            style={{ color: "#FF0000" }}
+                          >
+                            Watch →
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* Prizepool Section */}
         <section className="px-3 mt-4">

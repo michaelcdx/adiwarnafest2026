@@ -3,7 +3,7 @@ import { Button } from 'primereact/button'
 import { Dialog } from 'primereact/dialog'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
-import { ShieldCheck, UsersThree, Trophy, CalendarBlank, Download, GameController } from '@phosphor-icons/react'
+import { ShieldCheck, UsersThree, Trophy, CalendarBlank, Download, GameController, YoutubeLogo } from '@phosphor-icons/react'
 import { useAuth } from '../store/auth'
 import { useRef, useState } from 'react'
 import { Toast } from 'primereact/toast'
@@ -143,6 +143,16 @@ const Maintenance = () => {
       onClick: () => navigate('/maintenance/games'),
       bgGradient: 'linear-gradient(135deg, #0891b2 0%, #0e7490 100%)',
       color: '#0891b2'
+    },
+    {
+      icon: <YoutubeLogo size={28} weight="bold" color="#fff" />,
+      title: 'Live YouTube',
+      description: 'Manage live YouTube stream links.',
+      label: 'Open Live YouTube',
+      disabled: false,
+      onClick: () => navigate('/maintenance/live-youtube'),
+      bgGradient: 'linear-gradient(135deg, #FF0000 0%, #CC0000 100%)',
+      color: '#FF0000'
     },
     {
       icon: <Download size={28} weight="bold" color="#fff" />,

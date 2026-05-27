@@ -7,12 +7,14 @@ import Map from './pages/Map'
 import Login from './pages/Login'
 import Committee from './pages/Committee'
 import LuckyDraw from './pages/luckyDraw'
+import Live from './pages/Live'
 import Maintenance from './pages/Maintenance'
 import MaintenanceUsers from './pages/MaintenanceUsers'
 import MaintenanceParticipants from './pages/MaintenanceParticipants'
 import MaintenanceTeams from './pages/MaintenanceTeams'
 import MaintenanceTournaments from './pages/MaintenanceTournaments'
 import MaintenanceGames from './pages/MaintenanceGames'
+import MaintenanceLiveYoutube from './pages/MaintenanceLiveYoutube'
 import QRCodeTester from './pages/QRCodeTester'
 import RequireRole from './components/RequireRole'
 
@@ -26,6 +28,7 @@ function App() {
           <Route path="map" element={<Map />} />
           <Route path="committee" element={<Committee />} />
           <Route path="lucky-draw" element={<LuckyDraw />} />
+          <Route path="live" element={<Live />} />
           <Route
             path="maintenance"
             element={
@@ -71,6 +74,14 @@ function App() {
             element={
               <RequireRole allowedRoles={['Admin', 'Maintainer']}>
                 <MaintenanceGames />
+              </RequireRole>
+            }
+          />
+          <Route
+            path="maintenance/live-youtube"
+            element={
+              <RequireRole allowedRoles={['Admin', 'Maintainer']}>
+                <MaintenanceLiveYoutube />
               </RequireRole>
             }
           />
