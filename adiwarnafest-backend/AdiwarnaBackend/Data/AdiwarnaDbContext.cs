@@ -15,6 +15,7 @@ namespace AdiwarnaBackend.Data
         public DbSet<TournamentTeam> TournamentTeams { get; set; }
         public DbSet<Game> Games { get; set; }
         public DbSet<PlayerGameStat> PlayerGameStats { get; set; }
+        public DbSet<LiveYoutube> LiveYoutubes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
