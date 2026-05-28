@@ -16,7 +16,7 @@ const MEDALS = ["🥇", "🥈", "🥉"];
 const SPORT_TO_GAMETYPE: Record<string, string> = {
   "Basketball 5x5": "Basketball5v5",
   "Futsal": "Futsal",
-  "Mobile Legends": "Mobile Legends",
+  "Mobile Legends": "MobileLegends",
 };
 
 // Format a UTC ISO datetime string as "HH:MM" in local time
