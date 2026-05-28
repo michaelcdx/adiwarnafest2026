@@ -392,8 +392,8 @@ const LuckyDraw: React.FC = () => {
 
         <div className="relative z-1 flex flex-column align-items-center text-center gap-2 mb-6 mt-4">
           <div className="bg-white-alpha-20 border-round-3xl px-3 py-1 flex align-items-center gap-2 border-1 border-white-alpha-30 mb-2">
-            <Trophy size={16} weight="fill" color="#FFD700" />
-            <span className="text-[10px] font-black uppercase tracking-widest text-white">Adiwarna Fest 2026</span>
+            <Trophy size={16} weight="fill" color="#A14000" />
+            <span className="text-[10px] font-black uppercase tracking-widest" style={{ color: '#3a1800' }}>Adiwarna Fest 2026</span>
           </div>
           <h1 className="m-0 text-4xl md:text-5xl font-black line-height-1" style={{ color: '#3a1800' }}>LUCKY DRAW</h1>
           <div className="flex align-items-center gap-2 mt-1">
@@ -402,7 +402,7 @@ const LuckyDraw: React.FC = () => {
               {username || 'Participant'}
             </p>
           </div>
-          <p className="m-0 text-white-alpha-80 text-sm font-medium max-w-20rem line-height-3 mt-2">
+          <p className="m-0 text-sm font-medium max-w-20rem line-height-3 mt-2" style={{ color: 'rgba(58,24,0,0.85)' }}>
             Scan QR codes at all 3 booths to unlock your chance to win grand prizes!
           </p>
         </div>
@@ -542,7 +542,12 @@ const LuckyDraw: React.FC = () => {
                 <div className="flex-1 flex flex-column justify-content-between">
                   <div>
                     <div className="flex align-items-center gap-2 mb-2">
-                      <div className="border-round-lg px-2 py-1 text-[8px] font-bold uppercase tracking-wider" style={{ background: 'rgba(161,64,0,0.1)', color: '#A14000' }}>Booth {index + 1}</div>
+                      <div className="button-wrap" style={{ fontSize: '9px' }}>
+                        <div className="premium-btn">
+                          <span className="font-bold uppercase tracking-wider" style={{ paddingInline: '0.9em', paddingBlock: '0.4em' }}>Booth {index + 1}</span>
+                        </div>
+                        <div className="button-shadow" />
+                      </div>
                       {isScanned && (
                         <div className="bg-green-100 border-round-lg px-2 py-1 text-[8px] font-bold text-green-700 uppercase tracking-wider">Completed</div>
                       )}
@@ -562,8 +567,16 @@ const LuckyDraw: React.FC = () => {
                       <CheckCircle size={24} weight="fill" color="#ffffff" />
                     </div>
                   ) : (
-                    <div className="border-round-xl flex align-items-center justify-content-center" style={{ background: 'rgba(161,64,0,0.12)', backdropFilter: 'blur(8px)', border: '1px solid rgba(161,64,0,0.25)', width: 'min(50px, 12vw)', height: 'min(50px, 12vw)', minWidth: '50px', minHeight: '50px' }}>
-                      <QrCode size={24} color="#A14000" weight="bold" />
+                    <div className="button-wrap" style={{ fontSize: '14px' }}>
+                      <div
+                        className="premium-btn flex align-items-center justify-content-center"
+                        style={{ width: 'min(50px, 12vw)', height: 'min(50px, 12vw)', minWidth: '50px', minHeight: '50px', borderRadius: '999vw' }}
+                      >
+                        <span style={{ padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          <QrCode size={24} color="#3a1800" weight="bold" />
+                        </span>
+                      </div>
+                      <div className="button-shadow" />
                     </div>
                   )}
                 </div>
