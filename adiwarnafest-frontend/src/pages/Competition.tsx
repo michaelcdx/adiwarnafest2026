@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+﻿import { useState, useEffect, useRef, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import {
   Basketball, SoccerBall, GameController,
@@ -177,47 +177,39 @@ const Competition = () => {
     standingsRanks.push(tied ? standingsRanks[idx - 1]! : idx + 1);
   });
 
-  const activeDateIndex = dates.indexOf(activeDate);
-  const buttonWidth = `calc(${100 / dates.length}% - 4px)`;
 
   return (
-    <div style={{ fontFamily: "Epilogue, sans-serif", background: "#f8f7f5", minHeight: "100vh", paddingBottom: "110px" }}>
+    <div className="glass-page" style={{ fontFamily: "Epilogue, sans-serif", minHeight: "100vh", paddingBottom: "110px" }}>
       <main style={{ maxWidth: "600px", margin: "0 auto", padding: "20px 16px" }}>
 
         {/* ── Title ── */}
-        <h2 style={{ textAlign: "center", fontSize: "22px", fontWeight: 900, color: "#1a1a1a", letterSpacing: "-0.03em", margin: "0 0 22px", textTransform: "uppercase" }}>
+        <h2 style={{ textAlign: "center", fontSize: "22px", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.03em", margin: "0 0 22px", textTransform: "uppercase" }}>
           Competition Schedule
         </h2>
 
         {/* ── Date Tabs ── */}
-        <div style={{ display: "flex", justifyContent: "center", marginBottom: "20px" }}>
-          <div style={{ position: "relative", display: "inline-flex", background: "white", borderRadius: "999px", padding: "4px", border: "1px solid #e8e5e0", boxShadow: "0 2px 10px rgba(0,0,0,0.07)", overflow: "hidden" }}>
-            <div style={{
-              position: "absolute", top: "4px",
-              left: `calc(${activeDateIndex * (100 / dates.length)}% + 4px)`,
-              width: buttonWidth, height: "calc(100% - 8px)",
-              background: "var(--color-primary)", borderRadius: "999px",
-              transition: "left 0.3s cubic-bezier(0.4,0,0.2,1), width 0.3s cubic-bezier(0.4,0,0.2,1)",
-              zIndex: 0, boxShadow: "0 2px 8px rgba(144,77,0,0.3)",
-            }} />
-            {dates.map(d => {
-              const [day, month] = d.split(' ');
-              return (
-                <button key={d} onClick={() => setActiveDate(d)} style={{
-                  position: "relative", zIndex: 1,
-                  padding: "9px 12px", border: "none", borderRadius: "999px",
-                  cursor: "pointer", background: "transparent",
-                  color: activeDate === d ? "white" : "#6b7280",
-                  fontWeight: 700, fontSize: "12px", whiteSpace: "nowrap",
-                  fontFamily: "Epilogue, sans-serif", transition: "color 0.25s",
-                  flex: `1 1 ${100 / dates.length}%`,
-                  textAlign: "center",
-                }}>
-                  {day} {month}
-                </button>
-              );
-            })}
-          </div>
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: "20px", gap: "6px", flexWrap: "wrap" }}>
+          {dates.map(d => {
+            const [day, month] = d.split(' ');
+            const isActive = activeDate === d;
+            return (
+              <button
+                key={d}
+                onClick={() => setActiveDate(d)}
+                className={isActive ? "glass-btn-brown" : "glass-btn"}
+                style={{
+                  padding: "9px 14px",
+                  fontSize: "12px",
+                  fontWeight: 700,
+                  fontFamily: "Epilogue, sans-serif",
+                  whiteSpace: "nowrap",
+                  color: isActive ? "#3a1800" : "var(--text-muted)",
+                }}
+              >
+                {day} {month}
+              </button>
+            );
+          })}
         </div>
 
         {/* ── Sport Chips ── */}
@@ -234,16 +226,13 @@ const Competition = () => {
                   key={s.id}
                   data-active={active}
                   onClick={() => setActiveSport(s.id)}
+                  className={active ? "glass-btn-brown" : "glass-btn"}
                   style={{
                     display: "flex", alignItems: "center", gap: "7px",
                     padding: "9px 16px", flexShrink: 0,
-                    border: active ? "none" : "1.5px solid #e5e7eb",
-                    borderRadius: "999px", cursor: "pointer",
-                    background: active ? "var(--color-primary)" : "white",
-                    color: active ? "white" : "#6b7280",
-                    fontWeight: 700, fontSize: "13px", whiteSpace: "nowrap",
+                    fontSize: "13px", whiteSpace: "nowrap",
                     fontFamily: "Epilogue, sans-serif",
-                    boxShadow: active ? "0 4px 14px rgba(144,77,0,0.28)" : "0 1px 3px rgba(0,0,0,0.06)",
+                    color: active ? "#3a1800" : "var(--text-secondary)",
                     transform: active ? "scale(1.04)" : "scale(1)",
                     transition: "all 0.22s cubic-bezier(0.4,0,0.2,1)",
                   }}
@@ -254,17 +243,16 @@ const Competition = () => {
               );
             })}
           </div>
-          {/* Fade hints — hidden on desktop via CSS */}
-          <div className="chips-fade-left" style={{ position: "absolute", left: 0, top: 0, bottom: 6, width: "20px", background: "linear-gradient(to right, #f8f7f5, transparent)", pointerEvents: "none" }} />
-          <div className="chips-fade-right" style={{ position: "absolute", right: 0, top: 0, bottom: 6, width: "36px", background: "linear-gradient(to left, #f8f7f5, transparent)", pointerEvents: "none" }} />
-          {/* Scroll progress bar — hidden on desktop via CSS */}
+          {/* Fade hints */}
+          <div className="chips-fade-left" style={{ position: "absolute", left: 0, top: 0, bottom: 6, width: "20px", background: "linear-gradient(to right, rgba(238,242,255,0.8), transparent)", pointerEvents: "none" }} />
+          <div className="chips-fade-right" style={{ position: "absolute", right: 0, top: 0, bottom: 6, width: "36px", background: "linear-gradient(to left, rgba(252,232,244,0.8), transparent)", pointerEvents: "none" }} />
           {chipScroll.thumbRatio < 0.99 && (
-            <div className="chips-scroll-bar" style={{ height: "3px", background: "rgba(144,77,0,0.1)", borderRadius: "999px", marginTop: "4px", position: "relative", overflow: "hidden" }}>
+            <div className="chips-scroll-bar" style={{ height: "3px", background: "rgba(209,223,246,0.1)", borderRadius: "999px", marginTop: "4px", position: "relative", overflow: "hidden" }}>
               <div style={{
                 position: "absolute", height: "100%",
                 width: `${chipScroll.thumbRatio * 100}%`,
                 left: `${chipScroll.progress * (100 - chipScroll.thumbRatio * 100)}%`,
-                background: "linear-gradient(90deg, var(--color-primary), var(--color-accent))",
+                background: "linear-gradient(90deg, rgba(209,223,246,0.8), rgba(209,223,246,0.8))",
                 borderRadius: "999px",
                 transition: "left 0.08s linear",
               }} />
@@ -275,9 +263,7 @@ const Competition = () => {
         {/* ── YouTube Live Banner (Mobile Legends only) ── */}
         {activeSport === "Mobile Legends" && activeDate !== "27 May 2026" && activeDate !== "28 May 2026" && activeDate !== "31 May 2026" && (
           <a
-            href="https://www.youtube.com/@AdiwarnaFest"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/live"
             style={{
               display: "flex",
               alignItems: "center",
@@ -287,14 +273,14 @@ const Competition = () => {
               padding: "14px 18px",
               marginBottom: "16px",
               textDecoration: "none",
-              boxShadow: "0 2px 12px rgba(255,0,0,0.18)",
+              boxShadow: "0 4px 16px rgba(220,0,0,0.35)",
             }}
           >
             <svg width="32" height="32" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
               <path d="M23.5 6.2a3.01 3.01 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3.01 3.01 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3.01 3.01 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3.01 3.01 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.6 15.6V8.4l6.3 3.6-6.3 3.6z"/>
             </svg>
             <div>
-              <p style={{ margin: 0, color: "white", fontWeight: 800, fontSize: "15px", fontFamily: "Epilogue, sans-serif" }}>
+              <p style={{ margin: 0, color: "#fff", fontWeight: 800, fontSize: "15px", fontFamily: "Epilogue, sans-serif" }}>
                 Watch Live on YouTube
               </p>
               <p style={{ margin: "2px 0 0", color: "rgba(255,255,255,0.85)", fontSize: "12px", fontWeight: 600, fontFamily: "Epilogue, sans-serif" }}>
@@ -313,14 +299,17 @@ const Competition = () => {
         {/* ── Schedule Header ── */}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "14px" }}>
           <div>
-            <h3 style={{ margin: 0, fontSize: "20px", fontWeight: 800, color: "#1a1a1a", letterSpacing: "-0.02em" }}>Upcoming Matches</h3>
-            <p style={{ margin: "3px 0 0", color: "#9ca3af", fontSize: "13px", fontWeight: 600 }}>
+            <h3 style={{ margin: 0, fontSize: "20px", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>Upcoming Matches</h3>
+            <p style={{ margin: "3px 0 0", color: "var(--text-muted)", fontSize: "13px", fontWeight: 600 }}>
               {dayNames[activeDate]} · {activeDate}
             </p>
           </div>
-          <button onClick={fetchGames} style={{ background: "none", border: "1.5px solid #e5e7eb", borderRadius: "999px", padding: "5px 12px", fontSize: "11px", fontWeight: 700, color: "#6b7280", cursor: "pointer", fontFamily: "Epilogue, sans-serif" }}>
-            ↻ Refresh
-          </button>
+          <div className="button-wrap" style={{ fontSize: "11px" }}>
+            <button className="premium-btn" onClick={fetchGames} style={{ fontFamily: "Epilogue, sans-serif" }}>
+              <span>↻ Refresh</span>
+            </button>
+            <div className="button-shadow" />
+          </div>
         </div>
 
         {/* ── Match Cards ── */}
@@ -336,47 +325,48 @@ const Competition = () => {
                 <div
                   key={match.id}
                   style={{
-                    background: "white", border: "1px solid #f0ece8",
+                    background: "rgba(255,255,255,0.42)", backdropFilter: "blur(24px) saturate(180%)", WebkitBackdropFilter: "blur(24px) saturate(180%)",
+                    border: "1px solid rgba(255,255,255,0.72)",
                     borderRadius: "16px", padding: "14px 16px",
-                    boxShadow: "0 1px 6px rgba(0,0,0,0.05)",
+                    boxShadow: "0 4px 20px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.95)",
                     animation: isNew ? `slideInCard 0.45s cubic-bezier(0.34,1.2,0.64,1) ${delay}s both` : "none",
                   }}
                 >
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "10px" }}>
                     <div style={{ display: "flex", alignItems: "baseline", gap: "4px" }}>
-                      <span style={{ fontSize: "28px", fontWeight: 900, color: "#862C14", letterSpacing: "-2px", lineHeight: 1 }}>{formatTime(match.scheduledAt)}</span>
-                      <span style={{ fontSize: "9px", fontWeight: 700, color: "#9ca3af", textTransform: "uppercase" }}>MYT</span>
+                      <span style={{ fontSize: "28px", fontWeight: 900, color: "var(--text-secondary)", letterSpacing: "-2px", lineHeight: 1 }}>{formatTime(match.scheduledAt)}</span>
+                      <span style={{ fontSize: "9px", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase" }}>MYT</span>
                     </div>
-                    <span style={{ background: isCompleted ? "#dcfce7" : "#FEF0E3", color: isCompleted ? "#166534" : "#92400e", padding: "3px 10px", borderRadius: "7px", fontSize: "9px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.5px", marginTop: "4px" }}>
+                    <span style={{ background: isCompleted ? "rgba(34,197,94,0.15)" : "rgba(209,223,246,0.1)", color: isCompleted ? "#166534" : "rgba(168,192,232,0.9)", padding: "3px 10px", borderRadius: "7px", fontSize: "9px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.5px", marginTop: "4px" }}>
                       {match.gameStatus}
                     </span>
                   </div>
 
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 48px 1fr", alignItems: "center", gap: "6px", marginBottom: "10px" }}>
                     <div style={{ textAlign: "center" }}>
-                      <div style={{ fontSize: "15px", fontWeight: 900, color: "#111", letterSpacing: "-0.3px" }}>{match.team1Name}</div>
-                      <div style={{ fontSize: "22px", fontWeight: 900, color: isCompleted ? (t1Goals > t2Goals ? "#16a34a" : t1Goals < t2Goals ? "#dc2626" : "#6b7280") : "#9ca3af", marginTop: "2px" }}>{t1Goals}</div>
+                      <div style={{ fontSize: "15px", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.3px" }}>{match.team1Name}</div>
+                      <div style={{ fontSize: "22px", fontWeight: 900, color: isCompleted ? (t1Goals > t2Goals ? "#16a34a" : t1Goals < t2Goals ? "#dc2626" : "var(--text-muted)") : "var(--text-muted)", marginTop: "2px" }}>{t1Goals}</div>
                     </div>
-                    <div style={{ width: "48px", height: "32px", borderRadius: "50%", background: "#f5f4f2", display: "flex", alignItems: "center", justifyContent: "center", color: "#9ca3af", fontSize: "10px", fontWeight: 700, fontStyle: "italic" }}>vs</div>
+                    <div style={{ width: "48px", height: "32px", borderRadius: "50%", background: "rgba(255,255,255,0.5)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--text-muted)", fontSize: "10px", fontWeight: 700, fontStyle: "italic" }}>vs</div>
                     <div style={{ textAlign: "center" }}>
-                      <div style={{ fontSize: "15px", fontWeight: 900, color: "#111", letterSpacing: "-0.3px" }}>{match.team2Name}</div>
-                      <div style={{ fontSize: "22px", fontWeight: 900, color: isCompleted ? (t2Goals > t1Goals ? "#16a34a" : t2Goals < t1Goals ? "#dc2626" : "#6b7280") : "#9ca3af", marginTop: "2px" }}>{t2Goals}</div>
+                      <div style={{ fontSize: "15px", fontWeight: 900, color: "var(--text-primary)", letterSpacing: "-0.3px" }}>{match.team2Name}</div>
+                      <div style={{ fontSize: "22px", fontWeight: 900, color: isCompleted ? (t2Goals > t1Goals ? "#16a34a" : t2Goals < t1Goals ? "#dc2626" : "var(--text-muted)") : "var(--text-muted)", marginTop: "2px" }}>{t2Goals}</div>
                     </div>
                   </div>
 
                   {match.remark && (
-                    <div style={{ borderTop: "1px solid #f5f4f2", paddingTop: "8px", display: "flex", alignItems: "center", gap: "5px" }}>
-                      <MapPin size={11} weight="fill" color="#862C14" />
-                      <span style={{ fontSize: "9px", fontWeight: 700, color: "#6b7280", textTransform: "uppercase", letterSpacing: "0.7px" }}>{match.remark}</span>
+                    <div style={{ borderTop: "1px solid rgba(255,255,255,0.5)", paddingTop: "8px", display: "flex", alignItems: "center", gap: "5px" }}>
+                      <MapPin size={11} weight="fill" color="var(--text-muted)" />
+                      <span style={{ fontSize: "9px", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.7px" }}>{match.remark}</span>
                     </div>
                   )}
                 </div>
               );
             })
           ) : (
-            <div style={{ textAlign: "center", padding: "40px 20px", background: "white", borderRadius: "20px", border: "2px dashed #e5e7eb" }}>
-              <Clock size={36} weight="light" color="#d1d5db" />
-              <p style={{ color: "#9ca3af", fontWeight: 600, marginTop: "10px", fontSize: "14px" }}>No matches scheduled for this day</p>
+            <div style={{ textAlign: "center", padding: "40px 20px", background: "rgba(255,255,255,0.45)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", borderRadius: "20px", border: "1px solid rgba(255,255,255,0.65)" }}>
+              <Clock size={36} weight="light" color="var(--text-muted)" />
+              <p style={{ color: "var(--text-muted)", fontWeight: 600, marginTop: "10px", fontSize: "14px" }}>No matches scheduled for this day</p>
             </div>
           )}
         </div>
@@ -387,16 +377,8 @@ const Competition = () => {
             {activeMatches.length > visibleMatches && (
               <button
                 onClick={handleLoadMore}
-                className="comp-btn-primary"
-                style={{
-                  background: "white", border: "2px solid var(--color-primary)",
-                  color: "var(--color-primary)", padding: "10px 26px",
-                  borderRadius: "999px", fontWeight: 700, fontSize: "12px",
-                  textTransform: "uppercase", letterSpacing: "0.5px",
-                  cursor: "pointer", fontFamily: "Epilogue, sans-serif",
-                  boxShadow: "0 2px 8px rgba(144,77,0,0.12)",
-                  transition: "all 0.2s ease",
-                }}
+                className="glass-btn"
+                style={{ padding: "10px 26px", fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.5px", fontFamily: "Epilogue, sans-serif", color: "var(--text-primary)" }}
               >
                 Load More
               </button>
@@ -404,15 +386,8 @@ const Competition = () => {
             {visibleMatches > 3 && (
               <button
                 onClick={handleShowLess}
-                className="comp-btn-ghost"
-                style={{
-                  background: "white", border: "2px solid #e5e7eb",
-                  color: "#6b7280", padding: "10px 26px",
-                  borderRadius: "999px", fontWeight: 700, fontSize: "12px",
-                  textTransform: "uppercase", letterSpacing: "0.5px",
-                  cursor: "pointer", fontFamily: "Epilogue, sans-serif",
-                  transition: "all 0.2s ease",
-                }}
+                className="glass-btn"
+                style={{ padding: "10px 26px", fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.5px", fontFamily: "Epilogue, sans-serif", color: "var(--text-secondary)" }}
               >
                 Show Less
               </button>
@@ -422,13 +397,13 @@ const Competition = () => {
 
 {/* ── Standings ── */}
         <div style={{ marginBottom: "32px" }}>
-          <h3 style={{ margin: "0 0 14px", fontSize: "20px", fontWeight: 800, color: "#1a1a1a", letterSpacing: "-0.02em" }}>Standings</h3>
+          <h3 style={{ margin: "0 0 14px", fontSize: "20px", fontWeight: 800, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>Standings</h3>
 
-          <div style={{ background: "white", borderRadius: "20px", overflow: "hidden", border: "1px solid #f0ece8", boxShadow: "0 2px 12px rgba(0,0,0,0.05)" }}>
+          <div style={{ background: "rgba(255,255,255,0.38)", backdropFilter: "blur(28px) saturate(180%)", WebkitBackdropFilter: "blur(28px) saturate(180%)", borderRadius: "20px", overflow: "hidden", border: "1px solid rgba(255,255,255,0.75)", boxShadow: "0 4px 24px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.95)" }}>
             {/* Header row */}
-            <div style={{ display: "grid", gridTemplateColumns: isFutsal ? "52px 1fr 40px 40px 40px 40px 48px" : "52px 1fr 40px 40px 40px", padding: "10px 14px", background: "#faf9f7", borderBottom: "1px solid #f0ece8" }}>
+            <div style={{ display: "grid", gridTemplateColumns: isFutsal ? "52px 1fr 40px 40px 40px 40px 48px" : "52px 1fr 40px 40px 40px", padding: "10px 14px", background: "rgba(255,255,255,0.4)", borderBottom: "1px solid rgba(255,255,255,0.5)" }}>
               {(isFutsal ? ["#", "Team", "P", "W", "D", "L", "PTS"] : ["#", "Team", "P", "W", "L"]).map((h, i) => (
-                <div key={h} style={{ fontSize: "10px", fontWeight: 700, color: "#9ca3af", textTransform: "uppercase", letterSpacing: "0.7px", textAlign: i > 1 ? "center" : "left" }}>{h}</div>
+                <div key={h} style={{ fontSize: "10px", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.7px", textAlign: i > 1 ? "center" : "left" }}>{h}</div>
               ))}
             </div>
 
@@ -442,24 +417,24 @@ const Competition = () => {
                 style={{
                   display: "grid", gridTemplateColumns: isFutsal ? "52px 1fr 40px 40px 40px 40px 48px" : "52px 1fr 40px 40px 40px",
                   padding: "12px 14px", alignItems: "center",
-                  borderBottom: idx < standingsSlice.length - 1 ? "1px solid #f7f5f3" : "none",
-                  background: rank === 1 ? "linear-gradient(90deg,rgba(144,77,0,0.05) 0%,transparent 100%)" : "transparent",
+                  borderBottom: idx < standingsSlice.length - 1 ? "1px solid rgba(255,255,255,0.45)" : "none",
+                  background: rank === 1 ? "linear-gradient(90deg, rgba(209,223,246,0.06) 0%, transparent 100%)" : "transparent",
                 }}
               >
                 <div>
                   {isTop
                     ? <span style={{ fontSize: "20px", lineHeight: 1 }}>{MEDALS[rank - 1]}</span>
-                    : <span style={{ fontSize: "13px", fontWeight: 700, color: "#6b7280" }}>{rank}</span>
+                    : <span style={{ fontSize: "13px", fontWeight: 700, color: "var(--text-muted)" }}>{rank}</span>
                   }
                 </div>
                 <div style={{ display: "flex", alignItems: "center" }}>
-                  <span style={{ fontSize: "14px", fontWeight: isTop ? 700 : 500, color: "#111" }}>{team.name}</span>
+                  <span style={{ fontSize: "14px", fontWeight: isTop ? 700 : 500, color: "var(--text-primary)" }}>{team.name}</span>
                 </div>
-                <div style={{ textAlign: "center", fontSize: "13px", fontWeight: 500, color: "#6b7280" }}>{team.p}</div>
-                <div style={{ textAlign: "center", fontSize: "13px", fontWeight: 700, color: isTop ? "#16a34a" : "#374151" }}>{team.w}</div>
-                {isFutsal && <div style={{ textAlign: "center", fontSize: "13px", fontWeight: 500, color: "#6b7280" }}>{team.d}</div>}
-                <div style={{ textAlign: "center", fontSize: "13px", fontWeight: 500, color: isTop ? "#dc2626" : "#9ca3af" }}>{team.l}</div>
-                {isFutsal && <div style={{ textAlign: "center", fontSize: "13px", fontWeight: 700, color: "var(--color-primary)" }}>{team.pts}</div>}
+                <div style={{ textAlign: "center", fontSize: "13px", fontWeight: 500, color: "var(--text-muted)" }}>{team.p}</div>
+                <div style={{ textAlign: "center", fontSize: "13px", fontWeight: 700, color: isTop ? "#16a34a" : "var(--text-secondary)" }}>{team.w}</div>
+                {isFutsal && <div style={{ textAlign: "center", fontSize: "13px", fontWeight: 500, color: "var(--text-muted)" }}>{team.d}</div>}
+                <div style={{ textAlign: "center", fontSize: "13px", fontWeight: 500, color: isTop ? "#dc2626" : "var(--text-muted)" }}>{team.l}</div>
+                {isFutsal && <div style={{ textAlign: "center", fontSize: "13px", fontWeight: 700, color: "rgba(168,192,232,0.9)" }}>{team.pts}</div>}
               </div>
               );
             })}
@@ -469,15 +444,8 @@ const Competition = () => {
             <div style={{ display: "flex", justifyContent: "center", marginTop: "14px" }}>
               <button
                 onClick={() => setShowFullStandings(p => !p)}
-                className="comp-btn-primary"
-                style={{
-                  background: "white", border: "2px solid var(--color-primary)",
-                  color: "var(--color-primary)", padding: "9px 28px",
-                  borderRadius: "999px", fontWeight: 700, fontSize: "12px",
-                  textTransform: "uppercase", letterSpacing: "0.5px",
-                  cursor: "pointer", fontFamily: "Epilogue, sans-serif",
-                  transition: "all 0.2s ease",
-                }}
+                className="glass-btn"
+                style={{ padding: "9px 28px", fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.5px", fontFamily: "Epilogue, sans-serif", color: "var(--text-primary)" }}
               >
                 {showFullStandings ? "Collapse" : "View All Standings"}
               </button>
@@ -512,9 +480,7 @@ const Competition = () => {
           .chips-fade-left, .chips-fade-right { display: none; }
           .chips-scroll-bar { display: none; }
         }
-        /* button hover states */
-        .comp-btn-primary:hover { background: var(--color-primary) !important; color: white !important; }
-        .comp-btn-ghost:hover   { background: #f3f4f6 !important; }
+        /* button hover states handled by glass-btn class */
       `}</style>
     </div>
   );

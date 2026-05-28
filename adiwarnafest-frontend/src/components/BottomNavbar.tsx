@@ -25,19 +25,19 @@ const BottomNavbar: React.FC = () => {
     <nav
       className="md:hidden fixed bottom-0 left-0 w-full z-5"
       style={{
-        backgroundColor: 'rgba(251, 249, 248, 0.96)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        borderTop: '1px solid rgba(144,77,0,0.08)',
+        background: 'rgba(255, 255, 255, 0.68)',
+        backdropFilter: 'blur(28px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+        borderTop: '1px solid rgba(255, 255, 255, 0.8)',
         borderRadius: '20px 20px 0 0',
-        boxShadow: '0 -4px 24px rgba(0,0,0,0.07)',
+        boxShadow: '0 -4px 24px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255,255,255,0.9)',
         paddingTop: '6px',
         paddingBottom: 'env(safe-area-inset-bottom, 12px)',
         display: 'flex',
         position: 'relative',
       }}
     >
-      {/* Sliding pill indicator */}
+      {/* Sliding pill indicator — glass-btn-indigo style */}
       {activeIndex >= 0 && (
         <div
           style={{
@@ -47,7 +47,11 @@ const BottomNavbar: React.FC = () => {
             width: `${100 / navItems.length}%`,
             height: '50px',
             borderRadius: '14px',
-            background: 'rgba(144,77,0,0.1)',
+            background: 'linear-gradient(-75deg, rgba(161,64,0,0.18), rgba(254,178,70,0.55), rgba(161,64,0,0.18))',
+            border: '1px solid rgba(161,64,0,0.4)',
+            boxShadow: 'inset 0 2px 2px rgba(255,255,255,0.6), inset 0 -2px 2px rgba(161,64,0,0.2), 0 4px 12px rgba(161,64,0,0.22)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
             transition: 'left 0.35s cubic-bezier(0.4, 0, 0.2, 1)',
             pointerEvents: 'none',
           }}
@@ -86,7 +90,7 @@ const BottomNavbar: React.FC = () => {
                   <Icon
                     size={23}
                     weight={isActive ? 'fill' : 'regular'}
-                    color={isActive ? 'var(--color-primary)' : '#b0a39d'}
+                    color={isActive ? '#3a1800' : 'var(--text-muted)'}
                   />
                 </div>
                 <span
@@ -94,7 +98,7 @@ const BottomNavbar: React.FC = () => {
                     fontSize: '10px',
                     fontFamily: 'Epilogue, sans-serif',
                     fontWeight: isActive ? 700 : 500,
-                    color: isActive ? 'var(--color-primary)' : '#b0a39d',
+                    color: isActive ? '#3a1800' : 'var(--text-muted)',
                     marginTop: '2px',
                     transition: 'color 0.3s ease, font-weight 0.2s ease',
                     letterSpacing: isActive ? '0.2px' : '0',

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+﻿import React, { useState, useEffect, useMemo } from "react";
 import { MagnifyingGlass, X, Info, MapPin, Storefront } from "@phosphor-icons/react";
 import { Scroll } from "@phosphor-icons/react/dist/csr/Scroll";
 import { Image } from "@phosphor-icons/react/dist/csr/Image";
@@ -141,10 +141,12 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ floor, vendors, onMarke
   return (
     <div
       style={{
-        background: P.card,
+        background: "rgba(255,255,255,0.52)",
+        backdropFilter: "blur(20px) saturate(160%)",
+        WebkitBackdropFilter: "blur(20px) saturate(160%)",
         borderRadius: "16px",
-        border: `1px solid rgba(161,64,0,0.09)`,
-        boxShadow: "0 4px 20px rgba(161,64,0,0.06)",
+        border: "1px solid rgba(255,255,255,0.72)",
+        boxShadow: "0 4px 20px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.9)",
         overflow: "hidden",
         marginBottom: "20px",
         opacity: fading ? 0 : 1,
@@ -917,7 +919,9 @@ interface GADPACardProps {
 const GADPACard: React.FC<GADPACardProps> = ({ vendor, onViewInfo }) => (
   <div
     style={{
-      background: "linear-gradient(135deg, #3a1800 0%, #6b2e00 50%, #8a4a00 100%)",
+      background: "linear-gradient(135deg, rgba(58,24,0,0.88) 0%, rgba(107,46,0,0.85) 50%, rgba(138,74,0,0.82) 100%)",
+      backdropFilter: "blur(20px) saturate(160%)",
+      WebkitBackdropFilter: "blur(20px) saturate(160%)",
       borderRadius: "18px",
       padding: "20px 24px",
       marginBottom: "24px",
@@ -926,8 +930,8 @@ const GADPACard: React.FC<GADPACardProps> = ({ vendor, onViewInfo }) => (
       justifyContent: "space-between",
       gap: "16px",
       flexWrap: "wrap",
-      boxShadow: "0 8px 32px rgba(161,64,0,0.22), 0 2px 8px rgba(0,0,0,0.1)",
-      border: `1px solid rgba(254,178,70,0.2)`,
+      boxShadow: "0 8px 32px rgba(161,64,0,0.22), 0 2px 8px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.08)",
+      border: `1px solid rgba(254,178,70,0.3)`,
       position: "relative",
       overflow: "hidden",
     }}
@@ -1007,10 +1011,12 @@ const GADPACard: React.FC<GADPACardProps> = ({ vendor, onViewInfo }) => (
     <button
       onClick={onViewInfo}
       style={{
-        background: P.accent,
+        background: "linear-gradient(-75deg, rgba(254,178,70,0.6), rgba(254,178,70,0.9), rgba(254,178,70,0.6))",
+        backdropFilter: "blur(8px)",
+        WebkitBackdropFilter: "blur(8px)",
         color: "#3a1800",
-        border: "none",
-        borderRadius: "12px",
+        border: "1px solid rgba(255,210,120,0.6)",
+        borderRadius: "999px",
         padding: "10px 20px",
         fontSize: "13px",
         fontWeight: 800,
@@ -1018,17 +1024,17 @@ const GADPACard: React.FC<GADPACardProps> = ({ vendor, onViewInfo }) => (
         fontFamily: "Plus Jakarta Sans, sans-serif",
         whiteSpace: "nowrap",
         flexShrink: 0,
-        transition: "all 0.15s",
-        boxShadow: "0 2px 8px rgba(254,178,70,0.3)",
+        transition: "all 0.25s cubic-bezier(0.25,1,0.5,1)",
+        boxShadow: "inset 0 2px 2px rgba(255,255,255,0.5), 0 4px 12px rgba(254,178,70,0.3)",
         position: "relative",
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.background = "#ffc45e";
-        e.currentTarget.style.transform = "translateY(-1px)";
+        e.currentTarget.style.transform = "scale(0.975)";
+        e.currentTarget.style.boxShadow = "inset 0 2px 2px rgba(255,255,255,0.5), 0 6px 20px rgba(254,178,70,0.45)";
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.style.background = P.accent;
-        e.currentTarget.style.transform = "translateY(0)";
+        e.currentTarget.style.transform = "scale(1)";
+        e.currentTarget.style.boxShadow = "inset 0 2px 2px rgba(255,255,255,0.5), 0 4px 12px rgba(254,178,70,0.3)";
       }}
     >
       View Details
@@ -1052,10 +1058,14 @@ const BoothCard: React.FC<BoothCardProps> = ({ vendor, onViewInfo }) => {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        background: P.card,
+        background: hovered ? "rgba(255,255,255,0.68)" : "rgba(255,255,255,0.52)",
+        backdropFilter: "blur(20px) saturate(160%)",
+        WebkitBackdropFilter: "blur(20px) saturate(160%)",
         borderRadius: "16px",
-        border: `1px solid rgba(161,64,0,${hovered ? "0.13" : "0.07"})`,
-        boxShadow: hovered ? "0 12px 36px rgba(161,64,0,0.13), 0 4px 12px rgba(0,0,0,0.06)" : "0 2px 10px rgba(0,0,0,0.045)",
+        border: hovered ? "1px solid rgba(255,255,255,0.85)" : "1px solid rgba(255,255,255,0.7)",
+        boxShadow: hovered
+          ? "0 12px 36px rgba(161,64,0,0.1), 0 4px 12px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.95)"
+          : "0 4px 16px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.9)",
         padding: "20px",
         display: "flex",
         flexDirection: "column",
@@ -1322,7 +1332,7 @@ const Map: React.FC = () => {
           border-radius: 999px;
           border: none;
           background: transparent;
-          color: #705A49;
+          color: var(--text-muted);
           font-size: 13px;
           font-weight: 700;
           cursor: pointer;
@@ -1332,22 +1342,21 @@ const Map: React.FC = () => {
                       transform 0.25s ease, box-shadow 0.25s ease;
         }
         .floor-tab:hover:not(.active) {
-          background: rgba(254, 178, 70, 0.15);
-          color: #A14000;
+          background: rgba(255,255,255,0.6);
+          color: var(--text-primary);
           transform: scale(1.05);
         }
         .floor-tab.active {
-          background: #A14000;
+          background: rgba(209,223,246,0.85);
           color: #fff;
           transform: scale(1.04);
-          box-shadow: 0 4px 18px rgba(161, 64, 0, 0.32),
-                      0 0 0 4px rgba(254, 178, 70, 0.16);
+          box-shadow: 0 4px 14px rgba(209,223,246,0.3);
         }
         .floor-tab.active:hover {
-          background: #8a3500;
+          background: rgba(168,192,232,0.9);
         }
         .floor-tab:focus-visible {
-          outline: 3px solid #FEB246;
+          outline: 3px solid rgba(209,223,246,0.5);
           outline-offset: 3px;
         }
 
@@ -1361,7 +1370,7 @@ const Map: React.FC = () => {
         @media (max-width: 899px) { .booth-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 599px) { .booth-grid { grid-template-columns: 1fr; } }
 
-        .search-input::placeholder { color: rgba(112,90,73,0.5); }
+        .search-input::placeholder { color: var(--text-muted); }
 
         /* ── GADPA & Anytime Fitness mobile fix ────────────────────────── */
         .booth-gadpa .booth-label,
@@ -1405,7 +1414,7 @@ const Map: React.FC = () => {
       )}
       {imageVendor && <ImageModal vendor={imageVendor} onClose={() => setImageVendor(null)} />}
 
-      <div className="mythic-pattern min-h-screen font-jakarta" style={{ backgroundColor: P.bg, paddingBottom: "96px" }}>
+      <div className="glass-page font-jakarta" style={{ paddingBottom: "96px" }}>
         <div style={{ maxWidth: "1100px", margin: "0 auto", padding: "28px 16px 0" }}>
           {/* ── Page title ──────────────────────────────────────────── */}
           <div style={{ marginBottom: "20px" }}>
@@ -1415,21 +1424,21 @@ const Map: React.FC = () => {
                 margin: "0 0 4px",
                 fontSize: "clamp(26px, 5vw, 34px)",
                 fontWeight: 900,
-                color: P.primary,
+                color: "var(--text-primary)",
                 letterSpacing: "-0.03em",
                 lineHeight: 1.05,
               }}
             >
               Discover Excellence
             </h1>
-            <p style={{ margin: 0, fontSize: "13px", color: P.muted }}>
+            <p style={{ margin: 0, fontSize: "13px", color: "var(--text-muted)" }}>
               {isSearching ? (
                 <>
-                  Showing <strong style={{ color: P.primary }}>{searchResults.length}</strong> result{searchResults.length !== 1 ? "s" : ""} across all floors
+                  Showing <strong style={{ color: "rgba(168,192,232,0.9)" }}>{searchResults.length}</strong> result{searchResults.length !== 1 ? "s" : ""} across all floors
                 </>
               ) : (
                 <>
-                  Browsing <strong style={{ color: P.primary }}>{floorVendors.length}</strong> vendors on the <strong style={{ color: P.primary }}>{activeFloor === "1st" ? "1st" : "Ground"} Floor</strong>
+                  Browsing <strong style={{ color: "rgba(168,192,232,0.9)" }}>{floorVendors.length}</strong> vendors on the <strong style={{ color: "rgba(168,192,232,0.9)" }}>{activeFloor === "1st" ? "1st" : "Ground"} Floor</strong>
                 </>
               )}
             </p>
@@ -1438,23 +1447,41 @@ const Map: React.FC = () => {
           {/* ── GADPA — always pinned at top ─────────────────────────── */}
           <GADPACard vendor={gadpa} onViewInfo={() => setInfoVendor(gadpa)} />
 
-          {/* ── Floor tabs — always visible (even during search) ─────── */}
-          <div
-            style={{
-              display: "flex",
-              gap: "6px",
-              marginBottom: "16px",
-              background: "rgba(112,90,73,0.07)",
-              borderRadius: "999px",
-              padding: "4px",
-              width: "fit-content",
-            }}
-          >
-            {(["1st", "Ground"] as const).map((floor) => (
-              <button key={floor} className={`floor-tab ${activeFloor === floor ? "active" : ""}`} onClick={() => switchFloor(floor)}>
-                {floor === "1st" ? "First Floor" : "Ground Floor"}
-              </button>
-            ))}
+          {/* ── Floor tabs ───────────────────────────────────────────── */}
+          <div style={{ display: "flex", gap: "8px", marginBottom: "16px" }}>
+            {(["1st", "Ground"] as const).map((floor) => {
+              const isActive = activeFloor === floor;
+              return (
+                <button
+                  key={floor}
+                  onClick={() => switchFloor(floor)}
+                  style={{
+                    padding: "8px 22px",
+                    borderRadius: "999px",
+                    fontFamily: "Epilogue, sans-serif",
+                    fontWeight: 700,
+                    fontSize: "13px",
+                    cursor: "pointer",
+                    whiteSpace: "nowrap",
+                    transition: "all 0.18s ease",
+                    background: isActive
+                      ? "linear-gradient(-75deg, rgba(209,223,246,0.25), rgba(209,223,246,0.65), rgba(209,223,246,0.25))"
+                      : "transparent",
+                    border: isActive
+                      ? "1px solid rgba(209,223,246,0.5)"
+                      : "1px solid transparent",
+                    boxShadow: isActive
+                      ? "inset 0 2px 2px rgba(255,255,255,0.7), 0 4px 12px rgba(168,192,232,0.2)"
+                      : "none",
+                    backdropFilter: isActive ? "blur(8px)" : "none",
+                    WebkitBackdropFilter: isActive ? "blur(8px)" : "none",
+                    color: isActive ? "#1e3a5f" : "var(--text-muted)",
+                  }}
+                >
+                  {floor === "1st" ? "First Floor" : "Ground Floor"}
+                </button>
+              );
+            })}
           </div>
 
           {/* ── Interactive map — always visible ──────────────────────── */}
@@ -1466,16 +1493,18 @@ const Map: React.FC = () => {
               display: "flex",
               alignItems: "center",
               gap: "10px",
-              background: "#fff",
+              background: "rgba(255,255,255,0.6)",
+              backdropFilter: "blur(20px) saturate(160%)",
+              WebkitBackdropFilter: "blur(20px) saturate(160%)",
               borderRadius: "999px",
               padding: "11px 18px",
-              boxShadow: "0 2px 16px rgba(161,64,0,0.07)",
-              border: `1px solid rgba(161,64,0,${isSearching ? "0.2" : "0.1"})`,
+              boxShadow: "0 2px 16px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.9)",
+              border: `1px solid ${isSearching ? "rgba(209,223,246,0.3)" : "rgba(255,255,255,0.75)"}`,
               marginBottom: "20px",
-              transition: "border-color 0.15s",
+              transition: "border-color 0.2s",
             }}
           >
-            <MagnifyingGlass size={16} weight="bold" style={{ color: P.muted, flexShrink: 0, opacity: 0.7 }} />
+            <MagnifyingGlass size={16} weight="bold" style={{ color: "var(--text-muted)", flexShrink: 0 }} />
             <input
               className="search-input"
               type="text"
@@ -1488,7 +1517,7 @@ const Map: React.FC = () => {
                 background: "transparent",
                 fontSize: "14px",
                 flex: 1,
-                color: "#1f2937",
+                color: "var(--text-primary)",
                 fontFamily: "Plus Jakarta Sans, sans-serif",
               }}
             />
@@ -1497,7 +1526,7 @@ const Map: React.FC = () => {
                 onClick={() => setSearchQuery("")}
                 aria-label="Clear search"
                 style={{
-                  background: "rgba(161,64,0,0.08)",
+                  background: "rgba(209,223,246,0.1)",
                   border: "none",
                   borderRadius: "50%",
                   width: "22px",
@@ -1510,7 +1539,7 @@ const Map: React.FC = () => {
                   padding: 0,
                 }}
               >
-                <X size={12} weight="bold" color={P.primary} />
+                <X size={12} weight="bold" color="rgba(168,192,232,0.8)" />
               </button>
             )}
           </div>

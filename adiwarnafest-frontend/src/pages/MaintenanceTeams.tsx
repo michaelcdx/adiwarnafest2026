@@ -343,13 +343,7 @@ const MaintenanceTeams = () => {
   }, [loading])
 
   return (
-    <div
-      className="min-h-screen"
-      style={{
-        fontFamily: 'Epilogue, sans-serif',
-        backgroundColor: '#FAF9F6',
-      }}
-    >
+    <div className="glass-page" style={{ fontFamily: 'Epilogue, sans-serif' }}>
       <Toast ref={toast} />
 
       <div
@@ -364,24 +358,22 @@ const MaintenanceTeams = () => {
             <p className="m-0 text-600 text-sm">Manage teams and standings.</p>
           </div>
           <div className="flex flex-wrap align-items-center gap-3">
-            <div className="flex align-items-center gap-2">
+            <label className="flex align-items-center gap-2 cursor-pointer" style={{ background: 'rgba(255,255,255,0.45)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', border: '1px solid rgba(255,255,255,0.7)', borderRadius: '999px', padding: '6px 14px', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.9)' }}>
               <InputSwitch
                 checked={includeDeleted}
                 onChange={e => setIncludeDeleted(Boolean(e.value))}
               />
-              <span className="text-sm font-semibold" style={{ color: '#374151' }}>
-                Include deleted
-              </span>
+              <span className="text-sm font-semibold" style={{ color: 'var(--text-secondary)' }}>Include deleted</span>
+            </label>
+            <div className="button-wrap" style={{ fontSize: '13px' }}>
+              <button className="premium-btn" onClick={openCreate}><span>New Team</span></button>
+              <div className="button-shadow" />
             </div>
-            <Button label="New Team" onClick={openCreate} />
-            <Button label="Refresh" onClick={() => loadTeams(includeDeleted)} outlined />
+            <button className="glass-btn" style={{ padding: '8px 18px', fontSize: '13px' }} onClick={() => loadTeams(includeDeleted)}>Refresh</button>
           </div>
         </header>
 
-        <div
-          className="border-round-2xl p-3 shadow-2"
-          style={{ backgroundColor: '#fff', border: '1px solid #eee', overflowX: 'auto' }}
-        >
+        <div className="glass-card p-3" style={{ overflowX: 'auto' }}>
           <DataTable
             value={teams}
             paginator

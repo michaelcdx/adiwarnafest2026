@@ -1,4 +1,4 @@
-import adiwarnaLogo from '../image/Adiwarna_Logo_NoBackground.png';
+﻿import adiwarnaLogo from '../image/Adiwarna_Logo_NoBackground.png';
 
 const LoadingScreen = () => {
   return (
@@ -41,7 +41,7 @@ const LoadingScreen = () => {
         .loading-spinner {
           width: 40px;
           height: 40px;
-          border: 4px solid rgba(144, 77, 0, 0.2);
+          border: 4px solid rgba(209, 223, 246, 0.2);
           border-top: 4px solid var(--color-primary);
           border-radius: 50%;
           animation: spin 1s linear infinite;

@@ -250,10 +250,9 @@ const MaintenanceGames = () => {
 
   return (
     <div
-      className="min-h-screen"
+      className="glass-page"
       style={{
         fontFamily: 'Epilogue, sans-serif',
-        backgroundColor: '#FAF9F6',
       }}
     >
       <Toast ref={toast} />
@@ -270,32 +269,24 @@ const MaintenanceGames = () => {
             <p className="m-0 text-600 text-sm">Manage games within tournaments.</p>
           </div>
           <div className="flex flex-wrap align-items-center gap-3">
-            <div className="flex align-items-center gap-2">
+            <label className="flex align-items-center gap-2 cursor-pointer" style={{ background: 'rgba(255,255,255,0.45)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', border: '1px solid rgba(255,255,255,0.7)', borderRadius: '999px', padding: '6px 14px', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.9)' }}>
               <InputSwitch
                 checked={includeDeleted}
                 onChange={e => handleIncludeDeletedChange(Boolean(e.value))}
               />
-              <span className="text-sm font-semibold" style={{ color: '#374151' }}>
-                Include deleted
-              </span>
+              <span className="text-sm font-semibold" style={{ color: 'var(--text-secondary)' }}>Include deleted</span>
+            </label>
+            <div className="button-wrap" style={{ fontSize: '13px', opacity: !selectedTournamentId ? 0.45 : 1 }}>
+              <button className="premium-btn" onClick={openCreate} disabled={!selectedTournamentId}><span>New Game</span></button>
+              <div className="button-shadow" />
             </div>
-            <Button
-              label="New Game"
-              onClick={openCreate}
-              disabled={!selectedTournamentId}
-            />
-            <Button
-              label="Refresh"
-              onClick={refresh}
-              outlined
-              disabled={!selectedTournamentId}
-            />
+            <button className="glass-btn" style={{ padding: '8px 18px', fontSize: '13px', opacity: !selectedTournamentId ? 0.45 : 1 }} onClick={refresh} disabled={!selectedTournamentId}>Refresh</button>
           </div>
         </header>
 
         <div className="flex flex-column gap-3 mb-4">
           <div className="flex flex-column gap-2" style={{ maxWidth: '300px' }}>
-            <label className="text-sm font-semibold" style={{ color: '#374151' }}>
+            <label className="text-sm font-semibold" style={{ color: 'var(--text-secondary)' }}>
               Tournament
             </label>
             <Dropdown
@@ -305,14 +296,12 @@ const MaintenanceGames = () => {
               onChange={e => handleTournamentChange(e.value)}
               showClear
               className="w-full"
+              style={{ background: 'rgba(255,255,255,0.52)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', border: '1px solid rgba(255,255,255,0.72)', borderRadius: '12px', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.9)' }}
             />
           </div>
         </div>
 
-        <div
-          className="border-round-2xl p-3 shadow-2"
-          style={{ backgroundColor: '#fff', border: '1px solid #eee', overflowX: 'auto' }}
-        >
+        <div className="glass-card p-3" style={{ overflowX: 'auto' }}>
           <DataTable
             value={games}
             paginator

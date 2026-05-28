@@ -1,186 +1,86 @@
-import { useNavigate } from 'react-router-dom'
-import { Button } from 'primereact/button'
-import { Dialog } from 'primereact/dialog'
-import { DataTable } from 'primereact/datatable'
-import { Column } from 'primereact/column'
-import { ShieldCheck, UsersThree, Trophy, CalendarBlank, Download, GameController, YoutubeLogo } from '@phosphor-icons/react'
+﻿import { useNavigate } from 'react-router-dom'
+import { ShieldCheck, UsersThree, Trophy, CalendarBlank, Download, GameController, Eye } from '@phosphor-icons/react'
 import { useAuth } from '../store/auth'
-import { useRef, useState } from 'react'
-import { Toast } from 'primereact/toast'
-import { luckyDrawService, type LuckyDrawEntryDto } from '../services/luckyDraw'
-import { ApiError } from '../services/http'
 
 const Maintenance = () => {
   const navigate = useNavigate()
-  const { role, username, signOut, accessToken } = useAuth()
+  const { role, username, signOut } = useAuth()
   const isAdmin = role === 'Admin'
   const isMaintainer = role === 'Maintainer'
   const canExport = isAdmin || isMaintainer
-  const toast = useRef<Toast>(null)
-  const [isExporting, setIsExporting] = useState(false)
-  const [isEntriesModalOpen, setIsEntriesModalOpen] = useState(false)
-  const [entries, setEntries] = useState<LuckyDrawEntryDto[]>([])
-  const [isLoadingEntries, setIsLoadingEntries] = useState(false)
 
-  const loadEntries = async () => {
-    try {
-      setIsLoadingEntries(true)
-      const data = await luckyDrawService.getEntries()
-      setEntries(data || [])
-      toast.current?.show({
-        severity: 'success',
-        summary: 'Entries Loaded',
-        detail: `Found ${data?.length || 0} entries.`,
-        life: 2500
-      })
-    } catch (error) {
-      const message = error instanceof ApiError
-        ? 'Failed to load entries.'
-        : 'Failed to load entries. Check that the backend is running.'
-      setEntries([])
-      toast.current?.show({
-        severity: 'error',
-        summary: 'Load Failed',
-        detail: message,
-        life: 4000
-      })
-    } finally {
-      setIsLoadingEntries(false)
-    }
-  }
-
-  const handleExportLuckyDraw = async () => {
-    try {
-      setIsExporting(true)
-      setIsEntriesModalOpen(true)
-      await loadEntries()
-    } finally {
-      setIsExporting(false)
-    }
-  }
-
-  const handleDownloadCSV = async () => {
-    try {
-      const baseUrl = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.trim() || ''
-      const response = await fetch(`${baseUrl}/api/lucky-draw/export-entries`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${accessToken || ''}`
-        }
-      })
-
-      if (!response.ok) {
-        throw new Error(`Export failed: ${response.status} ${response.statusText}`)
-      }
-
-      const blob = await response.blob()
-      const url = window.URL.createObjectURL(blob)
-      const link = document.createElement('a')
-      link.href = url
-      link.setAttribute('download', `lucky-draw-entries-${new Date().toISOString().split('T')[0]}.csv`)
-      document.body.appendChild(link)
-      link.click()
-      link.parentNode?.removeChild(link)
-      window.URL.revokeObjectURL(url)
-    } catch (error) {
-      const message = error instanceof Error ? 'CSV download failed.' : 'CSV download failed.'
-      toast.current?.show({
-        severity: 'error',
-        summary: 'Download Failed',
-        detail: message,
-        life: 4000
-      })
-    }
-  }
-
+  const iconColor = 'rgba(209,223,246,0.85)'
   const cards = [
     {
-      icon: <UsersThree size={28} weight="bold" color="#fff" />,
+      icon: <UsersThree size={28} weight="bold" color={iconColor} />,
       title: 'Staff Users',
       description: 'Manage Admin and Maintainer accounts.',
       label: isAdmin ? 'Open Staff' : 'Admin only',
       disabled: !isAdmin,
       onClick: () => navigate('/maintenance/users'),
-      bgGradient: 'linear-gradient(135deg, #862C14 0%, #a83d1a 100%)',
-      color: '#862C14'
     },
     {
-      icon: <UsersThree size={28} weight="bold" color="#fff" />,
+      icon: <UsersThree size={28} weight="bold" color={iconColor} />,
       title: 'Participants',
       description: 'Manage registered participants (Players).',
       label: 'Open Participants',
       disabled: false,
       onClick: () => navigate('/maintenance/participants'),
-      bgGradient: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)',
-      color: '#7c3aed'
     },
     {
-      icon: <Trophy size={28} weight="bold" color="#fff" />,
+      icon: <Trophy size={28} weight="bold" color={iconColor} />,
       title: 'Teams',
       description: 'Manage teams and standings.',
       label: 'Open Teams',
       disabled: false,
       onClick: () => navigate('/maintenance/teams'),
-      bgGradient: 'linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%)',
-      color: '#1e40af'
     },
     {
-      icon: <CalendarBlank size={28} weight="bold" color="#fff" />,
+      icon: <CalendarBlank size={28} weight="bold" color={iconColor} />,
       title: 'Tournaments',
       description: 'Manage tournaments and placements.',
       label: 'Open Tournaments',
       disabled: false,
       onClick: () => navigate('/maintenance/tournaments'),
-      bgGradient: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
-      color: '#059669'
     },
     {
-      icon: <GameController size={28} weight="bold" color="#fff" />,
+      icon: <GameController size={28} weight="bold" color={iconColor} />,
       title: 'Games',
       description: 'Manage games and score updates within tournaments.',
       label: 'Open Games',
       disabled: false,
       onClick: () => navigate('/maintenance/games'),
-      bgGradient: 'linear-gradient(135deg, #0891b2 0%, #0e7490 100%)',
-      color: '#0891b2'
     },
     {
-      icon: <YoutubeLogo size={28} weight="bold" color="#fff" />,
+      icon: <Eye size={28} weight="bold" color={iconColor} />,
       title: 'Live YouTube',
       description: 'Manage live YouTube stream links.',
       label: 'Open Live YouTube',
       disabled: false,
       onClick: () => navigate('/maintenance/live-youtube'),
-      bgGradient: 'linear-gradient(135deg, #FF0000 0%, #CC0000 100%)',
-      color: '#FF0000'
     },
     {
-      icon: <Download size={28} weight="bold" color="#fff" />,
+      icon: <Download size={28} weight="bold" color={iconColor} />,
       title: 'Lucky Draw',
       description: 'Export participant entries.',
-      label: canExport ? (isExporting ? 'Loading...' : 'View Entries') : 'Admin/Maintainer only',
-      disabled: !canExport || isExporting,
-      onClick: handleExportLuckyDraw,
-      bgGradient: 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)',
-      color: '#ec4899'
+      label: canExport ? 'Open Lucky Draw' : 'Admin/Maintainer only',
+      disabled: !canExport,
+      onClick: () => navigate('/maintenance/lucky-draw'),
     }
   ];
 
   return (
-    <div className="min-h-screen" style={{ fontFamily: 'Epilogue, sans-serif', backgroundColor: '#fafaf9' }}>
-      <Toast ref={toast} position="bottom-center" />
+    <div className="glass-page" style={{ fontFamily: 'Epilogue, sans-serif' }}>
       <div className="px-4 py-6 md:py-8 mx-auto w-full" style={{ maxWidth: '1280px' }}>
         {/* Header */}
         <header className="mb-8">
           <div className="flex align-items-center gap-3 mb-3">
-            <div className="border-round-xl p-3" style={{ background: 'linear-gradient(135deg, #862C14 0%, #a83d1a 100%)' }}>
-              <ShieldCheck size={24} weight="bold" color="#fff" />
-            </div>
+            <ShieldCheck size={24} weight="bold" color="rgba(209,223,246,0.9)" />
             <div>
-              <h1 className="m-0 text-3xl font-black" style={{ color: '#1a1a1a', letterSpacing: '-0.02em' }}>
+              <h1 className="m-0 text-3xl font-black" style={{ color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
                 Maintenance Dashboard
               </h1>
-              <p className="m-0 text-600 text-sm mt-1">Welcome, {username || 'User'} · <span style={{ fontWeight: '600', color: '#862C14' }}>{role || 'Unknown'}</span></p>
+              <p className="m-0 text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>Welcome, {username || 'User'} · <span style={{ fontWeight: '600', color: 'rgba(209,223,246,0.9)' }}>{role || 'Unknown'}</span></p>
             </div>
           </div>
         </header>
@@ -190,107 +90,70 @@ const Maintenance = () => {
           {cards.map((card, idx) => (
             <div key={idx} className="col-12 md:col-6 lg:col-6 xl:col-3">
               <div
-                className="h-full border-round-2xl p-5 shadow-3 flex flex-column gap-4 transition-all duration-300 hover:shadow-6 hover:transform-y-2 cursor-pointer border-1"
+                className="h-full p-5 flex flex-column gap-4 cursor-pointer"
                 style={{
-                  backgroundColor: '#fff',
-                  borderColor: 'rgba(0,0,0,0.06)',
+                  background: 'rgba(255,255,255,0.42)',
+                  backdropFilter: 'blur(28px) saturate(180%)',
+                  WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+                  border: '1px solid rgba(255,255,255,0.75)',
+                  borderRadius: '24px',
+                  boxShadow: '0 8px 32px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.95)',
+                  transition: 'transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease',
+                }}
+                onMouseEnter={e => {
+                  const el = e.currentTarget as HTMLDivElement;
+                  el.style.transform = 'translateY(-4px)';
+                  el.style.background = 'rgba(255,255,255,0.62)';
+                  el.style.boxShadow = '0 16px 48px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.95)';
+                }}
+                onMouseLeave={e => {
+                  const el = e.currentTarget as HTMLDivElement;
+                  el.style.transform = '';
+                  el.style.background = 'rgba(255,255,255,0.42)';
+                  el.style.boxShadow = '0 8px 32px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.95)';
                 }}
               >
-                {/* Icon Container */}
-                <div
-                  className="border-round-xl p-4 w-fit"
-                  style={{ background: card.bgGradient }}
-                >
-                  {card.icon}
-                </div>
+                {/* Icon */}
+                {card.icon}
 
                 {/* Content */}
                 <div className="flex-1">
-                  <h2 className="m-0 text-xl font-bold mb-1" style={{ color: '#1a1a1a' }}>
+                  <h2 className="m-0 text-xl font-bold mb-1" style={{ color: 'var(--text-primary)' }}>
                     {card.title}
                   </h2>
-                  <p className="m-0 text-600 text-sm leading-relaxed">
+                  <p className="m-0 text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                     {card.description}
                   </p>
                 </div>
 
                 {/* Button */}
-                <Button
-                  label={card.label}
+                <button
                   disabled={card.disabled}
-                  onClick={card.onClick}
-                  loading={card.title === 'Lucky Draw' && isExporting}
-                  className="w-full font-bold uppercase text-sm"
+                  onClick={card.disabled ? undefined : card.onClick}
+                  className="glass-btn-indigo w-full font-bold text-sm"
                   style={{
-                    backgroundColor: card.color,
-                    borderColor: card.color,
-                    color: '#fff',
-                    padding: '10px 16px'
+                    opacity: card.disabled ? 0.45 : 1,
+                    cursor: card.disabled ? 'not-allowed' : 'pointer',
+                    padding: '10px 16px',
                   }}
-                />
+                >
+                  {card.label}
+                </button>
               </div>
             </div>
           ))}
         </section>
 
         {/* Sign Out Button */}
-        <div className="flex gap-2">
-          <Button
-            label="Sign Out"
-            severity="secondary"
-            outlined
-            onClick={() => signOut().then(() => navigate('/'))}
-            className="font-bold"
-          />
+        <div className="flex gap-2" style={{ fontSize: '14px' }}>
+          <div className="button-wrap">
+            <button className="premium-btn" onClick={() => signOut().then(() => navigate('/'))} style={{ fontFamily: 'Epilogue, sans-serif' }}>
+              <span>Sign Out</span>
+            </button>
+            <div className="button-shadow" />
+          </div>
         </div>
       </div>
-
-      {/* Lucky Draw Entries Modal */}
-      <Dialog
-        visible={isEntriesModalOpen}
-        onHide={() => setIsEntriesModalOpen(false)}
-        header="Lucky Draw Entries"
-        modal
-        style={{ width: '90vw', maxWidth: '1200px' }}
-        contentStyle={{ padding: '20px' }}
-      >
-        <div className="flex gap-3 mb-4 justify-content-between">
-          <Button
-            label="Refresh"
-            icon="pi pi-refresh"
-            onClick={loadEntries}
-            loading={isLoadingEntries}
-            severity="info"
-          />
-          <Button
-            label="Download CSV"
-            icon={<Download size={20} className="mr-2" />}
-            onClick={handleDownloadCSV}
-            severity="success"
-          />
-        </div>
-
-        <div style={{ overflowX: 'auto' }}>
-        <DataTable
-          value={entries}
-          paginator
-          rows={10}
-          rowsPerPageOptions={[5, 10, 20]}
-          tableStyle={{ minWidth: '50rem' }}
-          loading={isLoadingEntries}
-        >
-          <Column field="fullName" header="Full Name" sortable filter />
-          <Column field="phoneNumber" header="Phone Number" sortable filter />
-          <Column field="instagramHandle" header="Instagram Handle" sortable filter />
-          <Column
-            field="submittedAt"
-            header="Submitted At"
-            sortable
-            body={(rowData) => new Date(rowData.submittedAt).toLocaleString()}
-          />
-        </DataTable>
-        </div>
-      </Dialog>
     </div>
   )
 }

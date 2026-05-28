@@ -264,10 +264,9 @@ const MaintenanceTournaments = () => {
 
   return (
     <div
-      className="min-h-screen"
+      className="glass-page"
       style={{
         fontFamily: 'Epilogue, sans-serif',
-        backgroundColor: '#FAF9F6',
       }}
     >
       <Toast ref={toast} />
@@ -298,10 +297,7 @@ const MaintenanceTournaments = () => {
           </div>
         </header>
 
-        <div
-          className="border-round-2xl p-3 shadow-2"
-          style={{ backgroundColor: '#fff', border: '1px solid #eee', overflowX: 'auto' }}
-        >
+        <div className="glass-card p-3" style={{ overflowX: 'auto' }}>
           <DataTable
             value={tournaments}
             paginator

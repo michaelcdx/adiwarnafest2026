@@ -15,6 +15,7 @@ import MaintenanceTeams from './pages/MaintenanceTeams'
 import MaintenanceTournaments from './pages/MaintenanceTournaments'
 import MaintenanceGames from './pages/MaintenanceGames'
 import MaintenanceLiveYoutube from './pages/MaintenanceLiveYoutube'
+import MaintenanceLuckyDraw from './pages/MaintenanceLuckyDraw'
 import QRCodeTester from './pages/QRCodeTester'
 import RequireRole from './components/RequireRole'
 
@@ -82,6 +83,14 @@ function App() {
             element={
               <RequireRole allowedRoles={['Admin', 'Maintainer']}>
                 <MaintenanceLiveYoutube />
+              </RequireRole>
+            }
+          />
+          <Route
+            path="maintenance/lucky-draw"
+            element={
+              <RequireRole allowedRoles={['Admin', 'Maintainer']}>
+                <MaintenanceLuckyDraw />
               </RequireRole>
             }
           />

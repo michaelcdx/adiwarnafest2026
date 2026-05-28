@@ -178,10 +178,9 @@ const MaintenanceLiveYoutube = () => {
 
   return (
     <div
-      className="min-h-screen"
+      className="glass-page"
       style={{
         fontFamily: 'Epilogue, sans-serif',
-        backgroundColor: '#FAF9F6',
       }}
     >
       <Toast ref={toast} />
@@ -197,16 +196,16 @@ const MaintenanceLiveYoutube = () => {
             </h1>
             <p className="m-0 text-600 text-sm">Manage live YouTube stream links.</p>
           </div>
-          <div className="flex flex-wrap align-items-center gap-3">
-            <Button label="New Entry" onClick={openCreate} />
-            <Button label="Refresh" onClick={refresh} outlined />
+          <div className="flex flex-wrap align-items-center gap-3" style={{ fontSize: '13px' }}>
+            <div className="button-wrap">
+              <button className="premium-btn" onClick={openCreate}><span>New Entry</span></button>
+              <div className="button-shadow" />
+            </div>
+            <button className="glass-btn" style={{ padding: '8px 18px', fontSize: '13px' }} onClick={refresh}>Refresh</button>
           </div>
         </header>
 
-        <div
-          className="border-round-2xl p-3 shadow-2"
-          style={{ backgroundColor: '#fff', border: '1px solid #eee', overflowX: 'auto' }}
-        >
+        <div className="glass-card p-3" style={{ overflowX: 'auto' }}>
           <DataTable
             value={entries}
             paginator

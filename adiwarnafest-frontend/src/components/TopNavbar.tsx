@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+﻿import { useMemo, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { House, Trophy, MapTrifold, UsersThree, X, User, Wrench, Sparkle } from '@phosphor-icons/react';
 import adiwarnaLogo from '../image/Adiwarna_Logo_NoBackground.png';
@@ -31,10 +31,11 @@ const TopNavbar = () => {
       <header
         className="sticky top-0 z-5 w-full"
         style={{
-          backgroundColor: 'rgba(251, 249, 248, 0.96)',
-          backdropFilter: 'blur(16px)',
-          WebkitBackdropFilter: 'blur(16px)',
-          borderBottom: '1px solid rgba(144,77,0,0.08)',
+          backgroundColor: 'rgba(255, 255, 255, 0.62)',
+          backdropFilter: 'blur(28px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+          borderBottom: '1px solid rgba(255,255,255,0.75)',
+          boxShadow: '0 2px 16px rgba(0,0,0,0.05), inset 0 -1px 0 rgba(255,255,255,0.8)',
           height: '60px',
           display: 'flex',
           alignItems: 'center',
@@ -50,9 +51,9 @@ const TopNavbar = () => {
             <span
               style={{
                 fontFamily: 'Epilogue, sans-serif',
-                fontWeight: 800,
+                fontWeight: 900,
                 fontSize: '17px',
-                color: 'var(--color-primary)',
+                color: 'var(--text-primary)',
                 letterSpacing: '-0.02em',
               }}
             >
@@ -71,9 +72,15 @@ const TopNavbar = () => {
                   alignItems: 'center',
                   gap: '6px',
                   padding: '7px 14px',
-                  borderRadius: '10px',
-                  background: isActive ? 'rgba(144,77,0,0.1)' : 'transparent',
-                  color: isActive ? 'var(--color-primary)' : '#6b7280',
+                  borderRadius: '999px',
+                  background: isActive
+                    ? 'linear-gradient(-75deg, rgba(161,64,0,0.18), rgba(254,178,70,0.55), rgba(161,64,0,0.18))'
+                    : 'transparent',
+                  border: isActive ? '1px solid rgba(161,64,0,0.4)' : '1px solid transparent',
+                  boxShadow: isActive ? 'inset 0 2px 2px rgba(255,255,255,0.6), 0 4px 12px rgba(161,64,0,0.2)' : 'none',
+                  backdropFilter: isActive ? 'blur(8px)' : 'none',
+                  WebkitBackdropFilter: isActive ? 'blur(8px)' : 'none',
+                  color: isActive ? '#3a1800' : '#6b7280',
                   fontFamily: 'Epilogue, sans-serif',
                   fontWeight: 700,
                   fontSize: '14px',
@@ -87,42 +94,25 @@ const TopNavbar = () => {
             
             {/* Auth Button Desktop */}
             <div style={{ position: 'relative' }}>
-              <button
-                onClick={() => {
-                  if (isAuthenticated) {
-                    setIsProfileOpen(prev => !prev);
-                  } else {
-                    navigate('/login');
-                  }
-                }}
-                style={{
-                  marginLeft: '12px',
-                  padding: '8px 20px',
-                  borderRadius: '12px',
-                  background: 'var(--color-primary)',
-                  color: 'white',
-                  border: 'none',
-                  fontFamily: 'Epilogue, sans-serif',
-                  fontWeight: 700,
-                  fontSize: '14px',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease',
-                  boxShadow: '0 4px 12px rgba(144,77,0,0.25)',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-1px)';
-                  e.currentTarget.style.boxShadow = '0 6px 16px rgba(144,77,0,0.35)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(144,77,0,0.25)';
-                }}
-              >
-                <div className="flex align-items-center gap-2">
-                  <User size={18} weight="bold" />
-                  {isAuthenticated ? 'Profile' : 'Login'}
-                </div>
-              </button>
+              <div className="button-wrap" style={{ marginLeft: '12px', fontSize: '14px' }}>
+                <button
+                  onClick={() => {
+                    if (isAuthenticated) {
+                      setIsProfileOpen(prev => !prev);
+                    } else {
+                      navigate('/login');
+                    }
+                  }}
+                  className="premium-btn"
+                  style={{ fontFamily: 'Epilogue, sans-serif' }}
+                >
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <User size={18} weight="bold" />
+                    {isAuthenticated ? 'Profile' : 'Login'}
+                  </span>
+                </button>
+                <div className="button-shadow" />
+              </div>
 
               {/* Desktop Profile Dropdown Popover */}
               {isAuthenticated && isProfileOpen && (
@@ -142,10 +132,12 @@ const TopNavbar = () => {
                       right: 0,
                       top: 'calc(100% + 8px)',
                       width: '240px',
-                      backgroundColor: 'white',
-                      borderRadius: '16px',
-                      boxShadow: '0 10px 30px rgba(0,0,0,0.12)',
-                      border: '1px solid rgba(144,77,0,0.08)',
+                      background: 'rgba(255,255,255,0.72)',
+                      backdropFilter: 'blur(24px) saturate(180%)',
+                      WebkitBackdropFilter: 'blur(24px) saturate(180%)',
+                      borderRadius: '18px',
+                      boxShadow: '0 12px 40px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.9)',
+                      border: '1px solid rgba(255,255,255,0.8)',
                       padding: '16px',
                       display: 'flex',
                       flexDirection: 'column',
@@ -159,32 +151,15 @@ const TopNavbar = () => {
                       <span style={{ fontSize: '13px', color: '#1b1c1c', fontWeight: 800, wordBreak: 'break-all' }}>{email || username}</span>
                     </div>
                     
-                    <div style={{ height: '1px', backgroundColor: 'rgba(144,77,0,0.08)' }} />
+                    <div style={{ height: '1px', backgroundColor: 'rgba(209,223,246,0.08)' }} />
                     
                     <button
                       onClick={() => {
                         setIsProfileOpen(false);
                         signOut().then(() => navigate('/'));
                       }}
-                      style={{
-                        padding: '10px',
-                        borderRadius: '10px',
-                        backgroundColor: '#FAF9F6',
-                        color: 'var(--color-primary)',
-                        border: '1.5px solid rgba(144,77,0,0.15)',
-                        fontFamily: 'Epilogue, sans-serif',
-                        fontWeight: 700,
-                        fontSize: '13px',
-                        cursor: 'pointer',
-                        textAlign: 'center',
-                        transition: 'all 0.15s ease',
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = 'rgba(144,77,0,0.05)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = '#FAF9F6';
-                      }}
+                      className="glass-btn-indigo w-full"
+                      style={{ padding: '10px', fontFamily: 'Epilogue, sans-serif', fontSize: '13px' }}
                     >
                       Sign Out
                     </button>
@@ -203,7 +178,7 @@ const TopNavbar = () => {
             style={{
               width: '40px',
               height: '40px',
-              background: isMenuOpen ? 'rgba(144,77,0,0.1)' : 'white',
+              background: isMenuOpen ? 'rgba(209,223,246,0.1)' : 'white',
               border: 'none',
               borderRadius: '12px',
               cursor: 'pointer',
@@ -346,7 +321,7 @@ const TopNavbar = () => {
               justifyContent: 'space-between',
               padding: '16px 20px',
               height: '60px',
-              borderBottom: '1px solid rgba(144,77,0,0.08)',
+              borderBottom: '1px solid rgba(209,223,246,0.08)',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -367,7 +342,7 @@ const TopNavbar = () => {
               onClick={closeMenu}
               style={{
                 width: '34px', height: '34px',
-                background: 'rgba(144,77,0,0.08)',
+                background: 'rgba(209,223,246,0.08)',
                 border: 'none',
                 borderRadius: '10px',
                 cursor: 'pointer',
@@ -394,9 +369,9 @@ const TopNavbar = () => {
                   gap: '14px',
                   padding: '14px 16px',
                   borderRadius: '14px',
-                  background: isActive ? 'rgba(144,77,0,0.1)' : 'transparent',
-                  border: isActive ? '1px solid rgba(144,77,0,0.15)' : '1px solid transparent',
-                  color: isActive ? 'var(--color-primary)' : '#3d3d3d',
+                  background: isActive ? 'rgba(254,178,70,0.18)' : 'transparent',
+                  border: isActive ? '1px solid rgba(161,64,0,0.25)' : '1px solid transparent',
+                  color: isActive ? '#3a1800' : '#3d3d3d',
                   fontFamily: 'Epilogue, sans-serif',
                   fontWeight: 700,
                   fontSize: '16px',
@@ -412,7 +387,7 @@ const TopNavbar = () => {
                         width: '40px',
                         height: '40px',
                         borderRadius: '12px',
-                        background: isActive ? 'var(--color-primary)' : 'rgba(144,77,0,0.08)',
+                        background: isActive ? '#feb246' : 'rgba(254,178,70,0.12)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -423,7 +398,7 @@ const TopNavbar = () => {
                       <item.icon
                         size={20}
                         weight="fill"
-                        color={isActive ? 'white' : 'var(--color-primary)'}
+                        color={isActive ? '#3a1800' : '#c89b6a'}
                       />
                     </div>
                     <span>{item.label}</span>
@@ -440,8 +415,8 @@ const TopNavbar = () => {
                 margin: '12px 16px',
                 padding: '16px', 
                 borderRadius: '16px', 
-                background: 'rgba(144,77,0,0.03)', 
-                border: '1.5px solid rgba(144,77,0,0.08)',
+                background: 'rgba(209,223,246,0.03)', 
+                border: '1.5px solid rgba(209,223,246,0.08)',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '12px',
@@ -462,15 +437,15 @@ const TopNavbar = () => {
                 style={{
                   padding: '12px',
                   borderRadius: '12px',
-                  backgroundColor: 'var(--color-primary)',
-                  color: 'white',
+                  backgroundColor: '#d1dff6',
+                  color: '#0f1829',
                   border: 'none',
                   fontFamily: 'Epilogue, sans-serif',
                   fontWeight: 800,
                   fontSize: '14px',
                   cursor: 'pointer',
                   textAlign: 'center',
-                  boxShadow: '0 4px 12px rgba(144,77,0,0.2)',
+                  boxShadow: '0 4px 12px rgba(209,223,246,0.4)',
                 }}
               >
                 Sign Out
@@ -483,7 +458,7 @@ const TopNavbar = () => {
             style={{
               margin: '8px 20px 0',
               paddingTop: '16px',
-              borderTop: '1px solid rgba(144,77,0,0.08)',
+              borderTop: '1px solid rgba(209,223,246,0.08)',
               display: 'flex',
               alignItems: 'center',
               gap: '8px',

@@ -1,29 +1,14 @@
-import { useState, useRef, useEffect } from "react";
+﻿import { useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
-import { CaretLeft, Eye, EyeSlash, QrCode, ShieldCheck, Camera, XCircle } from "@phosphor-icons/react";
+import { CaretLeft, Eye, EyeSlash, QrCode, ShieldCheck, Camera, XCircle, Trash, ArrowRight } from "@phosphor-icons/react";
 import { Html5Qrcode } from "html5-qrcode";
 import { useAuth } from "../store/auth";
 import { authService } from "../services/auth";
 import { REGISTRATION_KEY } from "../utils/qrGenerator";
 
-const PALETTE = ['#C8622A', '#7BC4D8', '#D4AA30', '#5AAA6A', '#D06030', '#80C0D0', '#C87090', '#D89060'];
-
-const RainbowText = ({ text }: { text: string }) => {
-  let colorIdx = 0;
-  return (
-    <>
-      {text.split('').map((char, i) => {
-        if (char === ' ') return <span key={i}> </span>;
-        const color = PALETTE[colorIdx % PALETTE.length];
-        colorIdx++;
-        return <span key={i} style={{ color }}>{char}</span>;
-      })}
-    </>
-  );
-};
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -45,6 +30,12 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { signIn, role } = useAuth();
+
+  // Auto-open register form when navigated from lucky draw "Create Account"
+  useEffect(() => {
+    const state = location.state as { register?: boolean } | null;
+    if (state?.register) setIsRegistering(true);
+  }, [location.state]);
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -281,17 +272,13 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-column align-items-center justify-content-center px-3 relative overflow-hidden"
-         style={{
-           background: 'linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%)',
-           fontFamily: '"Plus Jakarta Sans", sans-serif',
-           color: '#1b1c1c'
-         }}>
+    <div className="glass-page min-h-screen flex flex-column align-items-center justify-content-center px-3 relative overflow-hidden"
+         style={{ fontFamily: '"Plus Jakarta Sans", sans-serif', color: 'var(--text-primary)' }}>
       <Toast ref={toast} position="bottom-center" />
-      
-      {/* Decorative Circles */}
-      <div style={{ position: 'absolute', top: '-10%', left: '-10%', width: '40vw', height: '40vw', background: 'radial-gradient(circle, rgba(144,77,0,0.08) 0%, transparent 70%)', borderRadius: '50%', zIndex: 0 }} />
-      <div style={{ position: 'absolute', bottom: '-10%', right: '-10%', width: '30vw', height: '30vw', background: 'radial-gradient(circle, rgba(208,170,47,0.1) 0%, transparent 70%)', borderRadius: '50%', zIndex: 0 }} />
+
+      {/* Decorative blobs */}
+      <div style={{ position: 'absolute', top: '-10%', left: '-10%', width: '40vw', height: '40vw', background: 'radial-gradient(circle, rgba(209,223,246,0.07) 0%, transparent 70%)', borderRadius: '50%', zIndex: 0 }} />
+      <div style={{ position: 'absolute', bottom: '-10%', right: '-10%', width: '30vw', height: '30vw', background: 'radial-gradient(circle, rgba(209,223,246,0.06) 0%, transparent 70%)', borderRadius: '50%', zIndex: 0 }} />
 
       <style>{`
         @keyframes slideUp {
@@ -300,52 +287,48 @@ export default function LoginPage() {
         }
         .login-card {
           animation: slideUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-          backdrop-filter: blur(20px);
-          -webkit-backdrop-filter: blur(20px);
-          border: 1px solid rgba(255,255,255,0.4);
         }
         .custom-input {
-          width: 100%; padding: 14px 18px; background: rgba(144,77,0,0.03); border: 1.5px solid rgba(144,77,0,0.08); border-radius: 14px; color: #1b1c1c; font-size: 15px; font-weight: 500; transition: all 0.25s ease;
+          width: 100%; padding: 14px 18px; background: rgba(255,255,255,0.4); border: 1.5px solid rgba(255,255,255,0.65); border-radius: 14px; color: var(--text-primary); font-size: 15px; font-weight: 500; transition: all 0.25s ease;
         }
-        .custom-input:focus { outline: none; border-color: var(--color-primary); background: white; box-shadow: 0 0 0 4px rgba(144,77,0,0.1); }
-        
-        .custom-password { width: 100% !important; display: flex !important; align-items: center; background: rgba(144,77,0,0.03); border: 1.5px solid rgba(144,77,0,0.08); border-radius: 14px; transition: all 0.25s ease; box-sizing: border-box; }
-        .custom-password:focus-within { border-color: var(--color-primary); background: white; box-shadow: 0 0 0 4px rgba(144,77,0,0.1); }
-        .custom-password .p-password-input { flex: 1; min-width: 0; padding: 14px 18px !important; background: transparent !important; border: none !important; border-radius: 0 !important; color: #1b1c1c !important; font-size: 15px !important; font-weight: 500 !important; outline: none !important; box-shadow: none !important; }
-        .custom-password .p-password-show-icon, .custom-password .p-password-hide-icon { padding-right: 14px; color: #9ca3af; cursor: pointer; flex-shrink: 0; }
-        
-        .login-btn { 
-          background: var(--color-primary); border: none; border-radius: 16px; padding: 16px; color: white; font-weight: 800; font-size: 16px; letter-spacing: 0.5px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 8px 24px rgba(144,77,0,0.3);
+        .custom-input:focus { outline: none; border-color: rgba(209,223,246,0.6); background: rgba(255,255,255,0.7); box-shadow: 0 0 0 4px rgba(209,223,246,0.12); }
+
+        .login-btn {
+          background: rgba(209,223,246,0.85); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(209,223,246,0.5); border-radius: 16px; padding: 16px; color: white; font-weight: 800; font-size: 16px; letter-spacing: 0.5px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 8px 24px rgba(209,223,246,0.25);
         }
-        .login-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(144,77,0,0.4); filter: brightness(1.1); }
+        .login-btn:hover:not(:disabled) { transform: translateY(-2px); background: rgba(168,192,232,0.92); box-shadow: 0 12px 32px rgba(209,223,246,0.35); }
         .login-btn:active:not(:disabled) { transform: translateY(0); }
       `}</style>
 
       {/* Back Button */}
-      <button 
+      <button
         onClick={() => navigate('/')}
         className="fixed top-0 left-0 m-4 p-2 flex align-items-center gap-2 border-none bg-transparent cursor-pointer"
-        style={{ color: '#6b7280', fontWeight: 600, fontSize: '14px', zIndex: 10 }}
+        style={{ color: 'var(--text-secondary)', fontWeight: 600, fontSize: '14px', zIndex: 10 }}
       >
         <CaretLeft size={20} weight="bold" />
         Back to Home
       </button>
 
       <main className="w-full relative z-1" style={{ maxWidth: '420px' }}>
-        <div className="login-card bg-white p-6 shadow-8 flex flex-column gap-5" style={{ borderRadius: '32px' }}>
+        <div className="login-card glass-card p-6 flex flex-column gap-5" style={{ borderRadius: '32px' }}>
           
           <div className="text-center">
+            <p className="m-0 text-xs font-bold uppercase mb-2" style={{ color: 'var(--text-muted)', letterSpacing: '0.12em' }}>
+              Adiwarna Fest 2026
+            </p>
             <h1 style={{
-              fontFamily: '"Playfair Display", Georgia, serif',
-              fontSize: '36px',
+              fontFamily: 'Epilogue, sans-serif',
+              fontSize: '32px',
               fontWeight: 900,
               margin: '0 0 8px',
-              letterSpacing: '0.04em'
+              letterSpacing: '-0.03em',
+              color: 'var(--text-primary)',
             }}>
-              <RainbowText text={isDeleting ? 'Delete Account' : (isRegistering ? (registrationStep === 'verify' ? 'Verify Key' : 'Join Adiwarna') : 'WELCOME!')} />
+              {isDeleting ? 'Delete Account' : isRegistering ? (registrationStep === 'verify' ? 'Verify Key' : 'Join Adiwarna') : 'Welcome Back'}
             </h1>
-            <p style={{ color: '#6b7280', fontSize: '15px', margin: 0, fontWeight: 500 }}>
-              {isDeleting ? 'Permanently delete your account and data.' : (isRegistering ? (registrationStep === 'verify' ? 'Scan the registration QR code to continue.' : 'Create your account to join the fest.') : 'Login to access your pass and more.')}
+            <p style={{ color: 'var(--text-muted)', fontSize: '14px', margin: 0, fontWeight: 500 }}>
+              {isDeleting ? 'Permanently delete your account and data.' : isRegistering ? (registrationStep === 'verify' ? 'Scan the registration QR code to continue.' : 'Create your account to join the fest.') : 'Sign in to access your lucky draw pass.'}
             </p>
           </div>
 
@@ -414,7 +397,7 @@ export default function LoginPage() {
           ) : (
             <form onSubmit={isDeleting ? handleDeleteAccount : (isRegistering ? handleRegister : handleLogin)} className="flex flex-column gap-4">
               <div className="flex flex-column gap-2">
-                <label style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginLeft: '4px' }}>Email Address</label>
+                <label style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-secondary)', marginLeft: '4px' }}>Email Address</label>
                 <InputText
                   className="custom-input"
                   type="email"
@@ -426,7 +409,7 @@ export default function LoginPage() {
               </div>
 
               <div className="flex flex-column gap-2">
-                <label style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginLeft: '4px' }}>Password</label>
+                <label style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-secondary)', marginLeft: '4px' }}>Password</label>
                 <div style={{ position: 'relative' }}>
                   <InputText
                     className="custom-input"
@@ -449,7 +432,7 @@ export default function LoginPage() {
 
               {isRegistering && (
                 <div className="flex flex-column gap-2">
-                  <label style={{ fontSize: '13px', fontWeight: 700, color: '#374151', marginLeft: '4px' }}>Confirm Password</label>
+                  <label style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-secondary)', marginLeft: '4px' }}>Confirm Password</label>
                   <div style={{ position: 'relative' }}>
                     <InputText
                       className="custom-input"
@@ -473,40 +456,47 @@ export default function LoginPage() {
 
               {!isRegistering && !isDeleting && (
                 <div className="flex justify-content-end">
-                  <button type="button" style={{ border: 'none', background: 'none', color: 'var(--color-primary)', fontSize: '13px', fontWeight: 700, cursor: 'pointer' }}>
+                  <button type="button" style={{ border: 'none', background: 'none', color: 'var(--text-primary)', fontSize: '13px', fontWeight: 800, cursor: 'pointer' }}>
                     Forgot Password?
                   </button>
                 </div>
               )}
 
-              <Button
-                className="login-btn"
-                type="submit"
-                disabled={loading}
-                label={
-                  loading
-                    ? isDeleting
-                      ? "Deleting Account..."
-                      : "Signing in..."
-                    : isDeleting
-                      ? "Delete Account"
-                      : isRegistering
-                        ? "Continue"
-                        : "Sign In"
-                }
-                loading={loading}
-                icon={isRegistering ? <QrCode size={20} className="mr-2" /> : undefined}
-                style={{
-                  backgroundColor: isDeleting ? '#dc2626' : 'var(--color-primary)',
-                  borderColor: isDeleting ? '#dc2626' : 'var(--color-primary)'
-                }}
-              />
+              <div style={{ fontSize: '15px' }}>
+                {isDeleting ? (
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    style={{
+                      width: '100%', padding: '13px 20px', borderRadius: '999px',
+                      border: '1px solid rgba(220,38,38,0.45)', background: 'rgba(220,38,38,0.18)',
+                      backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)',
+                      color: '#dc2626', fontFamily: 'Epilogue, sans-serif', fontWeight: 700,
+                      fontSize: '15px', cursor: loading ? 'not-allowed' : 'pointer',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                      transition: 'all 0.2s ease',
+                    }}
+                  >
+                    <Trash size={18} weight="fill" />
+                    {loading ? 'Deleting...' : 'Delete Account'}
+                  </button>
+                ) : (
+                  <div className="button-wrap w-full">
+                    <button type="submit" className="premium-btn w-full" disabled={loading} style={{ fontFamily: 'Epilogue, sans-serif' }}>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
+                        {isRegistering ? <><QrCode size={18} weight="bold" /> {loading ? 'Checking...' : 'Continue'}</> : <><ArrowRight size={18} weight="bold" /> {loading ? 'Signing in...' : 'Sign In'}</>}
+                      </span>
+                    </button>
+                    <div className="button-shadow" />
+                  </div>
+                )}
+              </div>
             </form>
           )}
 
           <div className="flex flex-column gap-3">
             <div className="text-center">
-              <span style={{ color: '#6b7280', fontSize: '14px', fontWeight: 500 }}>
+              <span style={{ color: 'var(--text-muted)', fontSize: '14px', fontWeight: 500 }}>
                 {isDeleting ? "Back to login? " : isRegistering ? "Already have an account? " : "Don't have an account? "}
               </span>
               <button
@@ -523,11 +513,11 @@ export default function LoginPage() {
                 style={{
                   border: 'none',
                   background: 'none',
-                  color: 'var(--color-primary)',
+                  color: 'var(--text-primary)',
                   fontSize: '14px',
-                  fontWeight: 700,
+                  fontWeight: 800,
                   cursor: 'pointer',
-                  padding: '4px'
+                  padding: '4px',
                 }}
               >
                 {isDeleting ? "Sign In" : isRegistering ? "Sign In" : "Create Account"}

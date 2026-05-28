@@ -228,20 +228,23 @@ const MaintenanceUsers = () => {
   }, [error, loading])
 
   return (
-    <div className="min-h-screen" style={{ fontFamily: 'Epilogue, sans-serif', backgroundColor: '#FAF9F6' }}>
+    <div className="glass-page" style={{ fontFamily: 'Epilogue, sans-serif' }}>
       <div className="px-4 py-4 mx-auto w-full" style={{ maxWidth: '1100px' }}>
         <header className="flex align-items-center justify-content-between mb-4">
           <div>
             <h1 className="m-0 text-2xl font-bold" style={{ color: '#1a1a1a' }}>Staff Users</h1>
             <p className="m-0 text-600 text-sm">Manage Admin and Maintainer accounts. Participants are managed separately.</p>
           </div>
-          <div className="flex gap-2">
-            <Button label="New User" onClick={openCreate} />
-            <Button label="Refresh" onClick={loadUsers} outlined />
+          <div className="flex gap-2" style={{ fontSize: '13px' }}>
+            <div className="button-wrap">
+              <button className="premium-btn" onClick={openCreate}><span>New User</span></button>
+              <div className="button-shadow" />
+            </div>
+            <button className="glass-btn" style={{ padding: '8px 18px', fontSize: '13px' }} onClick={loadUsers}>Refresh</button>
           </div>
         </header>
 
-        <div className="border-round-2xl p-3 shadow-2" style={{ backgroundColor: '#fff', border: '1px solid #eee', overflowX: 'auto' }}>
+        <div className="glass-card p-3" style={{ overflowX: 'auto' }}>
           <DataTable
             value={users}
             paginator

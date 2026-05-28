@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState, useRef } from 'react'
+﻿import { useCallback, useEffect, useMemo, useState, useRef } from 'react'
 import { DataTable } from 'primereact/datatable'
 import { Column } from 'primereact/column'
 import { Tag } from 'primereact/tag'
@@ -188,13 +188,13 @@ const MaintenanceParticipants = () => {
   }, [error, loading])
 
   return (
-    <div className="min-h-screen" style={{ fontFamily: 'Epilogue, sans-serif', backgroundColor: '#FAF9F6' }}>
+    <div className="glass-page" style={{ fontFamily: 'Epilogue, sans-serif' }}>
       <Toast ref={toast} position="bottom-center" />
       <div className="px-4 py-4 mx-auto w-full" style={{ maxWidth: '1280px' }}>
         <header className="mb-4">
           <div className="flex align-items-center gap-3 mb-2">
-            <div className="border-round-xl p-2" style={{ background: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)' }}>
-              <UsersThree size={24} weight="bold" color="#fff" />
+            <div className="glass-icon" style={{ background: 'rgba(209,223,246,0.12)' }}>
+              <UsersThree size={24} weight="bold" color="rgba(209,223,246,0.9)" />
             </div>
             <div>
               <h1 className="m-0 text-2xl font-bold" style={{ color: '#1a1a1a' }}>Participants</h1>
@@ -205,7 +205,7 @@ const MaintenanceParticipants = () => {
 
         {/* Search + Refresh Bar */}
         <div className="flex flex-column md:flex-row gap-3 mb-3 align-items-stretch md:align-items-center">
-          <div className="flex-1 flex align-items-center gap-2 bg-white border-round-xl px-3 py-2 shadow-1 border-1" style={{ borderColor: '#eee' }}>
+          <div className="flex-1 flex align-items-center gap-2 glass-card-sm px-3 py-2">
             <MagnifyingGlass size={18} weight="bold" color="#9ca3af" />
             <InputText
               value={search}
@@ -215,10 +215,10 @@ const MaintenanceParticipants = () => {
               style={{ outline: 'none', boxShadow: 'none' }}
             />
           </div>
-          <Button label="Refresh" onClick={loadParticipants} outlined />
+          <button className="glass-btn" style={{ padding: '8px 18px', fontSize: '13px' }} onClick={loadParticipants}>Refresh</button>
         </div>
 
-        <div className="border-round-2xl p-3 shadow-2" style={{ backgroundColor: '#fff', border: '1px solid #eee', overflowX: 'auto' }}>
+        <div className="glass-card p-3" style={{ overflowX: 'auto' }}>
           <DataTable
             value={filteredParticipants}
             paginator

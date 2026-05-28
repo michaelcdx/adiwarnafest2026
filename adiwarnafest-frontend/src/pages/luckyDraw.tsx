@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
@@ -84,13 +84,16 @@ const LuckyDraw: React.FC = () => {
 
   // Load scanned booths from backend API on mount
   useEffect(() => {
+    if (!isAuthenticated) {
+      setIsLoading(false);
+      return;
+    }
     const loadStatus = async () => {
       try {
         const status = await luckyDrawService.getStatus();
         setScannedBooths(status.scannedBooths.map(s => s.boothId));
         setIsSubmitted(status.hasSubmitted);
       } catch (error) {
-
         toast.current?.show({
           severity: 'error',
           summary: 'Error',
@@ -102,7 +105,7 @@ const LuckyDraw: React.FC = () => {
       }
     };
     loadStatus();
-  }, []);
+  }, [isAuthenticated]);
 
   const handleScanSuccess = async (decodedText: string) => {
     const now = Date.now();
@@ -288,10 +291,10 @@ const LuckyDraw: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="surface-0 min-h-screen flex align-items-center justify-content-center">
+      <div className="glass-page min-h-screen flex align-items-center justify-content-center">
         <div className="text-center">
           <div className="spinner mb-3"></div>
-          <p className="text-600 font-medium">Loading your progress...</p>
+          <p className="font-medium" style={{ color: 'var(--text-muted)' }}>Loading your progress...</p>
         </div>
       </div>
     );
@@ -299,12 +302,76 @@ const LuckyDraw: React.FC = () => {
 
   // Require login before scanning
   if (!isAuthenticated) {
-    navigate("/login", { state: { from: "/lucky-draw" } });
-    return null;
+    return (
+      <div
+        className="fadein animation-duration-500"
+        style={{
+          fontFamily: 'Epilogue, sans-serif',
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '24px 20px',
+          boxSizing: 'border-box',
+          background: 'var(--page-gradient)',
+        }}
+      >
+        {/* Icon */}
+        <div style={{ width: '68px', height: '68px', borderRadius: '20px', background: 'rgba(255,215,0,0.12)', border: '1px solid rgba(255,215,0,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px', boxShadow: '0 4px 20px rgba(255,215,0,0.1)', flexShrink: 0 }}>
+          <Trophy size={34} weight="fill" color="#F59E0B" />
+        </div>
+
+        {/* Heading */}
+        <h1 className="m-0 text-3xl font-black text-center" style={{ color: 'var(--text-primary)', letterSpacing: '-0.03em', lineHeight: 1.1 }}>
+          Lucky Draw
+        </h1>
+        <p className="m-0 text-center mt-2 mb-4" style={{ color: 'var(--text-secondary)', fontSize: '14px', fontWeight: 500, maxWidth: '300px', lineHeight: 1.55 }}>
+          Scan QR codes at all 3 booths and enter the grand prize draw at Adiwarna Fest 2026.
+        </p>
+
+        {/* Steps preview */}
+        <div className="w-full mb-5" style={{ maxWidth: '340px', padding: '20px 24px', background: 'rgba(255,255,255,0.42)', backdropFilter: 'blur(28px) saturate(180%)', WebkitBackdropFilter: 'blur(28px) saturate(180%)', border: '1px solid rgba(255,255,255,0.75)', borderRadius: '20px', boxShadow: '0 8px 32px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.9)' }}>
+          <p className="m-0 mb-3 text-xs font-bold uppercase" style={{ color: 'var(--text-muted)', letterSpacing: '0.08em' }}>How it works</p>
+          {[
+            { num: '1', text: 'Visit any of the 3 participating booths' },
+            { num: '2', text: 'Scan the booth QR code with this app' },
+            { num: '3', text: 'Complete all 3 booths to enter the draw' },
+          ].map(step => (
+            <div key={step.num} className="flex align-items-start gap-3 mb-3">
+              <div style={{ width: '26px', height: '26px', borderRadius: '50%', background: 'linear-gradient(-75deg, rgba(209,223,246,0.25), rgba(209,223,246,0.65), rgba(209,223,246,0.25))', border: '1px solid rgba(209,223,246,0.5)', boxShadow: 'inset 0 2px 2px rgba(255,255,255,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <span style={{ fontSize: '11px', fontWeight: 800, color: '#1e3a5f' }}>{step.num}</span>
+              </div>
+              <p className="m-0 text-sm" style={{ color: 'var(--text-secondary)', lineHeight: 1.5, paddingTop: '4px' }}>{step.text}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* CTA Buttons */}
+        <div className="flex gap-3 w-full" style={{ maxWidth: '340px', fontSize: '14px' }}>
+          <div style={{ flex: '1 1 50%', minWidth: 0 }}>
+            <div className="button-wrap w-full">
+              <button className="premium-btn w-full" onClick={() => navigate('/login', { state: { from: '/lucky-draw' } })} style={{ fontFamily: 'Epilogue, sans-serif' }}>
+                <span style={{ textAlign: 'center', display: 'block', width: '100%' }}>Login</span>
+              </button>
+              <div className="button-shadow" />
+            </div>
+          </div>
+          <div style={{ flex: '1 1 50%', minWidth: 0 }}>
+            <div className="button-wrap w-full">
+              <button className="premium-btn w-full" onClick={() => navigate('/login', { state: { from: '/lucky-draw', register: true } })} style={{ fontFamily: 'Epilogue, sans-serif' }}>
+                <span style={{ textAlign: 'center', display: 'block', width: '100%' }}>Register Here</span>
+              </button>
+              <div className="button-shadow" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="surface-0 min-h-screen fadein animation-duration-1000 p-0 overflow-x-hidden" style={{ fontFamily: 'Epilogue, sans-serif' }}>
+    <div className="glass-page fadein animation-duration-1000 p-0 overflow-x-hidden" style={{ fontFamily: 'Epilogue, sans-serif' }}>
       <Toast ref={toast} position="bottom-center" />
 
       {/* Hero Header Section */}
@@ -342,7 +409,7 @@ const LuckyDraw: React.FC = () => {
 
         {/* Progress Tracker Card */}
         <div className="relative z-2 mx-auto max-w-30rem -mb-12 px-4">
-          <div className="bg-white border-round-2xl p-3 md:p-4 shadow-8 border-1" style={{ borderColor: 'var(--color-border)' }}>
+          <div className="glass-card p-3 md:p-4">
             <div className="flex justify-content-between align-items-end mb-3 gap-2">
               <div className="flex-1">
                 <h3 className="m-0 text-xs md:text-sm font-bold text-900 uppercase tracking-wide">Your Progress</h3>
@@ -366,13 +433,87 @@ const LuckyDraw: React.FC = () => {
 
       {/* Booths Grid */}
       <main className="px-4 pt-10 pb-6 mx-auto w-full" style={{ maxWidth: '1024px' }}>
-        <div className="flex flex-column gap-3 mt-4">
+
+        {/* Submit Button Section */}
+        <section className="mt-4 mb-6 px-4 flex flex-column align-items-center gap-4">
+          <div className="text-center">
+            <h3 className="m-0 text-lg md:text-xl font-bold text-900 mb-2">Ready for the Grand Draw?</h3>
+            <p className="m-0 text-xs md:text-sm text-600">Complete all booth challenges to unlock your entry form.</p>
+          </div>
+
+          <div className={`w-full max-w-25rem ${scannedBooths.length === 3 && !isSubmitted ? 'pulse-button' : ''}`} style={{ fontSize: '15px' }}>
+            {scannedBooths.length < 3 && !isSubmitted ? (
+              /* Locked state — visually disabled */
+              <button
+                disabled
+                style={{
+                  width: '100%',
+                  padding: '14px 20px',
+                  borderRadius: '999px',
+                  border: '1px solid rgba(200,210,225,0.4)',
+                  background: 'rgba(200,210,225,0.18)',
+                  backdropFilter: 'blur(8px)',
+                  WebkitBackdropFilter: 'blur(8px)',
+                  color: 'rgba(100,130,170,0.45)',
+                  fontFamily: 'Epilogue, sans-serif',
+                  fontWeight: 700,
+                  fontSize: '15px',
+                  cursor: 'not-allowed',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  letterSpacing: '0.01em',
+                  boxShadow: 'none',
+                }}
+              >
+                <Sparkle size={20} weight="regular" />
+                Submit Lucky Draw Entry
+              </button>
+            ) : (
+              /* Active state — full glass button */
+              <div className="button-wrap w-full">
+                <button
+                  className="premium-btn w-full"
+                  disabled={isSubmitted}
+                  onClick={() => setIsSubmitModalOpen(true)}
+                >
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
+                    {isSubmitted
+                      ? <><CheckCircle size={20} weight="fill" /> Entry Submitted</>
+                      : <><Sparkle size={20} weight="fill" /> Submit Lucky Draw Entry</>
+                    }
+                  </span>
+                </button>
+                <div className="button-shadow" />
+              </div>
+            )}
+          </div>
+
+          {!isSubmitted && scannedBooths.length < 3 && (
+            <p className="m-0 text-xs font-bold text-500 uppercase tracking-widest">
+              {3 - scannedBooths.length} Booths Remaining
+            </p>
+          )}
+
+          <div className="button-wrap" style={{ fontSize: '13px' }}>
+            <button className="premium-btn" onClick={() => navigate("/map")} style={{ fontFamily: 'Epilogue, sans-serif' }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                <MapPin size={18} weight="fill" />
+                View Vendor Map
+              </span>
+            </button>
+            <div className="button-shadow" />
+          </div>
+        </section>
+
+        <div className="flex flex-column gap-3">
           {BOOTHS.map((booth, index) => {
             const isScanned = scannedBooths.includes(booth.id);
             return (
               <div
                 key={booth.id}
-                className={`flex align-items-center gap-2 md:gap-4 bg-white border-round-2xl p-3 md:p-4 shadow-4 cursor-pointer transition-all duration-300 transform active:scale-95 ${isScanned ? 'opacity-80' : 'hover:shadow-7'}`}
+                className={`flex align-items-center gap-2 md:gap-4 glass-card p-3 md:p-4 cursor-pointer transition-all duration-300 transform active:scale-95 ${isScanned ? 'opacity-80' : ''}`}
                 onClick={() => openBoothDetails(booth)}
               >
                 {/* Logo/Image on Left */}
@@ -395,7 +536,7 @@ const LuckyDraw: React.FC = () => {
                 <div className="flex-1 flex flex-column justify-content-between">
                   <div>
                     <div className="flex align-items-center gap-2 mb-2">
-                      <div className="bg-primary-50 border-round-lg px-2 py-1 text-[8px] font-bold text-primary uppercase tracking-wider">Booth {index + 1}</div>
+                      <div className="border-round-lg px-2 py-1 text-[8px] font-bold uppercase tracking-wider" style={{ background: 'rgba(209,223,246,0.1)', color: 'rgba(168,192,232,0.9)' }}>Booth {index + 1}</div>
                       {isScanned && (
                         <div className="bg-green-100 border-round-lg px-2 py-1 text-[8px] font-bold text-green-700 uppercase tracking-wider">Completed</div>
                       )}
@@ -415,8 +556,8 @@ const LuckyDraw: React.FC = () => {
                       <CheckCircle size={24} weight="fill" color="#ffffff" />
                     </div>
                   ) : (
-                    <div className="border-round-xl flex align-items-center justify-content-center shadow-4" style={{ backgroundColor: 'var(--color-primary)', width: 'min(50px, 12vw)', height: 'min(50px, 12vw)', minWidth: '50px', minHeight: '50px' }}>
-                      <QrCode size={24} color="#ffffff" weight="bold" />
+                    <div className="border-round-xl flex align-items-center justify-content-center" style={{ background: 'rgba(209,223,246,0.12)', backdropFilter: 'blur(8px)', border: '1px solid rgba(209,223,246,0.2)', width: 'min(50px, 12vw)', height: 'min(50px, 12vw)', minWidth: '50px', minHeight: '50px' }}>
+                      <QrCode size={24} color="rgba(209,223,246,0.85)" weight="bold" />
                     </div>
                   )}
                 </div>
@@ -425,56 +566,14 @@ const LuckyDraw: React.FC = () => {
           })}
         </div>
 
-        {/* Vendor Map Button */}
-        <section className="mt-6 flex justify-content-center">
-          <Button
-            label="View Vendor Map"
-            icon={<MapPin size={20} className="mr-2" />}
-            className="py-3 px-6 shadow-6 border-round-xl font-bold uppercase"
-            style={{
-              backgroundColor: '#f0ece8',
-              color: 'var(--color-primary)',
-              border: '2px solid var(--color-primary)'
-            }}
-            onClick={() => navigate("/map")}
-          />
-        </section>
-
-        {/* Submit Button Section */}
-        <section className="mt-8 px-4 flex flex-column align-items-center gap-4">
-          <div className="text-center">
-            <h3 className="m-0 text-lg md:text-xl font-bold text-900 mb-2">Ready for the Grand Draw?</h3>
-            <p className="m-0 text-xs md:text-sm text-600">Complete all booth challenges to unlock your entry form.</p>
-          </div>
-
-          <Button
-            label={isSubmitted ? "Entry Submitted" : "Submit Lucky Draw Entry"}
-            icon={isSubmitted ? <CheckCircle size={20} weight="fill" className="mr-2" /> : <Sparkle size={20} weight="fill" className="mr-2" />}
-            className={`w-full max-w-25rem py-3 md:py-4 shadow-8 border-round-2xl font-bold md:font-black text-sm md:text-xl uppercase tracking-widest transition-all duration-300 ${scannedBooths.length === 3 && !isSubmitted ? 'pulse-button' : ''}`}
-            disabled={scannedBooths.length < 3 || isSubmitted}
-            style={{
-              backgroundColor: isSubmitted ? '#22C55E' : (scannedBooths.length === 3 ? 'var(--color-primary)' : '#e3e2e0'),
-              borderColor: isSubmitted ? '#22C55E' : (scannedBooths.length === 3 ? 'var(--color-primary)' : '#e3e2e0'),
-              color: scannedBooths.length === 3 || isSubmitted ? '#fff' : '#8c7166'
-            }}
-            onClick={() => setIsSubmitModalOpen(true)}
-          />
-
-          {!isSubmitted && scannedBooths.length < 3 && (
-            <p className="m-0 text-xs font-bold text-500 uppercase tracking-widest">
-              {3 - scannedBooths.length} Booths Remaining
-            </p>
-          )}
-        </section>
-
         {/* Info Box */}
         <section className="mt-6 px-4">
-          <div className="bg-blue-50 border-round-2xl p-3 md:p-4 border-1 border-blue-100 flex gap-3 md:gap-4 align-items-start">
-            <div className="bg-blue-500 border-round-xl p-2 flex align-items-center justify-content-center shadow-2 flex-shrink-0">
-              <Info size={20} weight="fill" color="#fff" />
+          <div className="glass-card p-3 md:p-4 flex gap-3 md:gap-4 align-items-start">
+            <div className="glass-icon p-2 flex align-items-center justify-content-center flex-shrink-0" style={{ width: '40px', height: '40px', background: 'rgba(209,223,246,0.15)', border: '1px solid rgba(209,223,246,0.3)' }}>
+              <Info size={20} weight="fill" color="rgba(168,192,232,0.9)" />
             </div>
             <div className="flex-1 min-w-0">
-              <h4 className="m-0 text-[10px] md:text-sm font-bold text-blue-900 mb-1 uppercase tracking-wide">How it works</h4>
+              <h4 className="m-0 text-[10px] md:text-sm font-bold mb-1 uppercase tracking-wide" style={{ color: 'var(--text-secondary)' }}>How it works</h4>
               <ul className="m-0 p-0 list-none flex flex-column gap-2">
                 {[
                   'Visit any of the 3 booths listed above.',
@@ -483,7 +582,7 @@ const LuckyDraw: React.FC = () => {
                   'Scan the QR code using this app to mark it as completed.',
                   'Complete all 3 booths to be automatically entered into the grand Lucky Draw.'
                 ].map((text, i) => (
-                  <li key={i} className="text-[9px] md:text-xs text-blue-700 flex gap-1 md:gap-2 align-items-start">
+                  <li key={i} className="text-[9px] md:text-xs flex gap-1 md:gap-2 align-items-start" style={{ color: 'var(--text-secondary)' }}>
                     <span className="font-bold flex-shrink-0">{i + 1}.</span>
                     <span>{text}</span>
                   </li>
@@ -508,11 +607,37 @@ const LuckyDraw: React.FC = () => {
         {selectedBooth && (
           <div className="flex flex-column h-full relative">
             {/* Close Button */}
-            <button 
+            <button
               onClick={closeDetails}
-              className="absolute top-0 right-0 m-3 p-2 bg-black-alpha-40 border-round-circle border-none cursor-pointer z-5 text-white backdrop-blur-md transition-colors hover:bg-black-alpha-60"
+              style={{
+                position: 'absolute',
+                top: '12px',
+                right: '12px',
+                zIndex: 10,
+                width: '36px',
+                height: '36px',
+                borderRadius: '50%',
+                border: '1px solid rgba(0,0,0,0.12)',
+                background: 'rgba(0,0,0,0.08)',
+                backdropFilter: 'blur(12px)',
+                WebkitBackdropFilter: 'blur(12px)',
+                boxShadow: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+              }}
+              onMouseEnter={e => {
+                (e.currentTarget as HTMLButtonElement).style.background = 'rgba(0,0,0,0.18)';
+                (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1.05)';
+              }}
+              onMouseLeave={e => {
+                (e.currentTarget as HTMLButtonElement).style.background = 'rgba(0,0,0,0.08)';
+                (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1)';
+              }}
             >
-              <XCircle size={24} weight="fill" />
+              <XCircle size={22} weight="fill" color="#111827" />
             </button>
 
             {/* Booth Image Header */}
@@ -565,12 +690,41 @@ const LuckyDraw: React.FC = () => {
                   </div>
 
                   <div className="flex flex-column gap-2 w-full">
-                    <Button
-                      label="Cancel Scanning"
-                      icon={<XCircle size={20} className="mr-2" />}
-                      className="p-button-danger p-button-text font-bold"
+                    <button
                       onClick={stopScanner}
-                    />
+                      style={{
+                        width: '100%',
+                        padding: '12px 20px',
+                        borderRadius: '999px',
+                        border: '1px solid rgba(255,100,100,0.45)',
+                        background: 'rgba(220,38,38,0.18)',
+                        backdropFilter: 'blur(16px)',
+                        WebkitBackdropFilter: 'blur(16px)',
+                        color: '#dc2626',
+                        fontFamily: 'Epilogue, sans-serif',
+                        fontWeight: 700,
+                        fontSize: '14px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px',
+                        boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.25), 0 4px 16px rgba(220,38,38,0.15)',
+                        transition: 'all 0.2s ease',
+                      }}
+                      onMouseEnter={e => {
+                        (e.currentTarget as HTMLButtonElement).style.background = 'rgba(220,38,38,0.28)';
+                        (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,100,100,0.65)';
+                        (e.currentTarget as HTMLButtonElement).style.transform = 'scale(0.975)';
+                      }}
+                      onMouseLeave={e => {
+                        (e.currentTarget as HTMLButtonElement).style.background = 'rgba(220,38,38,0.18)';
+                        (e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,100,100,0.45)';
+                        (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1)';
+                      }}
+                    >
+                      <XCircle size={20} weight="fill" /> Cancel Scanning
+                    </button>
                   </div>
 
                   <p className="m-0 text-[10px] text-500 font-italic text-center px-4">
@@ -599,13 +753,14 @@ const LuckyDraw: React.FC = () => {
                       <Button label="Back to Grid" className="mt-3 p-button-outlined w-full border-round-xl" onClick={closeDetails} />
                     </div>
                   ) : (
-                    <Button 
-                      label="Scan QR Code" 
-                      icon={<QrCode size={24} className="mr-2" />} 
-                      className="w-full py-3 shadow-6 border-round-xl font-bold text-lg transform active:scale-95 transition-all"
-                      style={{ backgroundColor: 'var(--color-primary)', borderColor: 'var(--color-primary)' }}
-                      onClick={startScanner}
-                    />
+                    <div className="button-wrap w-full" style={{ fontSize: '16px' }}>
+                      <button className="premium-btn w-full" onClick={startScanner}>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
+                          <QrCode size={22} weight="bold" /> Scan QR Code
+                        </span>
+                      </button>
+                      <div className="button-shadow" />
+                    </div>
                   )}
                 </div>
               )}
@@ -625,113 +780,131 @@ const LuckyDraw: React.FC = () => {
         contentStyle={{ overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}
         modal
       >
-        <div className="bg-white p-4">
+        <div style={{ background: 'rgba(238,244,253,0.96)', backdropFilter: 'blur(28px) saturate(180%)', WebkitBackdropFilter: 'blur(28px) saturate(180%)', padding: '24px 20px' }}>
           <div className="flex justify-content-between align-items-center mb-4">
             <div className="flex align-items-center gap-2">
-              <Sparkle size={28} weight="fill" color="var(--color-primary)" />
-              <h2 className="m-0 text-2xl font-black text-900 tracking-tight">Final Entry</h2>
+              <Sparkle size={26} weight="fill" color="var(--text-secondary)" />
+              <h2 className="m-0 text-xl font-black" style={{ color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>Final Entry</h2>
             </div>
-            <button onClick={() => setIsSubmitModalOpen(false)} className="bg-transparent border-none p-1 cursor-pointer">
-              <XCircle size={28} weight="fill" color="#cbd5e1" />
+            <button onClick={() => setIsSubmitModalOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}>
+              <XCircle size={26} weight="fill" color="var(--text-muted)" />
             </button>
           </div>
 
-          <p className="text-sm text-600 mb-6 line-height-3">
+          <p className="mb-5 line-height-3" style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: '0 0 20px' }}>
             Please fill in your contact details correctly. We will use this information to contact you if you win.
           </p>
 
-          <form onSubmit={handleSubmitEntry} className="flex flex-column gap-5">
-            <div className="flex flex-column gap-2">
-              <label htmlFor="name" className="text-xs font-bold uppercase tracking-widest text-500">Full Name</label>
-              <div className="flex align-items-center bg-gray-50 border-1 border-round-xl overflow-hidden transition-all focus-within:border-primary" style={{ borderColor: '#f1f5f9' }}>
-                <div className="pl-3 flex align-items-center justify-content-center" style={{ color: '#9ca3af' }}>
-                  <i className="pi pi-user" />
+          <form onSubmit={handleSubmitEntry} className="flex flex-column gap-4">
+            {/* Full Name */}
+            <div className="flex flex-column gap-1">
+              <label htmlFor="name" className="text-xs font-bold uppercase" style={{ color: 'var(--text-muted)', letterSpacing: '0.08em' }}>Full Name</label>
+              <div style={{ display: 'flex', alignItems: 'center', background: 'rgba(255,255,255,0.45)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', border: '1px solid rgba(255,255,255,0.72)', borderRadius: '14px', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.9)', overflow: 'hidden' }}>
+                <div style={{ padding: '0 12px', color: 'var(--text-muted)', flexShrink: 0 }}>
+                  <i className="pi pi-user" style={{ fontSize: '13px' }} />
                 </div>
                 <InputText
                   id="name"
                   value={submissionForm.name}
                   onChange={(e) => setSubmissionForm({...submissionForm, name: e.target.value})}
                   placeholder="Enter your full name"
-                  className="flex-1 p-3 border-none bg-transparent"
-                  style={{ boxShadow: 'none', outline: 'none' }}
+                  className="flex-1 border-none"
+                  style={{ background: 'transparent', boxShadow: 'none', outline: 'none', padding: '11px 12px 11px 0', fontSize: '14px', color: 'var(--text-primary)' }}
                   required
                 />
               </div>
             </div>
 
-            <div className="flex flex-column gap-2">
-              <label htmlFor="phone" className="text-xs font-bold uppercase tracking-widest text-500">Whatsapp Number / Phone Number</label>
-              <div className="flex align-items-center bg-gray-50 border-1 border-round-xl overflow-hidden transition-all focus-within:border-primary" style={{ borderColor: '#f1f5f9' }}>
-                <div className="pl-3 flex align-items-center justify-content-center" style={{ color: '#9ca3af' }}>
-                  <i className="pi pi-phone" />
+            {/* Phone */}
+            <div className="flex flex-column gap-1">
+              <label htmlFor="phone" className="text-xs font-bold uppercase" style={{ color: 'var(--text-muted)', letterSpacing: '0.08em' }}>WhatsApp / Phone</label>
+              <div style={{ display: 'flex', alignItems: 'center', background: 'rgba(255,255,255,0.45)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', border: '1px solid rgba(255,255,255,0.72)', borderRadius: '14px', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.9)', overflow: 'hidden' }}>
+                <div style={{ padding: '0 12px', color: 'var(--text-muted)', flexShrink: 0 }}>
+                  <i className="pi pi-phone" style={{ fontSize: '13px' }} />
                 </div>
                 <InputText
                   id="phone"
                   value={submissionForm.phone}
                   onChange={(e) => setSubmissionForm({...submissionForm, phone: e.target.value})}
                   placeholder="+60 12-345 6789"
-                  className="flex-1 p-3 border-none bg-transparent"
-                  style={{ boxShadow: 'none', outline: 'none' }}
+                  className="flex-1 border-none"
+                  style={{ background: 'transparent', boxShadow: 'none', outline: 'none', padding: '11px 12px 11px 0', fontSize: '14px', color: 'var(--text-primary)' }}
                   type="tel"
                   required
                 />
               </div>
             </div>
 
-            <div className="flex flex-column gap-2">
-              <label htmlFor="instagram" className="text-xs font-bold uppercase tracking-widest text-500">Instagram</label>
-              <div className="flex align-items-center bg-gray-50 border-1 border-round-xl overflow-hidden transition-all focus-within:border-primary" style={{ borderColor: '#f1f5f9' }}>
-                <div className="pl-3 flex align-items-center justify-content-center" style={{ color: '#9ca3af' }}>
-                  <i className="pi pi-instagram" />
+            {/* Instagram */}
+            <div className="flex flex-column gap-1">
+              <label htmlFor="instagram" className="text-xs font-bold uppercase" style={{ color: 'var(--text-muted)', letterSpacing: '0.08em' }}>Instagram</label>
+              <div style={{ display: 'flex', alignItems: 'center', background: 'rgba(255,255,255,0.45)', backdropFilter: 'blur(16px)', WebkitBackdropFilter: 'blur(16px)', border: '1px solid rgba(255,255,255,0.72)', borderRadius: '14px', boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.9)', overflow: 'hidden' }}>
+                <div style={{ padding: '0 12px', color: 'var(--text-muted)', flexShrink: 0 }}>
+                  <i className="pi pi-instagram" style={{ fontSize: '13px' }} />
                 </div>
                 <InputText
                   id="instagram"
                   value={submissionForm.instagram}
                   onChange={(e) => setSubmissionForm({...submissionForm, instagram: e.target.value})}
                   placeholder="@username"
-                  className="flex-1 p-3 border-none bg-transparent"
-                  style={{ boxShadow: 'none', outline: 'none' }}
+                  className="flex-1 border-none"
+                  style={{ background: 'transparent', boxShadow: 'none', outline: 'none', padding: '11px 12px 11px 0', fontSize: '14px', color: 'var(--text-primary)' }}
                   required
                 />
               </div>
             </div>
 
-            <div className="flex align-items-start gap-3 p-3 border-round-xl bg-gray-50 border-1 border-gray-100 mt-2">
-              <Checkbox 
-                inputId="agree" 
-                checked={submissionForm.agreed} 
-                onChange={e => setSubmissionForm({...submissionForm, agreed: e.checked || false})} 
-                className="mt-1"
+            {/* Agreement */}
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', padding: '12px 14px', background: 'rgba(255,255,255,0.38)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.65)', borderRadius: '14px' }}>
+              <Checkbox
+                inputId="agree"
+                checked={submissionForm.agreed}
+                onChange={e => setSubmissionForm({...submissionForm, agreed: e.checked || false})}
+                style={{ marginTop: '2px', flexShrink: 0 }}
               />
-              <label htmlFor="agree" className="text-[11px] text-600 line-height-3 cursor-pointer">
-                I hereby acknowledge that I must be **attending the lucky draw session on the spot**. If my name is called and I am not present, the reward will be dismissed and a redraw will occur.
+              <label htmlFor="agree" style={{ fontSize: '11px', color: 'var(--text-secondary)', lineHeight: 1.6, cursor: 'pointer' }}>
+                I acknowledge that I must be <strong>attending the lucky draw session on the spot</strong>. If my name is called and I am not present, the reward will be dismissed and a redraw will occur.
               </label>
             </div>
 
-            <Button
-              type="submit"
-              label={isSubmitting ? "Submitting..." : "Confirm & Submit Entry"}
-              loading={isSubmitting}
-              disabled={!submissionForm.name.trim() || !submissionForm.phone.trim() || !submissionForm.instagram.trim() || !submissionForm.agreed || isSubmitting}
-              className="w-full py-4 border-round-2xl font-black text-lg uppercase tracking-widest shadow-6 transform active:scale-95 transition-all mt-2"
-              style={{
-                backgroundColor: submissionForm.name.trim() && submissionForm.phone.trim() && submissionForm.instagram.trim() && submissionForm.agreed
-                  ? 'var(--color-primary)'
-                  : '#d3d3d3',
-                borderColor: submissionForm.name.trim() && submissionForm.phone.trim() && submissionForm.instagram.trim() && submissionForm.agreed
-                  ? 'var(--color-primary)'
-                  : '#d3d3d3'
-              }}
-            />
+            {/* Submit */}
+            <div style={{ fontSize: '14px', marginTop: '4px' }}>
+              {submissionForm.name.trim() && submissionForm.phone.trim() && submissionForm.instagram.trim() && submissionForm.agreed && !isSubmitting ? (
+                <div className="button-wrap w-full">
+                  <button type="submit" className="premium-btn w-full">
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
+                      <Sparkle size={16} weight="fill" /> Confirm &amp; Submit Entry
+                    </span>
+                  </button>
+                  <div className="button-shadow" />
+                </div>
+              ) : (
+                <button
+                  type="submit"
+                  disabled
+                  style={{
+                    width: '100%', padding: '13px 20px', borderRadius: '999px',
+                    border: '1px solid rgba(200,210,225,0.4)', background: 'rgba(200,210,225,0.18)',
+                    backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)',
+                    color: 'rgba(100,130,170,0.45)', fontFamily: 'Epilogue, sans-serif',
+                    fontWeight: 700, fontSize: '14px', cursor: 'not-allowed',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                  }}
+                >
+                  <Sparkle size={16} weight="regular" />
+                  {isSubmitting ? 'Submitting…' : 'Confirm & Submit Entry'}
+                </button>
+              )}
+            </div>
           </form>
         </div>
       </Dialog>
 
       <style dangerouslySetInnerHTML={{ __html: `
         @keyframes pulse-button {
-          0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(144, 77, 0, 0.4); }
-          70% { transform: scale(1.02); box-shadow: 0 0 0 20px rgba(144, 77, 0, 0); }
-          100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(144, 77, 0, 0); }
+          0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(209, 223, 246, 0.4); }
+          70% { transform: scale(1.02); box-shadow: 0 0 0 20px rgba(209, 223, 246, 0); }
+          100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(209, 223, 246, 0); }
         }
         .pulse-button {
           animation: pulse-button 2s infinite;

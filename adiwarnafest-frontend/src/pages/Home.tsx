@@ -1,6 +1,5 @@
-import { useState, useEffect, useRef } from "react";
-import { Calendar, MapPin, Star, Basketball, MusicNotes, Storefront, Crown, X, CaretDown, Trophy, Medal, UsersThree } from "@phosphor-icons/react";
-import { YoutubeLogo } from "@phosphor-icons/react/dist/csr/YoutubeLogo";
+﻿import { useState, useEffect, useRef } from "react";
+import { Calendar, MapPin, Star, Basketball, MusicNotes, Storefront, Crown, X, CaretDown, Trophy, Medal, UsersThree, Eye, SoccerBall, GameController } from "@phosphor-icons/react";
 import { InstagramLogo } from "@phosphor-icons/react/dist/csr/InstagramLogo";
 
 // Imported Images
@@ -8,6 +7,7 @@ import plainBackground from "../image/Plain_Background.png";
 import adiwarnaLogo from "../image/Adiwarna_Logo_NoBackground.png";
 import xiamenLogo from "../image/xiamen_logo.png";
 import gadpaLogo from "../image/gadpa_xmum_logo.png";
+import xiamenLandscape from "../image/xiamen_landscape.jpg";
 
 import { sportsSlides, sportsDetails } from "../data/mockData";
 import { registrationService, type RegistrationStats } from "../services/registration";
@@ -19,6 +19,7 @@ const Home: React.FC = () => {
   const [isBazaarModalOpen, setIsBazaarModalOpen] = useState(false);
   const [isSportsModalOpen, setIsSportsModalOpen] = useState(false);
   const [isSimfoniModalOpen, setIsSimfoniModalOpen] = useState(false);
+  const [closedPortal, setClosedPortal] = useState<{ title: string; message: string } | null>(null);
   const [expandedSport, setExpandedSport] = useState<string | null>(null);
   const [activePortalIndex, setActivePortalIndex] = useState(0);
   const [lastInteraction, setLastInteraction] = useState(Date.now());
@@ -32,7 +33,7 @@ const Home: React.FC = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSportImg((prev) => (prev + 1) % sportsSlides.length);
-    }, 2000); // cycle image every 2 second
+    }, 2000);
     return () => clearInterval(timer);
   }, []);
 
@@ -73,17 +74,16 @@ const Home: React.FC = () => {
 
     const autoScroll = setInterval(() => {
       const now = Date.now();
-      // Only auto-scroll if 10 seconds have passed since last interaction
       if (now - lastInteraction < 10000) return;
 
       const cardWidth = window.innerWidth * 0.82 + 12;
-      const nextIndex = (activePortalIndex + 1) % 3; // Total 3 portals
+      const nextIndex = (activePortalIndex + 1) % 3;
 
       portalContainer.scrollTo({
         left: nextIndex * cardWidth,
         behavior: "smooth",
       });
-    }, 4000); // Scroll every 4 seconds
+    }, 4000);
 
     return () => clearInterval(autoScroll);
   }, [activePortalIndex, lastInteraction]);
@@ -148,11 +148,10 @@ const Home: React.FC = () => {
   const handlePortalScroll = (e: React.UIEvent<HTMLDivElement>) => {
     const container = e.currentTarget;
     const scrollLeft = container.scrollLeft;
-    // Assume each card takes roughly ~82vw + gap
-    const cardWidth = window.innerWidth * 0.82 + 12; // 12px gap
+    const cardWidth = window.innerWidth * 0.82 + 12;
     const index = Math.round(scrollLeft / cardWidth);
     setActivePortalIndex(Math.min(2, Math.max(0, index)));
-    setLastInteraction(Date.now()); // Reset cooldown on scroll
+    setLastInteraction(Date.now());
   };
 
   const renderSportDetails = (sportId: string) => {
@@ -161,42 +160,39 @@ const Home: React.FC = () => {
 
     return (
       <div className="fadein animation-duration-200">
-        <p className="m-0 text-sm mb-1 text-700">
+        <p className="m-0 text-sm mb-1" style={{ color: "var(--text-secondary)" }}>
           <strong>Date:</strong>{" "}
-          <span style={{ whiteSpace: "pre-line" }} className="text-900">
-            {sport.date}
-          </span>
+          <span style={{ whiteSpace: "pre-line", color: "var(--text-primary)" }}>{sport.date}</span>
         </p>
-        <p className="m-0 text-sm mb-1 text-700">
-          <strong>Location:</strong> <span className="text-900">{sport.location}</span>
+        <p className="m-0 text-sm mb-1" style={{ color: "var(--text-secondary)" }}>
+          <strong>Location:</strong> <span style={{ color: "var(--text-primary)" }}>{sport.location}</span>
         </p>
         {sport.venue && (
-          <p className="m-0 text-sm mb-1 text-700">
-            <strong>Venue:</strong> <span className="text-900">{sport.venue}</span>
+          <p className="m-0 text-sm mb-1" style={{ color: "var(--text-secondary)" }}>
+            <strong>Venue:</strong> <span style={{ color: "var(--text-primary)" }}>{sport.venue}</span>
           </p>
         )}
-        <p className="m-0 text-sm mb-1 text-700">
-          <strong>Registration Fee:</strong> <span className="text-900">{sport.fee}</span>
+        <p className="m-0 text-sm mb-1" style={{ color: "var(--text-secondary)" }}>
+          <strong>Registration Fee:</strong> <span style={{ color: "var(--text-primary)" }}>{sport.fee}</span>
         </p>
-
-        <p className="m-0 text-sm text-700 font-bold mb-2 mt-2">
-          Prizepool: <span className="text-900 font-bold">{sport.prize}</span>
+        <p className="m-0 text-sm font-bold mb-2 mt-2" style={{ color: "var(--text-secondary)" }}>
+          Prizepool: <span style={{ color: "var(--text-primary)", fontWeight: 700 }}>{sport.prize}</span>
         </p>
 
         <div className="flex flex-column gap-2 mb-3">
           {sport.prizeBreakdown?.map((prize, idx) => (
-            <div key={idx} className="p-2 border-round-lg flex align-items-center gap-3" style={{ backgroundColor: "rgba(161, 64, 0, 0.04)", border: "1px solid rgba(161, 64, 0, 0.1)" }}>
-              <div className="flex align-items-center justify-content-center border-circle" style={{ width: "32px", height: "32px", backgroundColor: "var(--color-primary)", color: "#fff" }}>
+            <div key={idx} className="p-2 border-round-lg flex align-items-center gap-3" style={{ backgroundColor: "rgba(255,255,255,0.35)", border: "1px solid rgba(255,255,255,0.5)" }}>
+              <div className="flex align-items-center justify-content-center border-circle" style={{ width: "32px", height: "32px", backgroundColor: "rgba(209,223,246,0.15)", color: "#6366F1", flexShrink: 0 }}>
                 <Star size={16} weight="fill" />
               </div>
               <div className="flex-1">
-                <p className="m-0 text-xs font-bold text-900">{prize.rank}</p>
-                <p className="m-0 text-[10px] text-700">{prize.details}</p>
+                <p className="m-0 text-xs font-bold" style={{ color: "var(--text-primary)" }}>{prize.rank}</p>
+                <p className="m-0 text-[10px]" style={{ color: "var(--text-muted)" }}>{prize.details}</p>
               </div>
             </div>
           ))}
-          <div className="p-2 mt-1 border-round-lg" style={{ backgroundColor: "var(--color-background)" }}>
-            <p className="m-0 text-[8px] text-500 font-italic line-height-3">*The prize pool may vary depending on the number of participating teams and sponsors. Once a team is registered, withdrawals are not permitted.</p>
+          <div className="p-2 mt-1 border-round-lg" style={{ backgroundColor: "rgba(255,255,255,0.2)", border: "1px solid rgba(255,255,255,0.35)" }}>
+            <p className="m-0 text-[8px] font-italic line-height-3" style={{ color: "var(--text-muted)" }}>*The prize pool may vary depending on the number of participating teams and sponsors. Once a team is registered, withdrawals are not permitted.</p>
           </div>
         </div>
 
@@ -206,8 +202,8 @@ const Home: React.FC = () => {
               href={sport.tnc}
               target="_blank"
               rel="noreferrer"
-              className="flex align-items-center justify-content-center w-full py-2 bg-white text-900 font-semibold border-1 border-round-lg text-decoration-none text-xs transition-colors hover:surface-100 shadow-1"
-              style={{ borderColor: "var(--color-border)" }}
+              className="glass-btn flex align-items-center justify-content-center w-full py-2 text-decoration-none text-xs font-semibold"
+              style={{ color: "var(--text-primary)" }}
             >
               Terms and Conditions
             </a>
@@ -216,8 +212,8 @@ const Home: React.FC = () => {
             href="https://docs.google.com/forms/d/e/1FAIpQLSfu-UDfhlRcgx-i5RA2gpvArcJCTa5ABN61RU61467-XTO3dA/viewform"
             target="_blank"
             rel="noreferrer"
-            className="flex align-items-center justify-content-center w-full py-2 text-white font-bold border-round-lg text-decoration-none text-sm transition-colors shadow-1 hover:surface-hover"
-            style={{ backgroundColor: "var(--color-primary)" }}
+            className="glass-btn-indigo flex align-items-center justify-content-center w-full py-2 text-white font-bold text-decoration-none text-sm"
+            style={{ borderRadius: "14px" }}
           >
             Register Now
           </a>
@@ -227,87 +223,200 @@ const Home: React.FC = () => {
   };
 
   return (
-    <div className="surface-0 min-h-screen fadein animation-duration-1000" style={{ fontFamily: "Epilogue, sans-serif" }}>
-      {/* Mobile Header is now managed in MainLayout */}
-
+    <div className="glass-page fadein animation-duration-1000" style={{ fontFamily: "Epilogue, sans-serif" }}>
       <main className="pb-6 mx-auto w-full" style={{ maxWidth: "1024px" }}>
-        {/* Hero Banner Area */}
+
+        {/* Hero Banner */}
         <section className="px-3 pt-3">
           <div
             className="border-round-2xl p-4 flex flex-column align-items-center text-center shadow-3 overflow-hidden"
             style={{
-              backgroundColor: "var(--color-primary)",
               backgroundImage: `url(${plainBackground})`,
               backgroundSize: "cover",
               backgroundPosition: "center",
               minHeight: "200px",
             }}
           >
-            {/* Top Logos in Header using Flexbox (no absolute positioning) */}
             <div className="w-full flex justify-content-between align-items-start mb-4">
               <img src={xiamenLogo} alt="Xiamen University" style={{ height: "40px", objectFit: "contain" }} />
               <img src={gadpaLogo} alt="GADPA" style={{ height: "40px", objectFit: "contain", borderRadius: "4px" }} />
             </div>
-
             <div className="w-full flex justify-content-center align-items-center flex-grow-1">
               <img src={adiwarnaLogo} alt="Adiwarna Fest 2026 Logo" style={{ width: "100%", maxWidth: "400px", objectFit: "contain" }} />
             </div>
           </div>
         </section>
 
-        {/* When & Where Panel */}
+        {/* When & Where */}
         <section className="px-3 mt-3">
-          <div className="bg-white border-round-2xl p-4 shadow-2 border-1 flex flex-column md:flex-row md:align-items-center md:justify-content-evenly gap-4" style={{ borderColor: "var(--color-border)" }}>
-            <div className="flex align-items-center gap-3 w-full md:w-auto md:flex-1 md:justify-content-center">
-              <div className="flex align-items-center justify-content-center border-circle flex-shrink-0" style={{ width: "40px", height: "40px", backgroundColor: "var(--color-primary-light)", color: "#fff" }}>
-                <Calendar size={20} weight="fill" />
+          <div
+            className="p-4 flex flex-column md:flex-row gap-4"
+            style={{
+              background: "#ffffff",
+              border: "1px solid rgba(161,64,0,0.12)",
+              borderRadius: "24px",
+              boxShadow: "0 8px 32px rgba(161,64,0,0.06)",
+            }}
+          >
+
+            {/* Day 1 */}
+            <div className="flex-1">
+              <div className="flex align-items-center gap-2 mb-3">
+                <div className="glass-icon flex-shrink-0" style={{ width: "34px", height: "34px" }}>
+                  <Calendar size={17} weight="fill" style={{ color: "var(--text-secondary)" }} />
+                </div>
+                <p className="m-0 text-sm font-black" style={{ color: "var(--text-primary)", letterSpacing: "-0.01em" }}>30 May 2026</p>
               </div>
-              <div>
-                <p className="m-0 text-[10px] font-bold uppercase" style={{ color: "var(--color-primary)", letterSpacing: "0.05em" }}>
-                  When
-                </p>
-                <p className="m-0 text-sm font-semibold text-900 line-height-2">30-31 May 2026</p>
+              <div className="flex flex-column gap-3 pl-1">
+                {[
+                  { icon: <Storefront size={14} weight="fill" />, label: "Bazaar", location: "B1 – Ground Floor & First Floor", mapLink: true },
+                  { icon: <Basketball size={14} weight="fill" />, label: "Basketball", location: "B1 – Indoor Court" },
+                  { icon: <SoccerBall size={14} weight="fill" />, label: "Futsal", location: "B1 – Futsal Court" },
+                ].map((item, i) => (
+                  <div key={i} className="flex gap-2 align-items-start">
+                    <span style={{ color: "var(--text-muted)", flexShrink: 0, marginTop: "2px" }}>{item.icon}</span>
+                    <div className="flex flex-column gap-1">
+                      <span className="text-xs font-bold" style={{ color: "var(--text-secondary)" }}>{item.label}</span>
+                      <div className="flex align-items-center gap-2 flex-wrap">
+                        <span className="text-xs" style={{ color: "var(--text-muted)" }}>{item.location}</span>
+                        {(item as { mapLink?: boolean }).mapLink && (
+                          <a
+                            href="/map"
+                            className="text-decoration-none flex align-items-center gap-1"
+                            style={{
+                              background: "rgba(209,223,246,0.15)",
+                              backdropFilter: "blur(8px)",
+                              WebkitBackdropFilter: "blur(8px)",
+                              border: "1px solid rgba(209,223,246,0.35)",
+                              borderRadius: "999px",
+                              padding: "2px 9px",
+                              fontSize: "11px",
+                              fontWeight: 700,
+                              color: "var(--text-secondary)",
+                              transition: "all 0.18s ease",
+                            }}
+                            onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.background = "rgba(209,223,246,0.28)"}
+                            onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.background = "rgba(209,223,246,0.15)"}
+                          >
+                            <MapPin size={11} weight="fill" /> View Map
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {/* Mobile Legends row with Watch Live button */}
+                <div className="flex gap-2 align-items-start">
+                  <span style={{ color: "var(--text-muted)", flexShrink: 0, marginTop: "2px" }}><GameController size={14} weight="fill" /></span>
+                  <div className="flex flex-column gap-1">
+                    <span className="text-xs font-bold" style={{ color: "var(--text-secondary)" }}>Mobile Legends</span>
+                    <div>
+                      <a
+                        href="/live"
+                        className="text-decoration-none flex align-items-center gap-1"
+                        style={{
+                          display: "inline-flex",
+                          background: "rgba(220,0,0,0.12)",
+                          backdropFilter: "blur(8px)",
+                          WebkitBackdropFilter: "blur(8px)",
+                          border: "1px solid rgba(255,80,80,0.3)",
+                          borderRadius: "999px",
+                          padding: "2px 9px",
+                          fontSize: "11px",
+                          fontWeight: 700,
+                          color: "#dc2626",
+                          transition: "all 0.18s ease",
+                        }}
+                        onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.background = "rgba(220,0,0,0.22)"}
+                        onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.background = "rgba(220,0,0,0.12)"}
+                      >
+                        <Eye size={11} weight="fill" /> Watch Live
+                      </a>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div className="md:hidden" style={{ height: "1px", width: "100%", backgroundColor: "var(--color-border)" }}></div>
-            <div className="hidden md:block" style={{ width: "1px", height: "50px", backgroundColor: "var(--color-border)" }}></div>
+            <hr className="glass-divider md:hidden w-full" style={{ margin: 0 }} />
+            <div className="hidden md:block" style={{ width: "1px", alignSelf: "stretch", background: "rgba(255,255,255,0.6)" }} />
 
-            <div className="flex align-items-center gap-3 w-full md:w-auto md:flex-1 md:justify-content-center">
-              <div className="flex align-items-center justify-content-center border-circle flex-shrink-0" style={{ width: "40px", height: "40px", backgroundColor: "var(--color-primary-light)", color: "#fff" }}>
-                <MapPin size={20} weight="fill" />
+            {/* Day 2 */}
+            <div className="flex-1">
+              <div className="flex align-items-center gap-2 mb-3">
+                <div className="glass-icon flex-shrink-0" style={{ width: "34px", height: "34px" }}>
+                  <Calendar size={17} weight="fill" style={{ color: "var(--text-secondary)" }} />
+                </div>
+                <p className="m-0 text-sm font-black" style={{ color: "var(--text-primary)", letterSpacing: "-0.01em" }}>31 May 2026</p>
               </div>
-              <div>
-                <p className="m-0 text-[10px] font-bold uppercase" style={{ color: "var(--color-primary)", letterSpacing: "0.05em" }}>
-                  Where
-                </p>
-                <p className="m-0 text-sm font-semibold text-900 line-height-2" style={{ whiteSpace: "normal", wordBreak: "break-word" }}>
-                  Xiamen University Malaysia
-                </p>
+              <div className="flex flex-column gap-3 pl-1">
+                {[
+                  { icon: <Basketball size={14} weight="fill" />, label: "Basketball", location: "B1 – Indoor Court" },
+                  { icon: <SoccerBall size={14} weight="fill" />, label: "Futsal", location: "B1 – Futsal Court" },
+                  { icon: <MusicNotes size={14} weight="fill" />, label: "Simfoni", location: "A1 – Tan Hua Choon Auditorium" },
+                ].map((item, i) => (
+                  <div key={i} className="flex gap-2 align-items-start">
+                    <span style={{ color: "var(--text-muted)", flexShrink: 0, marginTop: "2px" }}>{item.icon}</span>
+                    <div className="flex flex-column gap-1">
+                      <span className="text-xs font-bold" style={{ color: "var(--text-secondary)" }}>{item.label}</span>
+                      <span className="text-xs" style={{ color: "var(--text-muted)" }}>{item.location}</span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
+
           </div>
         </section>
 
-        {/* Live Now Section */}
+        {/* Live Page Entry */}
+        <section className="px-3 mt-3">
+          <a
+            href="/live"
+            className="text-decoration-none"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              background: 'linear-gradient(135deg, #ff0000 0%, #cc0000 100%)',
+              borderRadius: '14px',
+              padding: '14px 18px',
+              boxShadow: '0 4px 16px rgba(220,0,0,0.35)',
+              transition: 'transform 0.15s ease, box-shadow 0.15s ease',
+            }}
+            onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.transform = 'translateY(-2px)'; (e.currentTarget as HTMLAnchorElement).style.boxShadow = '0 8px 24px rgba(220,0,0,0.45)'; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.transform = ''; (e.currentTarget as HTMLAnchorElement).style.boxShadow = '0 4px 16px rgba(220,0,0,0.35)'; }}
+          >
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+              <path d="M23.5 6.2a3.01 3.01 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3.01 3.01 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3.01 3.01 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3.01 3.01 0 0 0 2.1-2.1C24 15.9 24 12 24 12s0-3.9-.5-5.8zM9.6 15.6V8.4l6.3 3.6-6.3 3.6z"/>
+            </svg>
+            <div className="flex-1">
+              <p style={{ margin: 0, color: '#fff', fontWeight: 800, fontSize: '15px', fontFamily: 'Epilogue, sans-serif' }}>
+                {liveEntries.length > 0 ? '🔴 Streaming Now' : 'Watch Live on YouTube'}
+              </p>
+              <p style={{ margin: '2px 0 0', color: 'rgba(255,255,255,0.85)', fontSize: '12px', fontWeight: 600, fontFamily: 'Epilogue, sans-serif' }}>
+                {liveEntries.length > 0 ? 'Live stream is on — tune in!' : '@AdiwarnaFest · Tap to open'}
+              </p>
+            </div>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 18l6-6-6-6"/>
+            </svg>
+          </a>
+        </section>
+
+        {/* Live Now */}
         {liveEntries.length > 0 && (
           <section className="px-3 mt-4">
-            <div className="bg-white border-round-2xl p-4 shadow-2 border-1" style={{ borderColor: "var(--color-border)" }}>
+            <div className="glass-card p-4">
               <div className="flex align-items-center gap-3 mb-3">
-                <div className="flex align-items-center justify-content-center border-circle" style={{ width: "40px", height: "40px", backgroundColor: "rgba(255, 0, 0, 0.1)", color: "#FF0000" }}>
-                  <YoutubeLogo size={20} weight="fill" />
+                <div className="glass-icon" style={{ width: "40px", height: "40px", backgroundColor: "rgba(255,0,0,0.12)" }}>
+                  <Eye size={20} weight="fill" color="#FF0000" />
                 </div>
                 <div className="flex-1">
-                  <p className="m-0 text-[10px] font-bold uppercase" style={{ color: "#FF0000", letterSpacing: "0.05em" }}>
-                    Live Now
-                  </p>
-                  <h2 className="m-0 text-lg font-bold text-900">Watch Live on YouTube</h2>
+                  <p className="m-0 text-[10px] font-bold uppercase" style={{ color: "#FF0000", letterSpacing: "0.05em" }}>Live Now</p>
+                  <h2 className="m-0 text-lg font-bold" style={{ color: "var(--text-primary)" }}>Watch Live on YouTube</h2>
                 </div>
-                <a
-                  href="/live"
-                  className="flex align-items-center gap-1 text-sm font-semibold text-decoration-none"
-                  style={{ color: "#FF0000" }}
-                >
+                <a href="/live" className="flex align-items-center gap-1 text-sm font-semibold text-decoration-none" style={{ color: "#FF0000" }}>
                   View All
                 </a>
               </div>
@@ -317,7 +426,7 @@ const Home: React.FC = () => {
                   const videoId = extractYouTubeId(entry.filePath);
                   return (
                     <div key={entry.id} className="col-12 md:col-6">
-                      <div className="border-round-xl overflow-hidden shadow-1 border-1" style={{ borderColor: "rgba(0,0,0,0.06)" }}>
+                      <div className="border-round-xl overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.45)" }}>
                         {videoId ? (
                           <div style={{ position: "relative", paddingBottom: "56.25%", height: 0 }}>
                             <iframe
@@ -330,19 +439,13 @@ const Home: React.FC = () => {
                             />
                           </div>
                         ) : (
-                          <div className="flex align-items-center justify-content-center" style={{ height: "180px", backgroundColor: "#f3f4f6" }}>
-                            <div className="text-500 text-sm">Unable to embed</div>
+                          <div className="flex align-items-center justify-content-center" style={{ height: "180px", backgroundColor: "rgba(255,255,255,0.25)" }}>
+                            <span className="text-sm" style={{ color: "var(--text-muted)" }}>Unable to embed</span>
                           </div>
                         )}
-                        <div className="p-2 flex align-items-center justify-content-between">
-                          <span className="text-sm font-semibold text-900 truncate" style={{ maxWidth: "70%" }}>{entry.title}</span>
-                          <a
-                            href={entry.filePath}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-xs font-bold text-decoration-none"
-                            style={{ color: "#FF0000" }}
-                          >
+                        <div className="p-2 flex align-items-center justify-content-between" style={{ background: "rgba(255,255,255,0.3)" }}>
+                          <span className="text-sm font-semibold truncate" style={{ maxWidth: "70%", color: "var(--text-primary)" }}>{entry.title}</span>
+                          <a href={entry.filePath} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-decoration-none" style={{ color: "#FF0000" }}>
                             Watch →
                           </a>
                         </div>
@@ -355,59 +458,9 @@ const Home: React.FC = () => {
           </section>
         )}
 
-        {/* Prizepool Section */}
-        <section className="px-3 mt-4">
-          <div className="luxury-obsidian-panel border-round-2xl p-5 shadow-6" style={{ minHeight: "280px" }}>
-            {/* Animated gold dust particles */}
-            {[...Array(12)].map((_, i) => (
-              <div
-                key={i}
-                className="absolute border-circle"
-                style={{
-                  width: `${3 + (i % 3)}px`,
-                  height: `${3 + (i % 3)}px`,
-                  background: i % 3 === 0 ? "#FFD700" : i % 3 === 1 ? "#D4AF37" : "#FFF8DC",
-                  left: `${(i * 8.3) % 100}%`,
-                  bottom: `${10 + ((i * 7) % 30)}%`,
-                  animation: `gold-dust ${2.5 + i * 0.4}s ease-in-out ${i * 0.3}s infinite`,
-                  pointerEvents: "none",
-                }}
-              />
-            ))}
-
-            {/* Floating Background Icons */}
-            <Trophy size={180} weight="fill" className="absolute" style={{ right: "-40px", bottom: "-30px", opacity: 0.07, transform: "rotate(-15deg)", filter: "blur(2px)", color: "#D4AF37" }} />
-            <Medal size={100} weight="fill" className="absolute" style={{ left: "-20px", top: "10px", opacity: 0.06, transform: "rotate(15deg)", filter: "blur(1px)", color: "#D4AF37" }} />
-
-            <div className="relative z-1 flex flex-column align-items-center text-center">
-              {/* Grand Prize Badge */}
-              <div
-                className="flex align-items-center gap-2 px-4 py-2 border-round-3xl mb-4"
-                style={{
-                  background: "rgba(212,175,55,0.1)",
-                  border: "1px solid rgba(212,175,55,0.45)",
-                }}
-              >
-                <Crown size={16} weight="fill" color="#D4AF37" />
-                <span className="text-[10px] font-black uppercase" style={{ color: "#D4AF37", letterSpacing: "0.2em" }}>
-                  Grand Prize Pool
-                </span>
-              </div>
-
-              {/* Total Amount */}
-              <p className="m-0 mb-2 text-xs font-bold uppercase" style={{ color: "rgba(255,255,255,0.4)", letterSpacing: "0.15em" }}>
-                Grand Prize Pool
-              </p>
-              <h2 className="m-0 text-5xl md:text-6xl font-black gold-shimmer-amount" style={{ letterSpacing: "-0.02em" }}>
-                RM 6,100.00
-              </h2>
-            </div>
-          </div>
-        </section>
-
         {/* Registration Portals */}
         <section className="pl-3 md:px-3 mt-5">
-          <h2 className="text-xl font-bold text-900 mb-3 m-0 pr-3">Registration Portals</h2>
+          <h2 className="text-xl font-bold mb-3 m-0 pr-3" style={{ color: "var(--text-primary)" }}>Registration Portals</h2>
 
           <div
             ref={portalRef}
@@ -417,35 +470,6 @@ const Home: React.FC = () => {
             onMouseDown={() => setLastInteraction(Date.now())}
             style={{ scrollbarWidth: "none", msOverflowStyle: "none", scrollSnapType: "x mandatory" }}
           >
-            {/* Sports */}
-            <div
-              className="flex-shrink-0 flex flex-column justify-content-end p-4 border-round-2xl shadow-3 overflow-hidden transition-all duration-500"
-              style={{
-                width: "82vw",
-                maxWidth: "320px",
-                height: "400px",
-                backgroundImage: `linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0.1) 100%), url('${sportsSlides[currentSportImg].image}')`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                scrollSnapAlign: "center",
-              }}
-            >
-              <div className="mt-auto">
-                <span className="inline-block px-3 py-1 text-white text-[10px] font-bold uppercase border-round-3xl mb-2" style={{ backgroundColor: "var(--color-primary)", letterSpacing: "0.05em" }}>
-                  Athletics
-                </span>
-                <h4 className="text-white text-2xl font-bold mb-2 m-0">Sports Registration</h4>
-                <div className="min-h-3rem flex align-items-end mb-4">
-                  <p className="text-white text-sm m-0 line-height-3 fadein animation-duration-500" style={{ textShadow: "0 1px 3px rgba(0,0,0,0.8)" }} key={currentSportImg}>
-                    {sportsSlides[currentSportImg].subtitle}
-                  </p>
-                </div>
-                <button disabled className="w-full py-3 font-bold border-round-xl border-none cursor-not-allowed shadow-2 text-white" style={{ backgroundColor: "#dc2626" }}>
-                  Registration Closed
-                </button>
-              </div>
-            </div>
-
             {/* Simfoni */}
             <div
               className="flex-shrink-0 flex flex-column justify-content-end p-4 border-round-2xl shadow-3 overflow-hidden transition-all"
@@ -460,16 +484,43 @@ const Home: React.FC = () => {
               }}
             >
               <div className="mt-auto">
-                <span className="inline-block px-3 py-1 text-900 text-[10px] font-bold uppercase border-round-3xl mb-2" style={{ backgroundColor: "var(--color-accent)", letterSpacing: "0.05em" }}>
-                  Performing Arts
-                </span>
+                <span className="glass-tag inline-block px-3 py-1 mb-2" style={{ color: "rgba(255,255,255,0.9)" }}>Performing Arts</span>
                 <h4 className="text-white text-2xl font-bold mb-2 m-0">Simfoni 2026</h4>
                 <p className="text-white text-sm mb-4 line-height-3 m-0 mt-2" style={{ textShadow: "0 1px 3px rgba(0,0,0,0.8)" }}>
                   Music band & performance and sports winner awarding ceremony
                 </p>
-                <button onClick={() => setIsSimfoniModalOpen(true)} className="w-full py-3 bg-white text-900 font-bold border-round-xl border-none cursor-pointer shadow-2 transition-colors hover:surface-200">
-                  Secure Seat
-                </button>
+                <div className="button-wrap w-full" style={{ fontSize: '15px' }}>
+                  <button className="premium-btn w-full" onClick={() => setIsSimfoniModalOpen(true)}><span style={{ color: '#fff', textShadow: '0 1px 3px rgba(0,0,0,0.4)', textAlign: 'center', display: 'block', width: '100%' }}>Secure Seat</span></button>
+                  <div className="button-shadow" />
+                </div>
+              </div>
+            </div>
+
+            {/* Sports */}
+            <div
+              className="flex-shrink-0 flex flex-column justify-content-end p-4 border-round-2xl shadow-3 overflow-hidden transition-all duration-500"
+              style={{
+                width: "82vw",
+                maxWidth: "320px",
+                height: "400px",
+                backgroundImage: `linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0.1) 100%), url('${sportsSlides[currentSportImg].image}')`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                scrollSnapAlign: "center",
+              }}
+            >
+              <div className="mt-auto">
+                <span className="glass-tag inline-block px-3 py-1 mb-2" style={{ color: "rgba(255,255,255,0.9)" }}>Athletics</span>
+                <h4 className="text-white text-2xl font-bold mb-2 m-0">Sports Registration</h4>
+                <div className="min-h-3rem flex align-items-end mb-4">
+                  <p className="text-white text-sm m-0 line-height-3 fadein animation-duration-500" style={{ textShadow: "0 1px 3px rgba(0,0,0,0.8)" }} key={currentSportImg}>
+                    {sportsSlides[currentSportImg].subtitle}
+                  </p>
+                </div>
+                <div className="button-wrap w-full" style={{ fontSize: '15px' }}>
+                  <button className="premium-btn w-full" onClick={() => setClosedPortal({ title: 'Sports Registration Closed', message: 'Sports registration has ended. Thank you for your interest — stay tuned for Adiwarna Fest 2026!' })}><span style={{ color: '#fff', textShadow: '0 1px 3px rgba(0,0,0,0.4)', textAlign: 'center', display: 'block', width: '100%' }}>Registration Closed</span></button>
+                  <div className="button-shadow" />
+                </div>
               </div>
             </div>
 
@@ -487,27 +538,26 @@ const Home: React.FC = () => {
               }}
             >
               <div className="mt-auto">
-                <span className="inline-block px-3 py-1 text-white text-[10px] font-bold uppercase border-round-3xl mb-2" style={{ backgroundColor: "#8c7166", letterSpacing: "0.05em" }}>
-                  Entrepreneurship
-                </span>
+                <span className="glass-tag inline-block px-3 py-1 mb-2" style={{ color: "rgba(255,255,255,0.9)" }}>Entrepreneurship</span>
                 <h4 className="text-white text-2xl font-bold mb-2 m-0">Open a Booth</h4>
                 <p className="text-white text-sm mb-4 line-height-3 m-0 mt-2" style={{ textShadow: "0 1px 3px rgba(0,0,0,0.8)" }}>
                   Open for public and student vendor
                 </p>
-                <button disabled className="w-full py-3 font-bold border-round-xl border-none cursor-not-allowed shadow-2 text-white" style={{ backgroundColor: "#dc2626" }}>
-                  Slots are Full
-                </button>
+                <div className="button-wrap w-full" style={{ fontSize: '15px' }}>
+                  <button className="premium-btn w-full" onClick={() => setClosedPortal({ title: 'Vendor Slots are Full', message: 'All vendor booth slots have been filled. Thank you for your interest — hope to see you as a visitor at Adiwarna Fest 2026!' })}><span style={{ color: '#fff', textShadow: '0 1px 3px rgba(0,0,0,0.4)', textAlign: 'center', display: 'block', width: '100%' }}>Slots are Full</span></button>
+                  <div className="button-shadow" />
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Scroll Indicator Dots */}
-          <div className="flex justify-content-center gap-2 mt-2 pr-3">
+          {/* Scroll Indicator Dots — mobile only */}
+          <div className="flex justify-content-center gap-2 mt-2 pr-3 md:hidden">
             {[0, 1, 2].map((idx) => (
               <div
                 key={idx}
                 className={`border-round-xl transition-all duration-300 ${activePortalIndex === idx ? "w-2rem" : "w-1rem"}`}
-                style={{ height: "6px", backgroundColor: activePortalIndex === idx ? "var(--color-primary)" : "#e3e2e0" }}
+                style={{ height: "6px", backgroundColor: activePortalIndex === idx ? "rgba(209,223,246,0.8)" : "rgba(255,255,255,0.45)" }}
               />
             ))}
           </div>
@@ -515,121 +565,149 @@ const Home: React.FC = () => {
 
         {/* Live Registration Stats */}
         <section className="px-3 mt-5">
-          <div className="border-round-2xl p-6 shadow-4 glass-panel-dashboard">
-            {/* Header Area */}
+          <div style={{ background: 'rgba(255,255,255,0.38)', backdropFilter: 'blur(28px) saturate(180%)', WebkitBackdropFilter: 'blur(28px) saturate(180%)', border: '1px solid rgba(255,255,255,0.75)', borderRadius: '24px', boxShadow: '0 8px 32px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.95)', padding: '28px 24px' }}>
             <div className="flex flex-column sm:flex-row sm:justify-content-between sm:align-items-center gap-3 mb-5">
               <div>
-                <h2 className="text-2xl font-black text-900 m-0 flex align-items-center gap-2" style={{ fontFamily: "Epilogue, sans-serif" }}>
-                  <UsersThree size={28} weight="fill" color="var(--color-primary)" />
-                  Live Registration Status
+                <div className="flex align-items-center gap-2 mb-2">
+                  <span className="pulse-live-dot" />
+                  <span className="text-[10px] font-black uppercase" style={{ color: '#ef4444', letterSpacing: '0.12em' }}>Live</span>
+                </div>
+                <h2 className="text-2xl font-black m-0 flex align-items-center gap-2" style={{ fontFamily: "Epilogue, sans-serif", color: "var(--text-primary)" }}>
+                  <UsersThree size={28} weight="fill" style={{ color: "var(--text-secondary)" }} />
+                  Registration Status
                 </h2>
-                <p className="m-0 text-xs font-semibold text-600 mt-1">Real-time participant analytics and tournament seat availability</p>
+                <p className="m-0 text-xs font-semibold mt-1" style={{ color: "var(--text-muted)" }}>Real-time participant analytics and tournament seat availability</p>
               </div>
             </div>
 
-            {/* Error State */}
             {statsError && (
               <div className="p-4 mb-4 border-round-2xl" style={{ backgroundColor: "rgba(220, 38, 38, 0.1)", border: "1px solid rgba(220, 38, 38, 0.3)", color: "#dc2626" }}>
                 <p className="m-0 text-sm font-semibold">⚠️ Unable to load live stats: {statsError}</p>
               </div>
             )}
 
-            {/* Overview KPIs Row (Top Row - 3 Cards) */}
             <div className="flex flex-column md:flex-row gap-4 mb-4">
-              {/* Card 1: Total Festival Participants */}
-              <div className="flex-1 premium-card-base border-round-2xl p-4 flex flex-column justify-content-between glow-hover-pink" style={{ minHeight: "130px" }}>
+              {/* Simfoni Attendees */}
+              <div className="flex-1 glass-stat-card p-4 flex flex-column justify-content-between" style={{ minHeight: "130px" }}>
                 <div className="flex justify-content-between align-items-start mb-2">
-                  <div className="flex align-items-center justify-content-center border-circle" style={{ width: "36px", height: "36px", backgroundColor: "rgba(236, 72, 153, 0.1)", color: "#EC4899" }}>
-                    <UsersThree size={20} weight="bold" />
+                  <div className="glass-icon" style={{ width: "36px", height: "36px", backgroundColor: "rgba(236,72,153,0.12)" }}>
+                    <UsersThree size={20} weight="bold" color="#EC4899" />
                   </div>
-                  <span className="text-[10px] font-bold text-500 uppercase tracking-widest" style={{ letterSpacing: "0.08em" }}>
-                    Grand Total
-                  </span>
+                  <span className="text-[10px] font-bold uppercase" style={{ color: "var(--text-muted)", letterSpacing: "0.08em" }}>Grand Total</span>
                 </div>
                 <div>
-                  <h3
-                    className="m-0 text-4xl font-black mb-1"
-                    style={{
-                      background: "linear-gradient(135deg, #EC4899 0%, #db2777 100%)",
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                      fontFamily: "Epilogue, sans-serif",
-                    }}
-                  >
-                    {stats?.simfoniParticipants ?? "Loading..."}
+                  <h3 className="m-0 text-4xl font-black mb-1" style={{ background: "linear-gradient(135deg, #EC4899 0%, #db2777 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", fontFamily: "Epilogue, sans-serif" }}>
+                    {stats?.simfoniParticipants ?? "—"}
                   </h3>
-                  <p className="m-0 text-xs font-bold text-700">Simfoni Attendees</p>
+                  <p className="m-0 text-xs font-bold" style={{ color: "var(--text-secondary)" }}>Simfoni Attendees</p>
                 </div>
               </div>
 
-              {/* Card 2: Sports Athletes */}
-              <div className="flex-1 premium-card-base border-round-2xl p-4 flex flex-column justify-content-between glow-hover-orange" style={{ minHeight: "130px" }}>
+              {/* Sports Athletes */}
+              <div className="flex-1 glass-stat-card p-4 flex flex-column justify-content-between" style={{ minHeight: "130px" }}>
                 <div className="flex justify-content-between align-items-start mb-2">
-                  <div className="flex align-items-center justify-content-center border-circle" style={{ width: "36px", height: "36px", backgroundColor: "rgba(242, 153, 74, 0.1)", color: "var(--color-primary-light)" }}>
-                    <UsersThree size={20} weight="bold" />
+                  <div className="glass-icon" style={{ width: "36px", height: "36px", backgroundColor: "rgba(245,158,11,0.12)" }}>
+                    <UsersThree size={20} weight="bold" color="#F59E0B" />
                   </div>
-                  <span className="text-[10px] font-bold text-500 uppercase tracking-widest" style={{ letterSpacing: "0.08em" }}>
-                    Athletes
-                  </span>
+                  <span className="text-[10px] font-bold uppercase" style={{ color: "var(--text-muted)", letterSpacing: "0.08em" }}>Athletes</span>
                 </div>
                 <div>
-                  <h3
-                    className="m-0 text-4xl font-black mb-1"
-                    style={{
-                      background: "linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-primary) 100%)",
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                      fontFamily: "Epilogue, sans-serif",
-                    }}
-                  >
-                    {stats?.sportParticipants ?? "Loading..."}
+                  <h3 className="m-0 text-4xl font-black mb-1" style={{ background: "linear-gradient(135deg, #F59E0B 0%, #D97706 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", fontFamily: "Epilogue, sans-serif" }}>
+                    {stats?.sportParticipants ?? "—"}
                   </h3>
-                  <p className="m-0 text-xs font-bold text-700">Sports Competitors</p>
+                  <p className="m-0 text-xs font-bold" style={{ color: "var(--text-secondary)" }}>Sports Competitors</p>
                 </div>
               </div>
 
-              {/* Card 3: Tournament Teams */}
-              <div className="flex-1 premium-card-base border-round-2xl p-4 flex flex-column justify-content-between glow-hover-gold" style={{ minHeight: "130px" }}>
+              {/* Registered Teams */}
+              <div className="flex-1 glass-stat-card p-4 flex flex-column justify-content-between" style={{ minHeight: "130px" }}>
                 <div className="flex justify-content-between align-items-start mb-2">
-                  <div className="flex align-items-center justify-content-center border-circle" style={{ width: "36px", height: "36px", backgroundColor: "rgba(208, 170, 47, 0.1)", color: "var(--color-accent)" }}>
-                    <Trophy size={20} weight="bold" />
+                  <div className="glass-icon" style={{ width: "36px", height: "36px", backgroundColor: "rgba(209,223,246,0.12)" }}>
+                    <Trophy size={20} weight="bold" color="#6366F1" />
                   </div>
-                  <span className="text-[10px] font-bold text-500 uppercase tracking-widest" style={{ letterSpacing: "0.08em" }}>
-                    Squads
-                  </span>
+                  <span className="text-[10px] font-bold uppercase" style={{ color: "var(--text-muted)", letterSpacing: "0.08em" }}>Squads</span>
                 </div>
                 <div>
-                  <h3
-                    className="m-0 text-4xl font-black mb-1"
-                    style={{
-                      background: "linear-gradient(135deg, var(--color-accent) 0%, #a17800 100%)",
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                      fontFamily: "Epilogue, sans-serif",
-                    }}
-                  >
-                    {stats?.totalTeams ?? "Loading..."}
+                  <h3 className="m-0 text-4xl font-black mb-1" style={{ background: "linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", fontFamily: "Epilogue, sans-serif" }}>
+                    {stats?.totalTeams ?? "—"}
                   </h3>
-                  <p className="m-0 text-xs font-bold text-700">Registered Teams</p>
+                  <p className="m-0 text-xs font-bold" style={{ color: "var(--text-secondary)" }}>Registered Teams</p>
                 </div>
+              </div>
+            </div>
+          </div>  {/* close stats glass div */}
+        </section>
+
+        {/* Prizepool */}
+        <section className="px-3 mt-4">
+          <div
+            className="p-5 border-round-2xl"
+            style={{
+              minHeight: "280px",
+              position: "relative",
+              overflow: "hidden",
+              backgroundImage: `linear-gradient(135deg, rgba(20,10,2,0.72) 0%, rgba(40,20,5,0.6) 50%, rgba(20,10,2,0.78) 100%), url(${xiamenLandscape})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              boxShadow: "0 16px 48px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.08)",
+              border: "1px solid rgba(254,178,70,0.25)",
+            }}
+          >
+            {[...Array(12)].map((_, i) => (
+              <div
+                key={i}
+                className="absolute border-circle"
+                style={{
+                  width: `${3 + (i % 3)}px`,
+                  height: `${3 + (i % 3)}px`,
+                  background: i % 3 === 0 ? "#FFD700" : i % 3 === 1 ? "#D4AF37" : "#FFF8DC",
+                  left: `${(i * 8.3) % 100}%`,
+                  bottom: `${10 + ((i * 7) % 30)}%`,
+                  animation: `gold-dust ${2.5 + i * 0.4}s ease-in-out ${i * 0.3}s infinite`,
+                  pointerEvents: "none",
+                }}
+              />
+            ))}
+
+            <Trophy size={180} weight="fill" className="absolute" style={{ right: "-40px", bottom: "-30px", opacity: 0.1, transform: "rotate(-15deg)", filter: "blur(2px)", color: "#FFD700" }} />
+            <Medal size={100} weight="fill" className="absolute" style={{ left: "-20px", top: "10px", opacity: 0.08, transform: "rotate(15deg)", filter: "blur(1px)", color: "#FFD700" }} />
+
+            <div className="relative z-1 flex flex-column align-items-center text-center">
+              <div
+                className="flex align-items-center gap-2 px-4 py-2 border-round-3xl mb-4"
+                style={{ background: "rgba(212,175,55,0.15)", border: "1px solid rgba(212,175,55,0.5)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}
+              >
+                <Crown size={16} weight="fill" color="#FFD700" />
+                <span className="text-[10px] font-black uppercase" style={{ color: "#FFD700", letterSpacing: "0.2em" }}>Grand Prize Pool</span>
+              </div>
+
+              {/* Glass amount panel */}
+              <div
+                className="px-6 py-4 border-round-2xl"
+                style={{
+                  background: "rgba(255,255,255,0.12)",
+                  backdropFilter: "blur(20px) saturate(160%)",
+                  WebkitBackdropFilter: "blur(20px) saturate(160%)",
+                  border: "1px solid rgba(255,255,255,0.28)",
+                  boxShadow: "0 8px 32px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.3)",
+                }}
+              >
+                <p className="m-0 mb-2 text-xs font-bold uppercase" style={{ color: "rgba(255,255,255,0.6)", letterSpacing: "0.15em" }}>Total Prize Pool</p>
+                <h2 className="m-0 text-5xl md:text-6xl font-black" style={{ color: '#fff', textShadow: '0 2px 12px rgba(212,175,55,0.5), 0 0 28px rgba(255,215,0,0.2)', fontFamily: 'Epilogue, sans-serif', letterSpacing: '-0.02em' }}>RM 4,000.00</h2>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Partnership / Sponsors */}
+        {/* Sponsors */}
         <section className="px-3 mt-4 mb-5">
-          <div className="bg-white border-round-2xl p-5 shadow-2 border-1" style={{ borderColor: "var(--color-border)", background: "linear-gradient(to bottom, #ffffff, #fdfbf9)" }}>
-            <div className="flex justify-content-between align-items-end mb-4">
+          <div style={{ background: 'rgba(255,255,255,0.38)', backdropFilter: 'blur(28px) saturate(180%)', WebkitBackdropFilter: 'blur(28px) saturate(180%)', border: '1px solid rgba(255,255,255,0.75)', borderRadius: '24px', boxShadow: '0 8px 32px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.95)', padding: '24px 20px' }}>
+            <div className="flex justify-content-between align-items-end mb-5">
               <div>
-                <p className="text-[10px] font-black uppercase mb-1 m-0" style={{ color: "var(--color-primary)", letterSpacing: "0.1em" }}>
-                  Partnership
-                </p>
-                <h2 className="text-2xl font-bold text-900 m-0">Meet our Sponsors</h2>
+                <p className="text-[10px] font-black uppercase mb-1 m-0" style={{ color: "var(--text-muted)", letterSpacing: "0.1em" }}>Partnership</p>
+                <h2 className="text-2xl font-bold m-0" style={{ color: "var(--text-primary)" }}>Meet our Sponsors</h2>
               </div>
-              <div className="hidden md:block">
-                <span className="text-xs font-medium text-500">Supporting Adiwarna Fest 2026</span>
-              </div>
+              <span className="glass-tag px-3 py-1 text-[10px] font-bold" style={{ color: "var(--text-muted)" }}>Adiwarna Fest 2026</span>
             </div>
 
             <div className="flex flex-wrap align-items-center justify-content-center gap-4 mt-2">
@@ -641,19 +719,29 @@ const Home: React.FC = () => {
                 { name: "Anytime Fitness", logo: "/Anytime_fitness_logo.jpeg" },
                 { name: "Sai Ngon", logo: "/Sai_Ngon_logo.jpg" },
               ].map((sponsor, idx) => (
-                <div key={idx} className="flex flex-column align-items-center gap-2 p-2 transition-all duration-300 hover:transform-y-1" style={{ width: "calc(50% - 1.5rem)", maxWidth: "160px" }}>
-                  <div className="border-round-xl flex align-items-center justify-content-center p-3 w-full bg-white shadow-1 border-1" style={{ height: "100px", borderColor: "rgba(0,0,0,0.03)" }}>
-                    <img
-                      src={sponsor.logo}
-                      alt={sponsor.name}
-                      style={{
-                        maxWidth: "100%",
-                        maxHeight: "100%",
-                        objectFit: "contain",
-                      }}
-                    />
+                <div
+                  key={idx}
+                  className="flex flex-column align-items-center gap-2 transition-all duration-300"
+                  style={{ width: "calc(33% - 1.5rem)", maxWidth: "140px", minWidth: "100px" }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-4px)'; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.transform = ''; }}
+                >
+                  <div
+                    className="flex align-items-center justify-content-center w-full"
+                    style={{
+                      height: "90px",
+                      padding: "14px",
+                      background: 'rgba(255,255,255,0.55)',
+                      backdropFilter: 'blur(16px)',
+                      WebkitBackdropFilter: 'blur(16px)',
+                      border: '1px solid rgba(255,255,255,0.8)',
+                      borderRadius: '16px',
+                      boxShadow: '0 4px 16px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.95)',
+                    }}
+                  >
+                    <img src={sponsor.logo} alt={sponsor.name} style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }} />
                   </div>
-                  <span className="text-[10px] font-bold text-500 uppercase tracking-wider text-center px-2">{sponsor.name}</span>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-center" style={{ color: "var(--text-muted)" }}>{sponsor.name}</span>
                 </div>
               ))}
             </div>
@@ -662,116 +750,65 @@ const Home: React.FC = () => {
 
         {/* Social Media */}
         <section className="px-3 mt-5 mb-6">
-          <div className="luxury-obsidian-panel border-round-2xl p-5 md:p-6 shadow-6 relative overflow-hidden">
-            {/* Decorative gold shimmers */}
-            <div className="absolute border-circle" style={{ width: "120px", height: "120px", background: "radial-gradient(circle, rgba(212,175,55,0.08) 0%, transparent 70%)", top: "-20px", right: "-20px", pointerEvents: "none" }} />
-            <div className="absolute border-circle" style={{ width: "160px", height: "160px", background: "radial-gradient(circle, rgba(212,175,55,0.05) 0%, transparent 70%)", bottom: "-40px", left: "-40px", pointerEvents: "none" }} />
+          <div className="glass-card-dark p-5 md:p-6 relative overflow-hidden">
+            <div className="absolute border-circle" style={{ width: "120px", height: "120px", background: "radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%)", top: "-20px", right: "-20px", pointerEvents: "none" }} />
+            <div className="absolute border-circle" style={{ width: "160px", height: "160px", background: "radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%)", bottom: "-40px", left: "-40px", pointerEvents: "none" }} />
 
             <div className="relative z-1 mb-5 flex flex-column align-items-center text-center sm:align-items-start sm:text-left">
-              <span className="inline-block px-3 py-1 border-round-3xl mb-2 text-[10px] font-black uppercase tracking-widest" style={{ background: "rgba(212,175,55,0.1)", border: "1px solid rgba(212,175,55,0.35)", color: "#D4AF37" }}>
-                Stay Connected
-              </span>
-              <h2 className="m-0 text-3xl font-black text-white" style={{ fontFamily: "Epilogue, sans-serif", letterSpacing: "-0.01em" }}>
-                Follow Our Social Media
-              </h2>
-              <p className="m-0 text-xs font-semibold text-400 mt-2">Join our digital community for exclusive updates, live ceremony streams, and daily snapshots!</p>
+              <span className="glass-tag inline-block px-3 py-1 mb-2" style={{ color: "rgba(255,255,255,0.75)" }}>Stay Connected</span>
+              <h2 className="m-0 text-3xl font-black text-white" style={{ fontFamily: "Epilogue, sans-serif", letterSpacing: "-0.01em" }}>Follow Our Social Media</h2>
+              <p className="m-0 text-xs font-semibold mt-2" style={{ color: "rgba(255,255,255,0.45)" }}>Join our digital community for exclusive updates, live ceremony streams, and daily snapshots!</p>
             </div>
 
             <div className="flex flex-column md:flex-row gap-4 mt-2">
-              {/* YouTube Card */}
+              {/* YouTube */}
               <div className="flex-1">
                 <a
                   href="https://www.youtube.com/@AdiwarnaFest"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex flex-column justify-content-between p-4 border-round-2xl h-full transition-all duration-300 relative overflow-hidden"
-                  style={{
-                    background: "linear-gradient(135deg, rgba(255, 0, 0, 0.08) 0%, rgba(20, 10, 10, 0.95) 100%)",
-                    border: "1px solid rgba(255, 0, 0, 0.25)",
-                    minHeight: "180px",
-                    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
-                    textDecoration: "none",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = "translateY(-5px)";
-                    e.currentTarget.style.borderColor = "rgba(255, 0, 0, 0.6)";
-                    e.currentTarget.style.boxShadow = "0 12px 30px rgba(255, 0, 0, 0.2)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = "translateY(0)";
-                    e.currentTarget.style.borderColor = "rgba(255, 0, 0, 0.25)";
-                    e.currentTarget.style.boxShadow = "0 4px 20px rgba(0, 0, 0, 0.3)";
-                  }}
+                  style={{ background: "linear-gradient(135deg, rgba(255,0,0,0.08) 0%, rgba(20,10,10,0.95) 100%)", border: "1px solid rgba(255,0,0,0.25)", minHeight: "180px", boxShadow: "0 4px 20px rgba(0,0,0,0.3)", textDecoration: "none" }}
+                  onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-5px)"; e.currentTarget.style.borderColor = "rgba(255,0,0,0.6)"; e.currentTarget.style.boxShadow = "0 12px 30px rgba(255,0,0,0.2)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = "rgba(255,0,0,0.25)"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(0,0,0,0.3)"; }}
                 >
-                  {/* Background Logo */}
-                  <YoutubeLogo size={130} weight="fill" className="absolute" style={{ right: "-20px", bottom: "-20px", opacity: 0.04, color: "#FF0000", transform: "rotate(-10deg)" }} />
-
+                  <Eye size={130} weight="fill" className="absolute" style={{ right: "-20px", bottom: "-20px", opacity: 0.04, color: "#FF0000", transform: "rotate(-10deg)" }} />
                   <div className="flex align-items-center justify-content-between relative z-1 mb-3">
-                    <div className="flex align-items-center justify-content-center border-circle" style={{ width: "42px", height: "42px", backgroundColor: "rgba(255, 0, 0, 0.15)", border: "1px solid rgba(255, 0, 0, 0.3)" }}>
-                      <YoutubeLogo size={24} weight="fill" color="#FF0000" />
+                    <div className="flex align-items-center justify-content-center border-circle" style={{ width: "42px", height: "42px", backgroundColor: "rgba(255,0,0,0.15)", border: "1px solid rgba(255,0,0,0.3)" }}>
+                      <Eye size={24} weight="fill" color="#FF0000" />
                     </div>
-                    <span className="text-[9px] font-black uppercase tracking-widest text-400" style={{ letterSpacing: "0.15em" }}>
-                      Official Channel
-                    </span>
+                    <span className="text-[9px] font-black uppercase text-400" style={{ letterSpacing: "0.15em" }}>Official Channel</span>
                   </div>
-
                   <div className="relative z-1">
-                    <h3 className="m-0 text-xl font-bold text-white mb-2" style={{ fontFamily: "Epilogue, sans-serif" }}>
-                      YouTube
-                    </h3>
+                    <h3 className="m-0 text-xl font-bold text-white mb-2" style={{ fontFamily: "Epilogue, sans-serif" }}>YouTube</h3>
                     <p className="m-0 text-xs text-400 line-height-3 mb-4">Watch the Mobile Legends live competition streams right here on our official channel!</p>
-                    <span className="inline-flex align-items-center gap-2 text-xs font-bold text-white transition-colors" style={{ color: "#FF3B30" }}>
-                      Subscribe Now ➜
-                    </span>
+                    <span className="inline-flex align-items-center gap-2 text-xs font-bold" style={{ color: "#FF3B30" }}>Subscribe Now ➜</span>
                   </div>
                 </a>
               </div>
 
-              {/* Instagram Card */}
+              {/* Instagram */}
               <div className="flex-1">
                 <a
                   href="https://www.instagram.com/adiwarnafest/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex flex-column justify-content-between p-4 border-round-2xl h-full transition-all duration-300 relative overflow-hidden"
-                  style={{
-                    background: "linear-gradient(135deg, rgba(228, 64, 95, 0.08) 0%, rgba(20, 10, 15, 0.95) 100%)",
-                    border: "1px solid rgba(228, 64, 95, 0.25)",
-                    minHeight: "180px",
-                    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
-                    textDecoration: "none",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = "translateY(-5px)";
-                    e.currentTarget.style.borderColor = "rgba(228, 64, 95, 0.6)";
-                    e.currentTarget.style.boxShadow = "0 12px 30px rgba(228, 64, 95, 0.2)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = "translateY(0)";
-                    e.currentTarget.style.borderColor = "rgba(228, 64, 95, 0.25)";
-                    e.currentTarget.style.boxShadow = "0 4px 20px rgba(0, 0, 0, 0.3)";
-                  }}
+                  style={{ background: "linear-gradient(135deg, rgba(228,64,95,0.08) 0%, rgba(20,10,15,0.95) 100%)", border: "1px solid rgba(228,64,95,0.25)", minHeight: "180px", boxShadow: "0 4px 20px rgba(0,0,0,0.3)", textDecoration: "none" }}
+                  onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-5px)"; e.currentTarget.style.borderColor = "rgba(228,64,95,0.6)"; e.currentTarget.style.boxShadow = "0 12px 30px rgba(228,64,95,0.2)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = "rgba(228,64,95,0.25)"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(0,0,0,0.3)"; }}
                 >
-                  {/* Background Logo */}
                   <InstagramLogo size={130} weight="fill" className="absolute" style={{ right: "-20px", bottom: "-20px", opacity: 0.04, color: "#E4405F", transform: "rotate(10deg)" }} />
-
                   <div className="flex align-items-center justify-content-between relative z-1 mb-3">
-                    <div className="flex align-items-center justify-content-center border-circle" style={{ width: "42px", height: "42px", backgroundColor: "rgba(228, 64, 95, 0.15)", border: "1px solid rgba(228, 64, 95, 0.3)" }}>
+                    <div className="flex align-items-center justify-content-center border-circle" style={{ width: "42px", height: "42px", backgroundColor: "rgba(228,64,95,0.15)", border: "1px solid rgba(228,64,95,0.3)" }}>
                       <InstagramLogo size={24} weight="fill" color="#E4405F" />
                     </div>
-                    <span className="text-[9px] font-black uppercase tracking-widest text-400" style={{ letterSpacing: "0.15em" }}>
-                      Latest Updates
-                    </span>
+                    <span className="text-[9px] font-black uppercase text-400" style={{ letterSpacing: "0.15em" }}>Latest Updates</span>
                   </div>
-
                   <div className="relative z-1">
-                    <h3 className="m-0 text-xl font-bold text-white mb-2" style={{ fontFamily: "Epilogue, sans-serif" }}>
-                      Instagram
-                    </h3>
+                    <h3 className="m-0 text-xl font-bold text-white mb-2" style={{ fontFamily: "Epilogue, sans-serif" }}>Instagram</h3>
                     <p className="m-0 text-xs text-400 line-height-3 mb-4">Catch daily snapshot updates, behind-the-scenes committee interviews, vibrant event photos, and direct story feeds!</p>
-                    <span className="inline-flex align-items-center gap-2 text-xs font-bold text-white transition-colors" style={{ color: "#E4405F" }}>
-                      Follow Us ➜
-                    </span>
+                    <span className="inline-flex align-items-center gap-2 text-xs font-bold" style={{ color: "#E4405F" }}>Follow Us ➜</span>
                   </div>
                 </a>
               </div>
@@ -780,48 +817,86 @@ const Home: React.FC = () => {
         </section>
       </main>
 
+      {/* Closed Portal Popup */}
+      {closedPortal && (
+        <div
+          className="fixed inset-0 z-5 flex align-items-center justify-content-center px-4"
+          style={{ backgroundColor: "rgba(0,0,0,0.45)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", top: 0, left: 0, right: 0, bottom: 0 }}
+          onClick={() => setClosedPortal(null)}
+        >
+          <div
+            className="fadein animation-duration-200"
+            style={{
+              background: "rgba(255,255,255,0.42)",
+              backdropFilter: "blur(28px) saturate(180%)",
+              WebkitBackdropFilter: "blur(28px) saturate(180%)",
+              border: "1px solid rgba(255,255,255,0.75)",
+              borderRadius: "24px",
+              boxShadow: "0 24px 64px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.95)",
+              padding: "32px 28px",
+              maxWidth: "340px",
+              width: "100%",
+              textAlign: "center",
+            }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div style={{ width: "56px", height: "56px", borderRadius: "16px", background: "rgba(220,38,38,0.1)", border: "1px solid rgba(220,38,38,0.2)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
+              <X size={28} weight="bold" color="#dc2626" />
+            </div>
+            <h3 style={{ margin: "0 0 10px", fontSize: "18px", fontWeight: 900, color: "var(--text-primary)", fontFamily: "Epilogue, sans-serif", letterSpacing: "-0.02em" }}>
+              {closedPortal.title}
+            </h3>
+            <p style={{ margin: "0 0 24px", fontSize: "13px", color: "var(--text-secondary)", lineHeight: 1.6 }}>
+              {closedPortal.message}
+            </p>
+            <div className="button-wrap w-full" style={{ fontSize: "14px" }}>
+              <button className="premium-btn w-full" onClick={() => setClosedPortal(null)}>
+                <span style={{ textAlign: "center", display: "block", width: "100%" }}>Got it</span>
+              </button>
+              <div className="button-shadow" />
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Sports Registration Modal */}
       {isSportsModalOpen && (
-        <div className="fixed inset-0 z-5 flex align-items-center justify-content-center px-3" style={{ backgroundColor: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)", top: 0, left: 0, right: 0, bottom: 0 }}>
-          <div className="bg-white border-round-2xl p-4 w-full max-w-30rem md:max-w-48rem shadow-6 relative fadein animation-duration-200 flex flex-column" style={{ maxHeight: "90vh" }}>
-            <button className="absolute top-0 right-0 m-3 p-1 bg-transparent border-none cursor-pointer text-600 hover:text-900 transition-colors z-1" onClick={() => setIsSportsModalOpen(false)}>
+        <div className="fixed inset-0 z-5 flex align-items-center justify-content-center px-3" style={{ backgroundColor: "rgba(0,0,0,0.5)", backdropFilter: "blur(16px)", top: 0, left: 0, right: 0, bottom: 0 }}>
+          <div className="glass-card p-4 w-full max-w-30rem md:max-w-48rem shadow-6 relative fadein animation-duration-200 flex flex-column" style={{ maxHeight: "90vh" }}>
+            <button className="absolute top-0 right-0 m-3 p-1 bg-transparent border-none cursor-pointer z-1" style={{ color: "var(--text-secondary)" }} onClick={() => setIsSportsModalOpen(false)}>
               <X size={24} weight="bold" />
             </button>
 
             <div className="flex align-items-center gap-2 mb-3">
-              <Basketball size={24} color="var(--color-primary)" weight="fill" />
-              <h3 className="m-0 text-xl font-bold text-900" style={{ color: "var(--color-primary)" }}>
-                Sports Registration
-              </h3>
+              <Basketball size={24} weight="fill" style={{ color: "var(--text-secondary)" }} />
+              <h3 className="m-0 text-xl font-bold" style={{ color: "var(--text-primary)" }}>Sports Registration</h3>
             </div>
 
             <div className="overflow-y-auto flex-1 pr-1 pb-4">
               <div className="flex flex-column md:flex-row gap-4 h-full">
-                {/* Left Side: Sports List (Mobile Accordion) */}
                 <div className="flex flex-column gap-2 w-full md:w-4">
                   {sportsDetails.map((sport) => (
                     <div
                       key={sport.id}
                       className="border-round-xl border-1 overflow-hidden transition-all duration-200"
                       style={{
-                        borderColor: expandedSport === sport.id ? "rgba(0,0,0,0.1)" : "rgba(0,0,0,0.05)",
-                        backgroundColor: expandedSport === sport.id ? "#fff" : "var(--color-background)",
+                        borderColor: expandedSport === sport.id ? "rgba(255,255,255,0.7)" : "rgba(255,255,255,0.3)",
+                        backgroundColor: expandedSport === sport.id ? "rgba(255,255,255,0.55)" : "rgba(255,255,255,0.25)",
                         boxShadow: expandedSport === sport.id ? "0 2px 8px rgba(0,0,0,0.05)" : "none",
                       }}
                     >
                       <button className="w-full flex justify-content-between align-items-center p-3 bg-transparent border-none cursor-pointer text-left" onClick={() => toggleSport(sport.id)}>
-                        <span className="font-bold text-900">{sport.title}</span>
+                        <span className="font-bold" style={{ color: "var(--text-primary)" }}>{sport.title}</span>
                         <CaretDown
                           size={20}
-                          color={expandedSport === sport.id ? "var(--color-primary)" : "#8c7166"}
+                          color={expandedSport === sport.id ? "var(--text-secondary)" : "var(--text-muted)"}
                           className="md:hidden transition-transform duration-200"
                           style={{ transform: expandedSport === sport.id ? "rotate(180deg)" : "rotate(0deg)" }}
                         />
                       </button>
-                      {/* Mobile Details Area */}
                       {expandedSport === sport.id && (
                         <div className="p-3 pt-0 md:hidden fadein animation-duration-200">
-                          <div className="border-top-1 pt-3" style={{ borderColor: "rgba(0,0,0,0.05)" }}>
+                          <div className="border-top-1 pt-3" style={{ borderColor: "rgba(255,255,255,0.4)" }}>
                             {renderSportDetails(sport.id)}
                           </div>
                         </div>
@@ -830,17 +905,16 @@ const Home: React.FC = () => {
                   ))}
                 </div>
 
-                {/* Right Side: Desktop Details Panel */}
-                <div className="hidden md:flex flex-column flex-1 p-4 border-round-xl border-1" style={{ backgroundColor: "var(--color-background)", borderColor: "var(--color-border)" }}>
+                <div className="hidden md:flex flex-column flex-1 p-4 border-round-xl border-1" style={{ backgroundColor: "rgba(255,255,255,0.35)", borderColor: "rgba(255,255,255,0.55)" }}>
                   {expandedSport ? (
                     <>
-                      <h4 className="m-0 mb-3 text-lg font-bold text-900" style={{ color: "var(--color-primary)" }}>
+                      <h4 className="m-0 mb-3 text-lg font-bold" style={{ color: "var(--text-primary)" }}>
                         {sportsDetails.find((s) => s.id === expandedSport)?.title}
                       </h4>
                       {renderSportDetails(expandedSport)}
                     </>
                   ) : (
-                    <div className="flex flex-column align-items-center justify-content-center h-full text-500 opacity-50 mt-5 pt-5">
+                    <div className="flex flex-column align-items-center justify-content-center h-full mt-5 pt-5" style={{ color: "var(--text-muted)", opacity: 0.6 }}>
                       <Basketball size={48} weight="fill" className="mb-2" />
                       <p className="m-0 font-semibold text-center px-4">Select a sport from the left to view details</p>
                     </div>
@@ -854,81 +928,68 @@ const Home: React.FC = () => {
 
       {/* Simfoni Registration Modal */}
       {isSimfoniModalOpen && (
-        <div className="fixed inset-0 z-5 flex align-items-center justify-content-center px-4" style={{ backgroundColor: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)", top: 0, left: 0, right: 0, bottom: 0 }}>
-          <div className="bg-white border-round-2xl p-4 w-full max-w-20rem shadow-6 relative fadein animation-duration-200">
-            <button className="absolute top-0 right-0 m-3 p-1 bg-transparent border-none cursor-pointer text-600 hover:text-900 transition-colors" onClick={() => setIsSimfoniModalOpen(false)}>
+        <div className="fixed inset-0 z-5 flex align-items-center justify-content-center px-4" style={{ backgroundColor: "rgba(0,0,0,0.5)", backdropFilter: "blur(16px)", top: 0, left: 0, right: 0, bottom: 0 }}>
+          <div className="glass-card p-4 w-full max-w-20rem shadow-6 relative fadein animation-duration-200">
+            <button className="absolute top-0 right-0 m-3 p-1 bg-transparent border-none cursor-pointer" style={{ color: "var(--text-secondary)" }} onClick={() => setIsSimfoniModalOpen(false)}>
               <X size={24} weight="bold" />
             </button>
 
             <div className="flex align-items-center gap-2 mb-3">
-              <MusicNotes size={24} color="var(--color-primary)" weight="fill" />
-              <h3 className="m-0 text-xl font-bold text-900" style={{ color: "var(--color-primary)" }}>
-                Simfoni 2026
-              </h3>
+              <MusicNotes size={24} weight="fill" style={{ color: "var(--text-secondary)" }} />
+              <h3 className="m-0 text-xl font-bold" style={{ color: "var(--text-primary)" }}>Simfoni 2026</h3>
             </div>
 
             <div className="mb-4">
-              <p className="m-0 text-sm font-semibold text-700 mb-1">
-                Date: <span className="text-900">30-31 May 2026</span>
-              </p>
-              <p className="m-0 text-sm font-semibold text-700 mb-1">
-                Venue: <span className="text-900">Main Stage</span>
-              </p>
-              <p className="m-0 text-sm font-semibold text-700">
-                Location: <span className="text-900">Xiamen University Malaysia</span>
-              </p>
+              <p className="m-0 text-sm font-semibold mb-1" style={{ color: "var(--text-secondary)" }}>Date: <span style={{ color: "var(--text-primary)" }}>30-31 May 2026</span></p>
+              <p className="m-0 text-sm font-semibold mb-1" style={{ color: "var(--text-secondary)" }}>Venue: <span style={{ color: "var(--text-primary)" }}>Main Stage</span></p>
+              <p className="m-0 text-sm font-semibold" style={{ color: "var(--text-secondary)" }}>Location: <span style={{ color: "var(--text-primary)" }}>Xiamen University Malaysia</span></p>
             </div>
 
-            <div className="p-3 border-round-xl border-1 mb-4" style={{ borderColor: "var(--color-border)", backgroundColor: "var(--color-background)" }}>
-              <p className="m-0 text-sm text-700 line-height-3">Join us for an unforgettable night of music band performances and the grand sports winner awarding ceremony!</p>
+            <div className="p-3 border-round-xl border-1 mb-4" style={{ borderColor: "rgba(255,255,255,0.5)", backgroundColor: "rgba(255,255,255,0.3)" }}>
+              <p className="m-0 text-sm line-height-3" style={{ color: "var(--text-secondary)" }}>Join us for an unforgettable night of music band performances and the grand sports winner awarding ceremony!</p>
             </div>
 
-            <a
-              href="https://docs.google.com/forms/d/e/1FAIpQLSd-dli1gB9idOGFHg2wiqRBGr2JOi7in5-Xao14yfi9HH_S8g/viewform"
-              target="_blank"
-              rel="noreferrer"
-              className="flex align-items-center justify-content-center w-full py-3 text-white font-bold border-round-xl text-decoration-none transition-colors shadow-2 hover:surface-hover"
-              style={{ backgroundColor: "var(--color-primary)" }}
-            >
-              Secure Seat
-            </a>
+            <div className="button-wrap w-full" style={{ fontSize: '15px' }}>
+              <a
+                href="https://docs.google.com/forms/d/e/1FAIpQLSd-dli1gB9idOGFHg2wiqRBGr2JOi7in5-Xao14yfi9HH_S8g/viewform"
+                target="_blank"
+                rel="noreferrer"
+                className="premium-btn w-full text-decoration-none"
+                style={{ display: 'block' }}
+              >
+                <span style={{ textAlign: 'center', display: 'block', width: '100%' }}>Secure Seat</span>
+              </a>
+              <div className="button-shadow" />
+            </div>
           </div>
         </div>
       )}
 
       {/* Bazaar Registration Modal */}
       {isBazaarModalOpen && (
-        <div className="fixed inset-0 z-5 flex align-items-center justify-content-center px-4" style={{ backgroundColor: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)", top: 0, left: 0, right: 0, bottom: 0 }}>
-          <div className="bg-white border-round-2xl p-4 w-full max-w-20rem shadow-6 relative fadein animation-duration-200">
-            <button className="absolute top-0 right-0 m-3 p-1 bg-transparent border-none cursor-pointer text-600 hover:text-900 transition-colors" onClick={() => setIsBazaarModalOpen(false)}>
+        <div className="fixed inset-0 z-5 flex align-items-center justify-content-center px-4" style={{ backgroundColor: "rgba(0,0,0,0.5)", backdropFilter: "blur(16px)", top: 0, left: 0, right: 0, bottom: 0 }}>
+          <div className="glass-card p-4 w-full max-w-20rem shadow-6 relative fadein animation-duration-200">
+            <button className="absolute top-0 right-0 m-3 p-1 bg-transparent border-none cursor-pointer" style={{ color: "var(--text-secondary)" }} onClick={() => setIsBazaarModalOpen(false)}>
               <X size={24} weight="bold" />
             </button>
 
             <div className="flex align-items-center gap-2 mb-3">
-              <Storefront size={24} color="var(--color-primary)" weight="fill" />
-              <h3 className="m-0 text-xl font-bold text-900" style={{ color: "var(--color-primary)" }}>
-                Bazaar Vendor
-              </h3>
+              <Storefront size={24} weight="fill" style={{ color: "var(--text-secondary)" }} />
+              <h3 className="m-0 text-xl font-bold" style={{ color: "var(--text-primary)" }}>Bazaar Vendor</h3>
             </div>
 
             <div className="mb-4">
-              <p className="m-0 text-sm font-semibold text-700 mb-1">
-                Date: <span className="text-900">30 May 2026</span>
-              </p>
-              <p className="m-0 text-sm font-semibold text-700 mb-1">
-                Venue: <span className="text-900">B1 - Ground Floor & 1st Floor</span>
-              </p>
-              <p className="m-0 text-sm font-semibold text-700">
-                Location: <span className="text-900">Xiamen University Malaysia</span>
-              </p>
+              <p className="m-0 text-sm font-semibold mb-1" style={{ color: "var(--text-secondary)" }}>Date: <span style={{ color: "var(--text-primary)" }}>30 May 2026</span></p>
+              <p className="m-0 text-sm font-semibold mb-1" style={{ color: "var(--text-secondary)" }}>Venue: <span style={{ color: "var(--text-primary)" }}>B1 - Ground Floor & 1st Floor</span></p>
+              <p className="m-0 text-sm font-semibold" style={{ color: "var(--text-secondary)" }}>Location: <span style={{ color: "var(--text-primary)" }}>Xiamen University Malaysia</span></p>
             </div>
 
             <div className="flex flex-column gap-3">
-              <div className="p-3 border-round-xl border-1" style={{ borderColor: "var(--color-border)", backgroundColor: "var(--color-background)" }}>
-                <p className="m-0 text-sm font-bold text-900 mb-1">Public Vendor</p>
+              <div className="p-3 border-round-xl border-1" style={{ borderColor: "rgba(255,255,255,0.5)", backgroundColor: "rgba(255,255,255,0.3)" }}>
+                <p className="m-0 text-sm font-bold mb-1" style={{ color: "var(--text-primary)" }}>Public Vendor</p>
                 <div className="flex justify-content-between align-items-center mb-3">
-                  <span className="text-xs text-600">Contact:</span>
-                  <span className="font-bold text-800 text-sm">Ivon</span>
+                  <span className="text-xs" style={{ color: "var(--text-muted)" }}>Contact:</span>
+                  <span className="font-bold text-sm" style={{ color: "var(--text-primary)" }}>Ivon</span>
                 </div>
                 <a
                   href="https://wa.me/6281280658422"
@@ -941,11 +1002,11 @@ const Home: React.FC = () => {
                 </a>
               </div>
 
-              <div className="p-3 border-round-xl border-1" style={{ borderColor: "var(--color-border)", backgroundColor: "var(--color-background)" }}>
-                <p className="m-0 text-sm font-bold text-900 mb-1">Student Vendor</p>
+              <div className="p-3 border-round-xl border-1" style={{ borderColor: "rgba(255,255,255,0.5)", backgroundColor: "rgba(255,255,255,0.3)" }}>
+                <p className="m-0 text-sm font-bold mb-1" style={{ color: "var(--text-primary)" }}>Student Vendor</p>
                 <div className="flex justify-content-between align-items-center mb-3">
-                  <span className="text-xs text-600">Contact:</span>
-                  <span className="font-bold text-800 text-sm">Nadya</span>
+                  <span className="text-xs" style={{ color: "var(--text-muted)" }}>Contact:</span>
+                  <span className="font-bold text-sm" style={{ color: "var(--text-primary)" }}>Nadya</span>
                 </div>
                 <a
                   href="https://wa.me/601125250543"
@@ -973,24 +1034,18 @@ const Home: React.FC = () => {
 
             <div className="flex align-items-center gap-3 mb-6">
               <Trophy size={32} weight="fill" color="#D4AF37" />
-              <h2 className="m-0 text-3xl font-black" style={{ color: "#D4AF37", letterSpacing: "0.1em" }}>
-                Treasure Vault
-              </h2>
+              <h2 className="m-0 text-3xl font-black" style={{ color: "#D4AF37", letterSpacing: "0.1em" }}>Treasure Vault</h2>
             </div>
 
             {/* Lucky Draw Card */}
             <div className="p-5 border-round-2xl mb-5" style={{ background: "linear-gradient(135deg, #D4AF37 0%, #FFD700 50%, #D4AF37 100%)", borderTop: "3px solid #FFD700" }}>
               <div className="flex align-items-center gap-2 mb-3">
                 <Crown size={24} weight="fill" color="#0A0A0B" />
-                <h3 className="m-0 text-xl font-black" style={{ color: "#0A0A0B" }}>
-                  Lucky Draw
-                </h3>
+                <h3 className="m-0 text-xl font-black" style={{ color: "#0A0A0B" }}>Lucky Draw</h3>
               </div>
               <p className="m-0 text-sm mb-4" style={{ color: "#0A0A0B", opacity: 0.8 }}>
                 Total Prize Pool:{" "}
-                <span className="font-black" style={{ fontSize: "1.25rem" }}>
-                  RM 1,800
-                </span>
+                <span className="font-black" style={{ fontSize: "1.25rem" }}>RM 1,800</span>
               </p>
               <div className="flex flex-column gap-2">
                 {[
@@ -1002,13 +1057,9 @@ const Home: React.FC = () => {
                   <div key={idx} className="flex align-items-center gap-3 p-2" style={{ backgroundColor: "rgba(0,0,0,0.1)", borderRadius: "8px" }}>
                     <div className={item.badge}></div>
                     <div className="flex-1">
-                      <p className="m-0 font-bold text-sm" style={{ color: "#0A0A0B" }}>
-                        {item.rank}
-                      </p>
+                      <p className="m-0 font-bold text-sm" style={{ color: "#0A0A0B" }}>{item.rank}</p>
                     </div>
-                    <p className="m-0 font-black" style={{ color: "#0A0A0B" }}>
-                      {item.prize}
-                    </p>
+                    <p className="m-0 font-black" style={{ color: "#0A0A0B" }}>{item.prize}</p>
                   </div>
                 ))}
               </div>
@@ -1016,24 +1067,16 @@ const Home: React.FC = () => {
 
             {/* Sports Section */}
             <div>
-              <h3 className="m-0 mb-4 text-lg font-black" style={{ color: "#D4AF37", letterSpacing: "0.08em" }}>
-                SPORTS COMPETITIONS
-              </h3>
+              <h3 className="m-0 mb-4 text-lg font-black" style={{ color: "#D4AF37", letterSpacing: "0.08em" }}>SPORTS COMPETITIONS</h3>
               <div className="flex flex-column gap-3">
                 {sportsDetails.map((sport) => (
-                  <div key={sport.id} className="border-round-xl overflow-hidden" style={{ backgroundColor: "rgba(17, 17, 20, 0.8)", border: "1px solid rgba(212, 175, 55, 0.3)" }}>
+                  <div key={sport.id} className="border-round-xl overflow-hidden" style={{ backgroundColor: "rgba(17,17,20,0.8)", border: "1px solid rgba(212,175,55,0.3)" }}>
                     <div className="p-3" style={{ backgroundColor: "#111114" }}>
-                      <h4 className="m-0 mb-1 font-bold" style={{ color: "white" }}>
-                        {sport.title}
-                      </h4>
-                      <p className="m-0 text-xs" style={{ color: "rgba(255,255,255,0.6)" }}>
-                        {sport.date} • {sport.venue}
-                      </p>
+                      <h4 className="m-0 mb-1 font-bold" style={{ color: "white" }}>{sport.title}</h4>
+                      <p className="m-0 text-xs" style={{ color: "rgba(255,255,255,0.6)" }}>{sport.date} • {sport.venue}</p>
                     </div>
                     <div className="p-4">
-                      <p className="m-0 mb-3 text-lg font-black" style={{ color: "#D4AF37" }}>
-                        Total Prize: {sport.prize}
-                      </p>
+                      <p className="m-0 mb-3 text-lg font-black" style={{ color: "#D4AF37" }}>Total Prize: {sport.prize}</p>
                       <div className="flex flex-column gap-2">
                         {sport.prizeBreakdown?.map((prize, idx) => {
                           let badgeClass = "gold-medal-badge";
@@ -1041,12 +1084,10 @@ const Home: React.FC = () => {
                           else if (idx === 2) badgeClass = "bronze-medal-badge";
 
                           return (
-                            <div key={idx} className="flex align-items-center gap-3 p-2" style={{ backgroundColor: "rgba(212, 175, 55, 0.06)", borderRadius: "8px" }}>
+                            <div key={idx} className="flex align-items-center gap-3 p-2" style={{ backgroundColor: "rgba(212,175,55,0.06)", borderRadius: "8px" }}>
                               <div className={badgeClass}></div>
                               <div className="flex-1">
-                                <p className="m-0 text-sm font-bold" style={{ color: "white" }}>
-                                  {prize.rank}
-                                </p>
+                                <p className="m-0 text-sm font-bold" style={{ color: "white" }}>{prize.rank}</p>
                               </div>
                               <p className="m-0 text-sm font-bold" style={{ color: "#D4AF37" }}>
                                 {prize.details.split("+")[0].trim()}

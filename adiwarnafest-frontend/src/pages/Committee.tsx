@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+﻿import React, { useState, useRef, useEffect } from "react";
 
 import committeeData from "../data/committee-data.json";
 
@@ -41,7 +41,7 @@ const MemberCard: React.FC<{ member: Member }> = ({ member }) => (
         borderRadius: "14px",
         overflow: "hidden",
         boxShadow: "0 2px 12px rgba(0,0,0,0.1)",
-        background: "#fff",
+        background: "rgba(255,255,255,0.55)", backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)", border: "1px solid rgba(255,255,255,0.68)",
       }}
     >
       <div style={{ position: "relative", aspectRatio: "3/4", overflow: "hidden" }}>
@@ -60,7 +60,7 @@ const MemberCard: React.FC<{ member: Member }> = ({ member }) => (
               position: "absolute",
               top: "10px",
               left: "10px",
-              background: "var(--color-primary)",
+              background: "rgba(209,223,246,0.85)",
               color: "white",
               padding: "3px 10px",
               borderRadius: "999px",
@@ -69,7 +69,7 @@ const MemberCard: React.FC<{ member: Member }> = ({ member }) => (
               letterSpacing: "0.8px",
               fontFamily: "Epilogue, sans-serif",
               textTransform: "uppercase",
-              boxShadow: "0 2px 8px rgba(144,77,0,0.45)",
+              boxShadow: "0 2px 8px rgba(209,223,246,0.35)",
             }}
           >
             Head
@@ -151,11 +151,10 @@ const Committee: React.FC = () => {
   const showIndicator = scrollInfo.thumbRatio < 0.99;
 
   return (
-    <div className="min-h-screen mythic-pattern pb-20">
+    <div className="glass-page pb-20">
       {/* Hero header */}
       <div
         style={{
-          background: "linear-gradient(180deg, rgba(144,77,0,0.06) 0%, transparent 100%)",
           paddingTop: "40px",
           paddingBottom: "28px",
           textAlign: "center",
@@ -170,9 +169,8 @@ const Committee: React.FC = () => {
             fontWeight: 700,
             letterSpacing: "3px",
             textTransform: "uppercase",
-            color: "var(--color-primary)",
+            color: "var(--text-muted)",
             margin: "0 0 10px",
-            opacity: 0.7,
           }}
         >
           Adiwarna Fest 2026
@@ -182,7 +180,7 @@ const Committee: React.FC = () => {
             fontFamily: "Epilogue, sans-serif",
             fontWeight: 900,
             fontSize: "clamp(2rem, 7vw, 3.2rem)",
-            color: "var(--color-primary)",
+            color: "var(--text-primary)",
             margin: "0 0 12px",
             lineHeight: 1.05,
             letterSpacing: "-0.02em",
@@ -190,14 +188,13 @@ const Committee: React.FC = () => {
         >
           Our Committee
         </h1>
-        {/* Slogan */}
         <p
           style={{
             fontFamily: "Epilogue, sans-serif",
             fontSize: "clamp(14px, 3.5vw, 18px)",
             fontStyle: "italic",
             fontWeight: 500,
-            color: "#6b4226",
+            color: "var(--text-secondary)",
             margin: "0 auto",
             maxWidth: "400px",
             lineHeight: 1.5,
@@ -210,7 +207,7 @@ const Committee: React.FC = () => {
           style={{
             width: "40px",
             height: "3px",
-            background: "linear-gradient(90deg, var(--color-primary), var(--color-accent))",
+            background: "linear-gradient(90deg, rgba(209,223,246,0.7), rgba(209,223,246,0.7))",
             borderRadius: "999px",
             margin: "16px auto 0",
           }}
@@ -235,11 +232,11 @@ const Committee: React.FC = () => {
                   height: "76px",
                   borderRadius: "12px",
                   overflow: "hidden",
-                  border: active ? "3px solid var(--color-primary)" : "3px solid transparent",
+                  border: active ? "3px solid rgba(254,178,70,0.85)" : "3px solid rgba(255,255,255,0.5)",
                   padding: 0,
                   cursor: "pointer",
                   position: "relative",
-                  boxShadow: active ? "0 4px 18px rgba(144,77,0,0.35)" : "0 2px 8px rgba(0,0,0,0.1)",
+                  boxShadow: active ? "0 4px 18px rgba(161,64,0,0.35)" : "0 2px 8px rgba(0,0,0,0.08)",
                   transform: active ? "scale(1.06)" : "scale(1)",
                   transition: "all 0.2s ease",
                   outline: "none",
@@ -250,7 +247,9 @@ const Committee: React.FC = () => {
                   style={{
                     position: "absolute",
                     inset: 0,
-                    background: active ? "linear-gradient(to top, rgba(144,77,0,0.92), rgba(144,77,0,0.3))" : "linear-gradient(to top, rgba(0,0,0,0.78), rgba(0,0,0,0.1))",
+                    background: active ? "linear-gradient(to top, rgba(161,64,0,0.85), rgba(254,178,70,0.3))" : "linear-gradient(to top, rgba(0,0,0,0.75), rgba(0,0,0,0.08))",
+                    backdropFilter: active ? "blur(2px)" : "none",
+                    WebkitBackdropFilter: active ? "blur(2px)" : "none",
                     display: "flex",
                     alignItems: "flex-end",
                     padding: "8px",
@@ -282,7 +281,7 @@ const Committee: React.FC = () => {
           <div
             style={{
               height: "3px",
-              background: "rgba(144,77,0,0.1)",
+              background: "rgba(209,223,246,0.1)",
               borderRadius: "999px",
               marginTop: "10px",
               position: "relative",
@@ -295,7 +294,7 @@ const Committee: React.FC = () => {
                 height: "100%",
                 width: `${thumbWidthPct}%`,
                 left: `${thumbLeftPct}%`,
-                background: "linear-gradient(90deg, var(--color-primary), var(--color-accent))",
+                background: "linear-gradient(90deg, rgba(209,223,246,0.8), rgba(209,223,246,0.8))",
                 borderRadius: "999px",
                 transition: "left 0.08s linear",
               }}
@@ -321,7 +320,7 @@ const Committee: React.FC = () => {
             style={{
               position: "absolute",
               inset: 0,
-              background: "linear-gradient(110deg, rgba(144,77,0,0.85) 0%, rgba(144,77,0,0.45) 45%, transparent 100%)",
+              background: "linear-gradient(110deg, rgba(12,8,28,0.82) 0%, rgba(12,8,28,0.4) 45%, transparent 100%)",
               display: "flex",
               alignItems: "center",
               padding: "clamp(20px, 5%, 44px)",
@@ -366,22 +365,25 @@ const Committee: React.FC = () => {
                 <div style={{ display: "flex", alignItems: "center", gap: "14px", marginBottom: "6px" }}>
                   <span
                     style={{
-                      padding: "4px 18px",
+                      padding: "5px 18px",
                       borderRadius: "999px",
-                      background: tier.color,
-                      color: "white",
+                      background: "linear-gradient(-75deg, rgba(161,64,0,0.18), rgba(254,178,70,0.55), rgba(161,64,0,0.18))",
+                      backdropFilter: "blur(8px)",
+                      WebkitBackdropFilter: "blur(8px)",
+                      border: "1px solid rgba(161,64,0,0.4)",
+                      color: "#3a1800",
                       fontWeight: 800,
                       fontSize: "10px",
                       fontFamily: "Epilogue, sans-serif",
                       textTransform: "uppercase",
                       letterSpacing: "1px",
                       whiteSpace: "nowrap",
-                      boxShadow: `0 3px 12px ${tier.color}55`,
+                      boxShadow: "inset 0 1px 0 rgba(255,255,255,0.6), 0 3px 12px rgba(161,64,0,0.22)",
                     }}
                   >
                     {tier.label}
                   </span>
-                  <div style={{ flex: 1, height: "1px", background: "rgba(144,77,0,0.12)" }} />
+                  <div style={{ flex: 1, height: "1px", background: "rgba(209,223,246,0.12)" }} />
                 </div>
                 <p
                   style={{
