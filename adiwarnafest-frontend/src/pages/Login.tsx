@@ -333,7 +333,7 @@ export default function LoginPage() {
                   Registration Approval Required
                 </p>
                 <p className="m-0 text-xs" style={{ color: '#6b7280' }}>
-                  Scan the QR code provided by the Adiwarna committee or enter the key manually below.
+                  Scan the QR code provided by the Adiwarna committee.
                 </p>
                 <div className="border-round-lg p-3 w-full" style={{ backgroundColor: 'rgba(124, 58, 237, 0.12)', border: '1px solid rgba(124, 58, 237, 0.25)' }}>
                   <p className="m-0 text-xs font-bold" style={{ color: '#6d28d9' }}>
@@ -342,20 +342,14 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              <Button
-                type="button"
-                label="Scan QR Code"
-                icon={<Camera size={20} className="mr-2" />}
-                onClick={startScanner}
-                className="w-full"
-                style={{
-                  backgroundColor: '#7c3aed',
-                  borderColor: '#7c3aed',
-                  borderRadius: '14px',
-                  padding: '14px',
-                  fontWeight: 700
-                }}
-              />
+              <div className="button-wrap w-full">
+                <button type="button" className="premium-btn w-full" onClick={startScanner} style={{ fontFamily: 'Epilogue, sans-serif' }}>
+                  <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', width: '100%' }}>
+                    <Camera size={20} /> Scan QR Code
+                  </span>
+                </button>
+                <div className="button-shadow" />
+              </div>
 
               {registrationKey && registrationKey.trim() === REGISTRATION_KEY && (
                 <div className="border-round-xl p-3 flex align-items-center gap-2" style={{ backgroundColor: 'rgba(34, 197, 94, 0.1)', border: '1px solid rgba(34, 197, 94, 0.3)' }}>

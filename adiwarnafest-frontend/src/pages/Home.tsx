@@ -559,7 +559,7 @@ const Home: React.FC = () => {
               <div
                 key={idx}
                 className={`border-round-xl transition-all duration-300 ${activePortalIndex === idx ? "w-2rem" : "w-1rem"}`}
-                style={{ height: "6px", backgroundColor: activePortalIndex === idx ? "rgba(209,223,246,0.8)" : "rgba(255,255,255,0.45)" }}
+                style={{ height: "6px", backgroundColor: activePortalIndex === idx ? "rgba(161,64,0,0.85)" : "rgba(255,255,255,0.45)" }}
               />
             ))}
           </div>

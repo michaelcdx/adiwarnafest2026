@@ -303,7 +303,7 @@ const LuckyDraw: React.FC = () => {
   if (!isAuthenticated) {
     return (
       <div
-        className="fadein animation-duration-500"
+        className="glass-page fadein animation-duration-500"
         style={{
           fontFamily: 'Epilogue, sans-serif',
           flex: 1,
@@ -313,7 +313,6 @@ const LuckyDraw: React.FC = () => {
           justifyContent: 'center',
           padding: '24px 20px',
           boxSizing: 'border-box',
-          background: 'var(--page-gradient)',
         }}
       >
         {/* Icon */}

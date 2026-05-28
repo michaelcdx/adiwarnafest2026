@@ -253,7 +253,7 @@ const Competition = () => {
                 position: "absolute", height: "100%",
                 width: `${chipScroll.thumbRatio * 100}%`,
                 left: `${chipScroll.progress * (100 - chipScroll.thumbRatio * 100)}%`,
-                background: "linear-gradient(90deg, rgba(209,223,246,0.8), rgba(209,223,246,0.8))",
+                background: "linear-gradient(90deg, rgba(254,178,70,0.9), rgba(161,64,0,0.7))",
                 borderRadius: "999px",
                 transition: "left 0.08s linear",
               }} />
