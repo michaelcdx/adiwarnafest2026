@@ -11,7 +11,6 @@ import {
   QrCode,
   MapPin,
   GameController,
-  Info,
   Trophy,
   Camera,
   XCircle,
@@ -588,9 +587,6 @@ const LuckyDraw: React.FC = () => {
         {/* Info Box */}
         <section className="mt-6 px-4">
           <div className="glass-card p-3 md:p-4 flex gap-3 md:gap-4 align-items-start">
-            <div className="glass-icon p-2 flex align-items-center justify-content-center flex-shrink-0" style={{ width: '40px', height: '40px', background: 'rgba(209,223,246,0.15)', border: '1px solid rgba(209,223,246,0.3)' }}>
-              <Info size={20} weight="fill" color="rgba(168,192,232,0.9)" />
-            </div>
             <div className="flex-1 min-w-0">
               <h4 className="m-0 text-[10px] md:text-sm font-bold mb-1 uppercase tracking-wide" style={{ color: 'var(--text-secondary)' }}>How it works</h4>
               <ul className="m-0 p-0 list-none flex flex-column gap-2">
