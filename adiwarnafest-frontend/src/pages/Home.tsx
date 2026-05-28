@@ -689,12 +689,9 @@ const Home: React.FC = () => {
         {/* Sponsors */}
         <section className="px-3 mt-4 mb-5">
           <div style={{ background: 'rgba(255,255,255,0.38)', backdropFilter: 'blur(28px) saturate(180%)', WebkitBackdropFilter: 'blur(28px) saturate(180%)', border: '1px solid rgba(255,255,255,0.75)', borderRadius: '24px', boxShadow: '0 8px 32px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.95)', padding: '24px 20px' }}>
-            <div className="flex justify-content-between align-items-end mb-5">
-              <div>
-                <p className="text-[10px] font-black uppercase mb-1 m-0" style={{ color: "var(--text-muted)", letterSpacing: "0.1em" }}>Partnership</p>
-                <h2 className="text-2xl font-bold m-0" style={{ color: "var(--text-primary)" }}>Meet our Sponsors</h2>
-              </div>
-              <span className="glass-tag px-3 py-1 text-[10px] font-bold" style={{ color: "var(--text-muted)" }}>Adiwarna Fest 2026</span>
+            <div className="flex flex-column align-items-center text-center mb-5">
+              <p className="text-[10px] font-black uppercase mb-1 m-0" style={{ color: "var(--text-muted)", letterSpacing: "0.1em" }}>Partnership</p>
+              <h2 className="text-2xl font-bold m-0" style={{ color: "var(--text-primary)" }}>Meet our Sponsors</h2>
             </div>
 
             <div className="grid mt-2">
