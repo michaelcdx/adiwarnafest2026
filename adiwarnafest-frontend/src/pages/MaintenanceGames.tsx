@@ -345,6 +345,7 @@ const MaintenanceGames = () => {
         <EditGameSidebar
           visible={showEdit}
           game={activeGame}
+          tournament={selectedTournament}
           onHide={() => setShowEdit(false)}
           onSubmit={handleEdit}
           loading={editing}

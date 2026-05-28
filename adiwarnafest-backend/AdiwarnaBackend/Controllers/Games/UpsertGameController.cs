@@ -63,7 +63,10 @@ namespace AdiwarnaBackend.Controllers.Games
                     .ToListAsync(cancellationToken);
 
                 var playerTeamIds = players.ToDictionary(p => p.Id, p => p.TeamId);
-                var validTeamIds = new HashSet<Guid> { game.Team1Id, game.Team2Id };
+                var validTeamIds = new[] { game.Team1Id, game.Team2Id }
+                    .Where(id => id.HasValue)
+                    .Select(id => id!.Value)
+                    .ToHashSet();
 
                 foreach (var playerId in allPlayerIds)
                 {
@@ -136,8 +139,8 @@ namespace AdiwarnaBackend.Controllers.Games
                 TournamentId = game.TournamentId,
                 Team1Id = game.Team1Id,
                 Team2Id = game.Team2Id,
-                Team1Name = game.Team1?.Name ?? string.Empty,
-                Team2Name = game.Team2?.Name ?? string.Empty,
+                Team1Name = game.Team1?.Name ?? "TBC",
+                Team2Name = game.Team2?.Name ?? "TBC",
                 GameStatus = game.GameStatus,
                 ScheduledAt = game.ScheduledAt,
                 Remark = game.Remark,

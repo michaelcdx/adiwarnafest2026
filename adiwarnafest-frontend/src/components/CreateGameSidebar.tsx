@@ -24,6 +24,10 @@ const STATUS_OPTIONS = [
   { label: 'Completed', value: 'COMPLETED' },
 ]
 
+// Sentinel value used in the team dropdowns to represent a not-yet-decided team.
+const TBC = 'TBC'
+const TBC_OPTION = { label: 'TBC (To Be Confirmed)', value: TBC }
+
 type TournamentTeamOption = {
   id: string
   name: string
@@ -38,8 +42,8 @@ export const CreateGameSidebar = ({
 }: CreateGameSidebarProps) => {
   const [gameType, setGameType] = useState<string | null>(null)
   const [gameTypeOptions, setGameTypeOptions] = useState<{ label: string; value: string }[]>([])
-  const [team1Id, setTeam1Id] = useState<string | null>(null)
-  const [team2Id, setTeam2Id] = useState<string | null>(null)
+  const [team1Id, setTeam1Id] = useState<string | null>(TBC)
+  const [team2Id, setTeam2Id] = useState<string | null>(TBC)
   const [scheduledAt, setScheduledAt] = useState<Date>(new Date())
   const [gameStatus, setGameStatus] = useState<string>('UPCOMING')
   const [remark, setRemark] = useState<string>('')
@@ -58,8 +62,8 @@ export const CreateGameSidebar = ({
   useEffect(() => {
     if (!visible) {
       setGameType(null)
-      setTeam1Id(null)
-      setTeam2Id(null)
+      setTeam1Id(TBC)
+      setTeam2Id(TBC)
       setScheduledAt(new Date())
       setGameStatus('UPCOMING')
       setRemark('')
@@ -90,12 +94,15 @@ export const CreateGameSidebar = ({
     }
   }
 
-  const filteredTeamOptions = tournamentTeams
-    .filter(t => !gameType || t.gameType === gameType)
-    .map(t => ({ label: t.name, value: t.id }))
+  const filteredTeamOptions = [
+    TBC_OPTION,
+    ...tournamentTeams
+      .filter(t => !gameType || t.gameType === gameType)
+      .map(t => ({ label: t.name, value: t.id })),
+  ]
 
-  const team1Name = tournamentTeams.find(t => t.id === team1Id)?.name ?? ''
-  const team2Name = tournamentTeams.find(t => t.id === team2Id)?.name ?? ''
+  const team1Name = team1Id === TBC ? 'To Be Confirmed' : (tournamentTeams.find(t => t.id === team1Id)?.name ?? '')
+  const team2Name = team2Id === TBC ? 'To Be Confirmed' : (tournamentTeams.find(t => t.id === team2Id)?.name ?? '')
 
   const handleHide = () => {
     setGameType(null)
@@ -109,8 +116,10 @@ export const CreateGameSidebar = ({
   }
 
   const handleSave = async () => {
-    if (!tournament || !team1Id || !team2Id) return
-    if (team1Id === team2Id) {
+    if (!tournament) return
+    const t1 = team1Id === TBC ? null : team1Id
+    const t2 = team2Id === TBC ? null : team2Id
+    if (t1 && t2 && t1 === t2) {
       setError('A game cannot have the same team for both sides.')
       return
     }
@@ -119,8 +128,8 @@ export const CreateGameSidebar = ({
     setError(null)
     try {
       await gamesService.createGame(tournament.id, {
-        team1Id,
-        team2Id,
+        team1Id: t1,
+        team2Id: t2,
         gameStatus: gameStatus as 'UPCOMING' | 'ONGOING' | 'COMPLETED',
         scheduledAt: scheduledAt.toISOString(),
         remark: remark || null,
@@ -157,8 +166,8 @@ export const CreateGameSidebar = ({
             placeholder="Select game type"
             onChange={e => {
               setGameType(e.value)
-              setTeam1Id(null)
-              setTeam2Id(null)
+              setTeam1Id(TBC)
+              setTeam2Id(TBC)
             }}
           />
         </div>
@@ -169,7 +178,7 @@ export const CreateGameSidebar = ({
               <label className="text-sm font-semibold">Team 1</label>
               <Dropdown
                 value={team1Id}
-                options={filteredTeamOptions.filter(t => t.value !== team2Id)}
+                options={filteredTeamOptions.filter(t => t.value === TBC || t.value !== team2Id)}
                 placeholder="Select Team 1"
                 onChange={e => setTeam1Id(e.value)}
                 disabled={loadingTeams || !gameType}
@@ -182,7 +191,7 @@ export const CreateGameSidebar = ({
               <label className="text-sm font-semibold">Team 2</label>
               <Dropdown
                 value={team2Id}
-                options={filteredTeamOptions.filter(t => t.value !== team1Id)}
+                options={filteredTeamOptions.filter(t => t.value === TBC || t.value !== team1Id)}
                 placeholder="Select Team 2"
                 onChange={e => setTeam2Id(e.value)}
                 disabled={loadingTeams || !gameType}

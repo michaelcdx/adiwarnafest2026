@@ -16,8 +16,8 @@ export type PlayerGameStat = {
 export type Game = {
   id: string
   tournamentId: string
-  team1Id: string
-  team2Id: string
+  team1Id: string | null
+  team2Id: string | null
   team1Name: string
   team2Name: string
   gameStatus: TournamentStatus
@@ -32,8 +32,8 @@ export type Game = {
 }
 
 export type CreateGamePayload = {
-  team1Id: string
-  team2Id: string
+  team1Id: string | null
+  team2Id: string | null
   gameStatus: TournamentStatus
   scheduledAt: string
   remark?: string | null
@@ -43,6 +43,9 @@ export type UpdateGamePayload = {
   gameStatus?: TournamentStatus | null
   scheduledAt?: string | null
   remark?: string | null
+  setTeams?: boolean
+  team1Id?: string | null
+  team2Id?: string | null
 }
 
 export type PlayerStatInput = {

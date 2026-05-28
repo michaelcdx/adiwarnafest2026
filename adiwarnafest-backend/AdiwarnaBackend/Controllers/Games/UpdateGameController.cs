@@ -28,6 +28,46 @@ namespace AdiwarnaBackend.Controllers.Games
             if (game.IsLocked)
                 return StatusCode(403, "Game is locked and cannot be modified.");
 
+            if (request.SetTeams)
+            {
+                var tournamentForTeams = await context.Tournaments
+                    .AsNoTracking()
+                    .Include(t => t.TournamentTeams)
+                    .ThenInclude(tt => tt.Team)
+                    .FirstOrDefaultAsync(t => t.Id == tournamentId, cancellationToken);
+
+                if (tournamentForTeams is null)
+                    return NotFound("Tournament not found.");
+
+                var team1Id = request.Team1Id == Guid.Empty ? null : request.Team1Id;
+                var team2Id = request.Team2Id == Guid.Empty ? null : request.Team2Id;
+
+                if (team1Id.HasValue && team2Id.HasValue && team1Id == team2Id)
+                    return BadRequest("A game cannot have the same team for both sides.");
+
+                var tournamentTeamIds = tournamentForTeams.TournamentTeams.Select(tt => tt.TeamId).ToHashSet();
+
+                if (team1Id.HasValue)
+                {
+                    if (!tournamentTeamIds.Contains(team1Id.Value))
+                        return BadRequest($"Team with ID {team1Id} is not part of this tournament.");
+                    var t1 = tournamentForTeams.TournamentTeams.First(tt => tt.TeamId == team1Id).Team;
+                    if (t1.GameType != tournamentForTeams.GameType)
+                        return BadRequest($"Team '{t1.Name}' GameType does not match tournament.");
+                }
+                if (team2Id.HasValue)
+                {
+                    if (!tournamentTeamIds.Contains(team2Id.Value))
+                        return BadRequest($"Team with ID {team2Id} is not part of this tournament.");
+                    var t2 = tournamentForTeams.TournamentTeams.First(tt => tt.TeamId == team2Id).Team;
+                    if (t2.GameType != tournamentForTeams.GameType)
+                        return BadRequest($"Team '{t2.Name}' GameType does not match tournament.");
+                }
+
+                game.Team1Id = team1Id;
+                game.Team2Id = team2Id;
+            }
+
             if (!string.IsNullOrWhiteSpace(request.GameStatus))
             {
                 string gameStatus;
@@ -88,8 +128,8 @@ namespace AdiwarnaBackend.Controllers.Games
                 TournamentId = game.TournamentId,
                 Team1Id = game.Team1Id,
                 Team2Id = game.Team2Id,
-                Team1Name = game.Team1?.Name ?? string.Empty,
-                Team2Name = game.Team2?.Name ?? string.Empty,
+                Team1Name = game.Team1?.Name ?? "TBC",
+                Team2Name = game.Team2?.Name ?? "TBC",
                 GameStatus = game.GameStatus,
                 ScheduledAt = game.ScheduledAt,
                 Remark = game.Remark,

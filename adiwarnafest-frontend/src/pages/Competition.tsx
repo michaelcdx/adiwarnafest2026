@@ -145,6 +145,7 @@ const Competition = () => {
       });
   }
   games.filter(g => g.gameStatus === "COMPLETED" && g.team1Name !== "TBC" && g.team2Name !== "TBC").forEach(g => {
+    if (!g.team1Id || !g.team2Id) return;
     const t1 = teamStatsMap.get(g.team1Id);
     const t2 = teamStatsMap.get(g.team2Id);
     const isDraw = g.team1Score === g.team2Score;

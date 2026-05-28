@@ -8,12 +8,6 @@ namespace AdiwarnaBackend.Data.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<Game> builder)
         {
-            builder.Property(g => g.Team1Id)
-                .IsRequired();
-
-            builder.Property(g => g.Team2Id)
-                .IsRequired();
-
             builder.HasQueryFilter(game => !game.IsDeleted);
 
             builder.HasOne(game => game.Tournament)
@@ -24,11 +18,13 @@ namespace AdiwarnaBackend.Data.EntityConfigurations
             builder.HasOne(game => game.Team1)
                 .WithMany()
                 .HasForeignKey(game => game.Team1Id)
+                .IsRequired(false)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(game => game.Team2)
                 .WithMany()
                 .HasForeignKey(game => game.Team2Id)
+                .IsRequired(false)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasIndex(g => new { g.TournamentId, g.Team1Id });

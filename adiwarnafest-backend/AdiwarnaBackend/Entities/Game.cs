@@ -6,8 +6,8 @@ namespace AdiwarnaBackend.Entities
     {
         public Guid Id { get; set; }
         public Guid TournamentId { get; set; }
-        public Guid Team1Id { get; set; }
-        public Guid Team2Id { get; set; }
+        public Guid? Team1Id { get; set; }
+        public Guid? Team2Id { get; set; }
         public string GameStatus { get; set; } = TournamentStatus.UPCOMING.Name;
         public DateTime ScheduledAt { get; set; }
         public string? Remark { get; set; }
@@ -18,8 +18,8 @@ namespace AdiwarnaBackend.Entities
         public int Team2Score { get; set; } = 0;
 
         public Tournament Tournament { get; set; } = null!;
-        public Team Team1 { get; set; } = null!;
-        public Team Team2 { get; set; } = null!;
+        public Team? Team1 { get; set; }
+        public Team? Team2 { get; set; }
         public ICollection<PlayerGameStat> PlayerGameStats { get; set; } = new List<PlayerGameStat>();
     }
 }
