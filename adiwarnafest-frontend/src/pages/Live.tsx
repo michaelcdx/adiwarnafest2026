@@ -64,7 +64,7 @@ const Live = () => {
             const videoId = extractYouTubeId(entry.filePath)
             return (
               <div key={entry.id} className="col-12 md:col-6">
-                <div className="glass-card overflow-hidden">
+                <div className="overflow-hidden" style={{ background: "#ffffff", border: "1px solid rgba(161,64,0,0.12)", borderRadius: "24px", boxShadow: "0 8px 24px rgba(161,64,0,0.06)" }}>
                   {videoId ? (
                     <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0 }}>
                       <iframe

@@ -1353,7 +1353,7 @@ const Map: React.FC = () => {
           box-shadow: 0 4px 14px rgba(209,223,246,0.3);
         }
         .floor-tab.active:hover {
-          background: rgba(168,192,232,0.9);
+          background: #A14000;
         }
         .floor-tab:focus-visible {
           outline: 3px solid rgba(209,223,246,0.5);
@@ -1434,11 +1434,11 @@ const Map: React.FC = () => {
             <p style={{ margin: 0, fontSize: "13px", color: "var(--text-muted)" }}>
               {isSearching ? (
                 <>
-                  Showing <strong style={{ color: "rgba(168,192,232,0.9)" }}>{searchResults.length}</strong> result{searchResults.length !== 1 ? "s" : ""} across all floors
+                  Showing <strong style={{ color: "#A14000" }}>{searchResults.length}</strong> result{searchResults.length !== 1 ? "s" : ""} across all floors
                 </>
               ) : (
                 <>
-                  Browsing <strong style={{ color: "rgba(168,192,232,0.9)" }}>{floorVendors.length}</strong> vendors on the <strong style={{ color: "rgba(168,192,232,0.9)" }}>{activeFloor === "1st" ? "1st" : "Ground"} Floor</strong>
+                  Browsing <strong style={{ color: "#A14000" }}>{floorVendors.length}</strong> vendors on the <strong style={{ color: "#A14000" }}>{activeFloor === "1st" ? "1st" : "Ground"} Floor</strong>
                 </>
               )}
             </p>
@@ -1447,8 +1447,38 @@ const Map: React.FC = () => {
           {/* ── GADPA — always pinned at top ─────────────────────────── */}
           <GADPACard vendor={gadpa} onViewInfo={() => setInfoVendor(gadpa)} />
 
-          {/* ── Floor tabs ───────────────────────────────────────────── */}
-          <div style={{ display: "flex", gap: "8px", marginBottom: "16px" }}>
+          {/* ── Floor tabs — full-width sliding segmented control ─────── */}
+          <div
+            style={{
+              position: "relative",
+              display: "flex",
+              width: "100%",
+              marginBottom: "16px",
+              background: "rgba(255,255,255,0.6)",
+              backdropFilter: "blur(16px) saturate(160%)",
+              WebkitBackdropFilter: "blur(16px) saturate(160%)",
+              border: "1px solid rgba(255,255,255,0.75)",
+              borderRadius: "999px",
+              padding: "4px",
+              boxShadow: "0 2px 12px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.9)",
+            }}
+          >
+            {/* Sliding brown pill */}
+            <div
+              style={{
+                position: "absolute",
+                top: "4px",
+                bottom: "4px",
+                left: activeFloor === "1st" ? "4px" : "calc(50% + 4px)",
+                width: "calc(50% - 8px)",
+                borderRadius: "999px",
+                background: "linear-gradient(-75deg, rgba(161,64,0,0.18), rgba(254,178,70,0.55), rgba(161,64,0,0.18))",
+                border: "1px solid rgba(161,64,0,0.4)",
+                boxShadow: "inset 0 2px 2px rgba(255,255,255,0.6), inset 0 -2px 2px rgba(161,64,0,0.2), 0 4px 12px rgba(161,64,0,0.22)",
+                transition: "left 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                pointerEvents: "none",
+              }}
+            />
             {(["1st", "Ground"] as const).map((floor) => {
               const isActive = activeFloor === floor;
               return (
@@ -1456,26 +1486,21 @@ const Map: React.FC = () => {
                   key={floor}
                   onClick={() => switchFloor(floor)}
                   style={{
-                    padding: "8px 22px",
+                    position: "relative",
+                    zIndex: 1,
+                    flex: 1,
+                    padding: "9px 0",
+                    border: "none",
+                    background: "transparent",
                     borderRadius: "999px",
                     fontFamily: "Epilogue, sans-serif",
                     fontWeight: 700,
                     fontSize: "13px",
                     cursor: "pointer",
                     whiteSpace: "nowrap",
-                    transition: "all 0.18s ease",
-                    background: isActive
-                      ? "linear-gradient(-75deg, rgba(209,223,246,0.25), rgba(209,223,246,0.65), rgba(209,223,246,0.25))"
-                      : "transparent",
-                    border: isActive
-                      ? "1px solid rgba(209,223,246,0.5)"
-                      : "1px solid transparent",
-                    boxShadow: isActive
-                      ? "inset 0 2px 2px rgba(255,255,255,0.7), 0 4px 12px rgba(168,192,232,0.2)"
-                      : "none",
-                    backdropFilter: isActive ? "blur(8px)" : "none",
-                    WebkitBackdropFilter: isActive ? "blur(8px)" : "none",
-                    color: isActive ? "#1e3a5f" : "var(--text-muted)",
+                    textAlign: "center",
+                    color: isActive ? "#3a1800" : "var(--text-muted)",
+                    transition: "color 0.25s ease",
                   }}
                 >
                   {floor === "1st" ? "First Floor" : "Ground Floor"}

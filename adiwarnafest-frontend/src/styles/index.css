@@ -44,12 +44,11 @@
 /* ── iOS 26 Glass Design System ─────────────────────────────────────────── */
 
 .glass-page {
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg opacity='0.08'%3E%3Crect width='60' height='60' fill='%23FFFFFF'/%3E%3Cg fill='%23FFFFFF' stroke='%23000000' stroke-width='1.5'%3E%3Ccircle cx='30' cy='20' r='8'/%3E%3Ccircle cx='30' cy='40' r='8'/%3E%3Ccircle cx='20' cy='30' r='8'/%3E%3Ccircle cx='40' cy='30' r='8'/%3E%3C/g%3E%3Cg stroke='%23000000' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M-8 -8 L8 8 M8 -8 L-8 8'/%3E%3Cpath d='M52 -8 L68 8 M68 -8 L52 8'/%3E%3Cpath d='M-8 52 L8 68 M8 52 L-8 68'/%3E%3Cpath d='M52 52 L68 68 M68 52 L52 68'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"),
-    var(--page-gradient);
-  background-size: 60px 60px, cover;
-  background-repeat: repeat, no-repeat;
-  background-attachment: fixed, fixed;
+  background-color: #F5F2F0;
+  background-image: radial-gradient(circle, #E8E0DC 3px, transparent 3px);
+  background-size: 30px 30px;
+  background-repeat: repeat;
+  background-attachment: fixed;
   min-height: 100vh;
 }
 
@@ -525,8 +524,12 @@ a[href^="sms"],
 
 /* ── Override PrimeReact orange theme → glass blue ─── */
 :root {
-  --primary-color: #a8bfe8 !important;
-  --primary-color-text: #0f1829 !important;
+  --primary-color: #A14000 !important;
+  --primary-color-text: #ffffff !important;
+}
+
+.p-progressbar .p-progressbar-value {
+  background: linear-gradient(90deg, #A14000, #FEB246) !important;
 }
 
 .p-button.p-button-outlined {

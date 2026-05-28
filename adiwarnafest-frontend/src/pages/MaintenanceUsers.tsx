@@ -181,11 +181,11 @@ const MaintenanceUsers = () => {
 
   const handleResetPassword = async () => {
     if (!activeUser) return
-    if (newPassword.length < 12) {
+    if (newPassword.length < 8) {
       toast.current?.show({
         severity: 'warn',
         summary: 'Weak Password',
-        detail: 'Password must be at least 12 characters long.',
+        detail: 'Password must be at least 8 characters long.',
         life: 3000
       })
       return
@@ -381,16 +381,16 @@ const MaintenanceUsers = () => {
                   onChange={(e) => setNewPassword(e.target.value)}
                   toggleMask
                   feedback={false}
-                  placeholder="Min 12 characters"
+                  placeholder="Min 8 characters"
                   inputStyle={{ width: '100%' }}
                   style={{ width: '100%' }}
                 />
-                <p className="m-0 text-[10px] text-500">Password must be at least 12 characters long.</p>
+                <p className="m-0 text-[10px] text-500">Password must be at least 8 characters long.</p>
                 <Button
                   label={resettingPassword ? 'Resetting...' : 'Apply New Password'}
                   icon={<Key size={14} className="mr-2" weight="bold" />}
                   onClick={handleResetPassword}
-                  disabled={resettingPassword || newPassword.length < 12}
+                  disabled={resettingPassword || newPassword.length < 8}
                   loading={resettingPassword}
                   className="w-full mt-1"
                   size="small"

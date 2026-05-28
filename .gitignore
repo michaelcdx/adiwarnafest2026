@@ -29,3 +29,4 @@ node_modules/
 # Docker
 .dockerignore
 .claude/
+docker-compose.override.yml

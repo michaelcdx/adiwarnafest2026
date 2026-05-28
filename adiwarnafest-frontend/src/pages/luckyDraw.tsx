@@ -416,7 +416,7 @@ const LuckyDraw: React.FC = () => {
                 <p className="m-0 text-[10px] md:text-xs text-500">{scannedBooths.length} of 3 booths completed</p>
               </div>
               <div className="text-right flex-shrink-0">
-                <span className="text-xl md:text-2xl font-black" style={{ color: 'var(--color-primary)' }}>{Math.round(progress)}%</span>
+                <span className="text-xl md:text-2xl font-black" style={{ color: '#A14000' }}>{Math.round(progress)}%</span>
               </div>
             </div>
             <ProgressBar value={progress} showValue={false} style={{ height: '12px', borderRadius: '6px', backgroundColor: 'var(--color-border)' }} />
@@ -513,7 +513,13 @@ const LuckyDraw: React.FC = () => {
             return (
               <div
                 key={booth.id}
-                className={`flex align-items-center gap-2 md:gap-4 glass-card p-3 md:p-4 cursor-pointer transition-all duration-300 transform active:scale-95 ${isScanned ? 'opacity-80' : ''}`}
+                className={`flex align-items-center gap-2 md:gap-4 p-3 md:p-4 cursor-pointer transition-all duration-300 transform active:scale-95 ${isScanned ? 'opacity-80' : ''}`}
+                style={{
+                  background: "#ffffff",
+                  border: "1px solid rgba(161,64,0,0.12)",
+                  borderRadius: "24px",
+                  boxShadow: "0 8px 24px rgba(161,64,0,0.06)",
+                }}
                 onClick={() => openBoothDetails(booth)}
               >
                 {/* Logo/Image on Left */}

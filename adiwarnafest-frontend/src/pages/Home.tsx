@@ -250,7 +250,7 @@ const Home: React.FC = () => {
         {/* When & Where */}
         <section className="px-3 mt-3">
           <div
-            className="p-4 flex flex-column md:flex-row gap-4"
+            className="p-3 md:p-4 flex flex-row gap-2 md:gap-4"
             style={{
               background: "#ffffff",
               border: "1px solid rgba(161,64,0,0.12)",
@@ -275,71 +275,73 @@ const Home: React.FC = () => {
                 ].map((item, i) => (
                   <div key={i} className="flex gap-2 align-items-start">
                     <span style={{ color: "var(--text-muted)", flexShrink: 0, marginTop: "2px" }}>{item.icon}</span>
-                    <div className="flex flex-column gap-1">
-                      <span className="text-xs font-bold" style={{ color: "var(--text-secondary)" }}>{item.label}</span>
-                      <div className="flex align-items-center gap-2 flex-wrap">
+                    <div className="flex flex-column gap-2">
+                      <div className="flex flex-column gap-1">
+                        <span className="text-xs font-bold" style={{ color: "var(--text-secondary)" }}>{item.label}</span>
                         <span className="text-xs" style={{ color: "var(--text-muted)" }}>{item.location}</span>
-                        {(item as { mapLink?: boolean }).mapLink && (
-                          <a
-                            href="/map"
-                            className="text-decoration-none flex align-items-center gap-1"
-                            style={{
-                              background: "rgba(209,223,246,0.15)",
-                              backdropFilter: "blur(8px)",
-                              WebkitBackdropFilter: "blur(8px)",
-                              border: "1px solid rgba(209,223,246,0.35)",
-                              borderRadius: "999px",
-                              padding: "2px 9px",
-                              fontSize: "11px",
-                              fontWeight: 700,
-                              color: "var(--text-secondary)",
-                              transition: "all 0.18s ease",
-                            }}
-                            onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.background = "rgba(209,223,246,0.28)"}
-                            onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.background = "rgba(209,223,246,0.15)"}
-                          >
-                            <MapPin size={11} weight="fill" /> View Map
-                          </a>
-                        )}
                       </div>
+                      {(item as { mapLink?: boolean }).mapLink && (
+                        <a
+                          href="/map"
+                          className="text-decoration-none flex align-items-center justify-content-center gap-2"
+                          style={{
+                            alignSelf: "flex-start",
+                            background: "linear-gradient(-75deg, rgba(161,64,0,0.18), rgba(254,178,70,0.55), rgba(161,64,0,0.18))",
+                            backdropFilter: "blur(8px)",
+                            WebkitBackdropFilter: "blur(8px)",
+                            border: "1px solid rgba(161,64,0,0.4)",
+                            borderRadius: "999px",
+                            padding: "7px 13px",
+                            fontSize: "12px",
+                            fontWeight: 700,
+                            whiteSpace: "nowrap",
+                            color: "#3a1800",
+                            boxShadow: "inset 0 1px 0 rgba(255,255,255,0.6), 0 3px 12px rgba(161,64,0,0.22)",
+                            transition: "all 0.18s ease",
+                          }}
+                          onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.transform = "scale(0.97)"}
+                          onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.transform = "scale(1)"}
+                        >
+                          <MapPin size={14} weight="fill" /> View Map
+                        </a>
+                      )}
                     </div>
                   </div>
                 ))}
                 {/* Mobile Legends row with Watch Live button */}
                 <div className="flex gap-2 align-items-start">
                   <span style={{ color: "var(--text-muted)", flexShrink: 0, marginTop: "2px" }}><GameController size={14} weight="fill" /></span>
-                  <div className="flex flex-column gap-1">
+                  <div className="flex flex-column gap-2">
                     <span className="text-xs font-bold" style={{ color: "var(--text-secondary)" }}>Mobile Legends</span>
-                    <div>
-                      <a
-                        href="/live"
-                        className="text-decoration-none flex align-items-center gap-1"
-                        style={{
-                          display: "inline-flex",
-                          background: "rgba(220,0,0,0.12)",
-                          backdropFilter: "blur(8px)",
-                          WebkitBackdropFilter: "blur(8px)",
-                          border: "1px solid rgba(255,80,80,0.3)",
-                          borderRadius: "999px",
-                          padding: "2px 9px",
-                          fontSize: "11px",
-                          fontWeight: 700,
-                          color: "#dc2626",
-                          transition: "all 0.18s ease",
-                        }}
-                        onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.background = "rgba(220,0,0,0.22)"}
-                        onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.background = "rgba(220,0,0,0.12)"}
-                      >
-                        <Eye size={11} weight="fill" /> Watch Live
-                      </a>
-                    </div>
+                    <a
+                      href="/competition"
+                      className="text-decoration-none flex align-items-center justify-content-center gap-2"
+                      style={{
+                        alignSelf: "flex-start",
+                        background: "linear-gradient(-75deg, rgba(161,64,0,0.18), rgba(254,178,70,0.55), rgba(161,64,0,0.18))",
+                        backdropFilter: "blur(8px)",
+                        WebkitBackdropFilter: "blur(8px)",
+                        border: "1px solid rgba(161,64,0,0.4)",
+                        borderRadius: "999px",
+                        padding: "7px 13px",
+                        fontSize: "12px",
+                        fontWeight: 700,
+                        whiteSpace: "nowrap",
+                        color: "#3a1800",
+                        boxShadow: "inset 0 1px 0 rgba(255,255,255,0.6), 0 3px 12px rgba(161,64,0,0.22)",
+                        transition: "all 0.18s ease",
+                      }}
+                      onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.transform = "scale(0.97)"}
+                      onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.transform = "scale(1)"}
+                    >
+                      <Calendar size={14} weight="fill" /> See Schedule
+                    </a>
                   </div>
                 </div>
               </div>
             </div>
 
-            <hr className="glass-divider md:hidden w-full" style={{ margin: 0 }} />
-            <div className="hidden md:block" style={{ width: "1px", alignSelf: "stretch", background: "rgba(255,255,255,0.6)" }} />
+            <div style={{ width: "1px", alignSelf: "stretch", background: "rgba(161,64,0,0.12)", flexShrink: 0 }} />
 
             {/* Day 2 */}
             <div className="flex-1">
@@ -586,54 +588,39 @@ const Home: React.FC = () => {
               </div>
             )}
 
-            <div className="flex flex-column md:flex-row gap-4 mb-4">
+            <div className="flex flex-row gap-2 md:gap-4 mb-4">
               {/* Simfoni Attendees */}
-              <div className="flex-1 glass-stat-card p-4 flex flex-column justify-content-between" style={{ minHeight: "130px" }}>
-                <div className="flex justify-content-between align-items-start mb-2">
-                  <div className="glass-icon" style={{ width: "36px", height: "36px", backgroundColor: "rgba(236,72,153,0.12)" }}>
-                    <UsersThree size={20} weight="bold" color="#EC4899" />
+              <div className="flex-1 glass-stat-card p-3 md:p-4 flex flex-column justify-content-between" style={{ minHeight: "120px" }}>
+                <div className="flex flex-column gap-2 mb-2">
+                  <div className="glass-icon" style={{ width: "32px", height: "32px", backgroundColor: "rgba(236,72,153,0.12)" }}>
+                    <UsersThree size={18} weight="bold" color="#EC4899" />
                   </div>
-                  <span className="text-[10px] font-bold uppercase" style={{ color: "var(--text-muted)", letterSpacing: "0.08em" }}>Grand Total</span>
+                  <span className="text-[9px] md:text-[10px] font-bold uppercase" style={{ color: "var(--text-muted)", letterSpacing: "0.06em" }}>Grand Total</span>
                 </div>
                 <div>
-                  <h3 className="m-0 text-4xl font-black mb-1" style={{ background: "linear-gradient(135deg, #EC4899 0%, #db2777 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", fontFamily: "Epilogue, sans-serif" }}>
+                  <h3 className="m-0 text-2xl md:text-4xl font-black mb-1" style={{ background: "linear-gradient(135deg, #A14000 0%, #6b2e00 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", fontFamily: "Epilogue, sans-serif" }}>
                     {stats?.simfoniParticipants ?? "—"}
                   </h3>
-                  <p className="m-0 text-xs font-bold" style={{ color: "var(--text-secondary)" }}>Simfoni Attendees</p>
+                  <p className="m-0 text-[10px] md:text-xs font-bold line-height-2" style={{ color: "var(--text-secondary)" }}>Simfoni Attendees</p>
                 </div>
               </div>
 
               {/* Sports Athletes */}
-              <div className="flex-1 glass-stat-card p-4 flex flex-column justify-content-between" style={{ minHeight: "130px" }}>
-                <div className="flex justify-content-between align-items-start mb-2">
-                  <div className="glass-icon" style={{ width: "36px", height: "36px", backgroundColor: "rgba(245,158,11,0.12)" }}>
-                    <UsersThree size={20} weight="bold" color="#F59E0B" />
+              <div className="flex-1 glass-stat-card p-3 md:p-4 flex flex-column justify-content-between" style={{ minHeight: "120px" }}>
+                <div className="flex flex-column gap-2 mb-2">
+                  <div className="glass-icon" style={{ width: "32px", height: "32px", backgroundColor: "rgba(245,158,11,0.12)" }}>
+                    <UsersThree size={18} weight="bold" color="#F59E0B" />
                   </div>
-                  <span className="text-[10px] font-bold uppercase" style={{ color: "var(--text-muted)", letterSpacing: "0.08em" }}>Athletes</span>
+                  <span className="text-[9px] md:text-[10px] font-bold uppercase" style={{ color: "var(--text-muted)", letterSpacing: "0.06em" }}>Athletes</span>
                 </div>
                 <div>
-                  <h3 className="m-0 text-4xl font-black mb-1" style={{ background: "linear-gradient(135deg, #F59E0B 0%, #D97706 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", fontFamily: "Epilogue, sans-serif" }}>
+                  <h3 className="m-0 text-2xl md:text-4xl font-black mb-1" style={{ background: "linear-gradient(135deg, #A14000 0%, #6b2e00 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", fontFamily: "Epilogue, sans-serif" }}>
                     {stats?.sportParticipants ?? "—"}
                   </h3>
-                  <p className="m-0 text-xs font-bold" style={{ color: "var(--text-secondary)" }}>Sports Competitors</p>
+                  <p className="m-0 text-[10px] md:text-xs font-bold line-height-2" style={{ color: "var(--text-secondary)" }}>Sports Competitors</p>
                 </div>
               </div>
 
-              {/* Registered Teams */}
-              <div className="flex-1 glass-stat-card p-4 flex flex-column justify-content-between" style={{ minHeight: "130px" }}>
-                <div className="flex justify-content-between align-items-start mb-2">
-                  <div className="glass-icon" style={{ width: "36px", height: "36px", backgroundColor: "rgba(209,223,246,0.12)" }}>
-                    <Trophy size={20} weight="bold" color="#6366F1" />
-                  </div>
-                  <span className="text-[10px] font-bold uppercase" style={{ color: "var(--text-muted)", letterSpacing: "0.08em" }}>Squads</span>
-                </div>
-                <div>
-                  <h3 className="m-0 text-4xl font-black mb-1" style={{ background: "linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", fontFamily: "Epilogue, sans-serif" }}>
-                    {stats?.totalTeams ?? "—"}
-                  </h3>
-                  <p className="m-0 text-xs font-bold" style={{ color: "var(--text-secondary)" }}>Registered Teams</p>
-                </div>
-              </div>
             </div>
           </div>  {/* close stats glass div */}
         </section>
@@ -710,7 +697,7 @@ const Home: React.FC = () => {
               <span className="glass-tag px-3 py-1 text-[10px] font-bold" style={{ color: "var(--text-muted)" }}>Adiwarna Fest 2026</span>
             </div>
 
-            <div className="flex flex-wrap align-items-center justify-content-center gap-4 mt-2">
+            <div className="grid mt-2">
               {[
                 { name: "Mulan", logo: "/Mulan_logo.jpg" },
                 { name: "Starbucks", logo: "/Starbucks_logo.png" },
@@ -719,29 +706,29 @@ const Home: React.FC = () => {
                 { name: "Anytime Fitness", logo: "/Anytime_fitness_logo.jpeg" },
                 { name: "Sai Ngon", logo: "/Sai_Ngon_logo.jpg" },
               ].map((sponsor, idx) => (
-                <div
-                  key={idx}
-                  className="flex flex-column align-items-center gap-2 transition-all duration-300"
-                  style={{ width: "calc(33% - 1.5rem)", maxWidth: "140px", minWidth: "100px" }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-4px)'; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.transform = ''; }}
-                >
+                <div key={idx} className="col-6 md:col-4 p-2">
                   <div
-                    className="flex align-items-center justify-content-center w-full"
-                    style={{
-                      height: "90px",
-                      padding: "14px",
-                      background: 'rgba(255,255,255,0.55)',
-                      backdropFilter: 'blur(16px)',
-                      WebkitBackdropFilter: 'blur(16px)',
-                      border: '1px solid rgba(255,255,255,0.8)',
-                      borderRadius: '16px',
-                      boxShadow: '0 4px 16px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.95)',
-                    }}
+                    className="flex flex-column align-items-center justify-content-start gap-2 transition-all duration-300 h-full"
+                    onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-4px)'; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.transform = ''; }}
                   >
-                    <img src={sponsor.logo} alt={sponsor.name} style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }} />
+                    <div
+                      className="flex align-items-center justify-content-center w-full"
+                      style={{
+                        height: "90px",
+                        padding: "14px",
+                        background: 'rgba(255,255,255,0.55)',
+                        backdropFilter: 'blur(16px)',
+                        WebkitBackdropFilter: 'blur(16px)',
+                        border: '1px solid rgba(255,255,255,0.8)',
+                        borderRadius: '16px',
+                        boxShadow: '0 4px 16px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.95)',
+                      }}
+                    >
+                      <img src={sponsor.logo} alt={sponsor.name} style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }} />
+                    </div>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-center flex align-items-center justify-content-center" style={{ color: "var(--text-muted)", minHeight: "28px", lineHeight: 1.2 }}>{sponsor.name}</span>
                   </div>
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-center" style={{ color: "var(--text-muted)" }}>{sponsor.name}</span>
                 </div>
               ))}
             </div>
@@ -750,14 +737,24 @@ const Home: React.FC = () => {
 
         {/* Social Media */}
         <section className="px-3 mt-5 mb-6">
-          <div className="glass-card-dark p-5 md:p-6 relative overflow-hidden">
+          <div
+            className="p-5 md:p-6 relative overflow-hidden"
+            style={{
+              background: "linear-gradient(-75deg, rgba(161,64,0,0.18), rgba(254,178,70,0.55), rgba(161,64,0,0.18))",
+              backdropFilter: "blur(20px) saturate(160%)",
+              WebkitBackdropFilter: "blur(20px) saturate(160%)",
+              border: "1px solid rgba(161,64,0,0.4)",
+              borderRadius: "24px",
+              boxShadow: "inset 0 2px 2px rgba(255,255,255,0.6), inset 0 -2px 2px rgba(161,64,0,0.2), 0 8px 24px rgba(161,64,0,0.22)",
+            }}
+          >
             <div className="absolute border-circle" style={{ width: "120px", height: "120px", background: "radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%)", top: "-20px", right: "-20px", pointerEvents: "none" }} />
             <div className="absolute border-circle" style={{ width: "160px", height: "160px", background: "radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%)", bottom: "-40px", left: "-40px", pointerEvents: "none" }} />
 
             <div className="relative z-1 mb-5 flex flex-column align-items-center text-center sm:align-items-start sm:text-left">
-              <span className="glass-tag inline-block px-3 py-1 mb-2" style={{ color: "rgba(255,255,255,0.75)" }}>Stay Connected</span>
-              <h2 className="m-0 text-3xl font-black text-white" style={{ fontFamily: "Epilogue, sans-serif", letterSpacing: "-0.01em" }}>Follow Our Social Media</h2>
-              <p className="m-0 text-xs font-semibold mt-2" style={{ color: "rgba(255,255,255,0.45)" }}>Join our digital community for exclusive updates, live ceremony streams, and daily snapshots!</p>
+              <span className="glass-tag inline-block px-3 py-1 mb-2" style={{ color: "#3a1800", background: "rgba(255,255,255,0.35)", border: "1px solid rgba(161,64,0,0.25)" }}>Stay Connected</span>
+              <h2 className="m-0 text-3xl font-black" style={{ color: "#3a1800", fontFamily: "Epilogue, sans-serif", letterSpacing: "-0.01em" }}>Follow Our Social Media</h2>
+              <p className="m-0 text-xs font-semibold mt-2" style={{ color: "#7a3d12" }}>Join our digital community for exclusive updates, live ceremony streams, and daily snapshots!</p>
             </div>
 
             <div className="flex flex-column md:flex-row gap-4 mt-2">

@@ -100,20 +100,11 @@ export default function LoginPage() {
         });
         return;
       }
-      if (password.length < 12) {
+      if (password.length < 8) {
         toast.current?.show({
           severity: 'error',
           summary: 'Weak Password',
-          detail: 'Password must be at least 12 characters long.',
-          life: 3000
-        });
-        return;
-      }
-      if (!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[0-9]/.test(password) || !/[^A-Za-z0-9]/.test(password)) {
-        toast.current?.show({
-          severity: 'error',
-          summary: 'Weak Password',
-          detail: 'Password must contain uppercase, lowercase, a digit, and a special character.',
+          detail: 'Password must be at least 8 characters long.',
           life: 3000
         });
         return;

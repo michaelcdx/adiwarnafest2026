@@ -247,9 +247,7 @@ const Committee: React.FC = () => {
                   style={{
                     position: "absolute",
                     inset: 0,
-                    background: active ? "linear-gradient(to top, rgba(161,64,0,0.85), rgba(254,178,70,0.3))" : "linear-gradient(to top, rgba(0,0,0,0.75), rgba(0,0,0,0.08))",
-                    backdropFilter: active ? "blur(2px)" : "none",
-                    WebkitBackdropFilter: active ? "blur(2px)" : "none",
+                    background: active ? "linear-gradient(to top, rgba(161,64,0,0.95) 0%, rgba(161,64,0,0.55) 40%, transparent 80%)" : "linear-gradient(to top, rgba(0,0,0,0.75), rgba(0,0,0,0.08))",
                     display: "flex",
                     alignItems: "flex-end",
                     padding: "8px",

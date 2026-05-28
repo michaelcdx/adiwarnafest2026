@@ -1,5 +1,5 @@
 ﻿import { useNavigate } from 'react-router-dom'
-import { ShieldCheck, UsersThree, Trophy, CalendarBlank, Download, GameController, Eye } from '@phosphor-icons/react'
+import { ShieldCheck, UsersThree, Trophy, CalendarBlank, Download, GameController, Eye, QrCode } from '@phosphor-icons/react'
 import { useAuth } from '../store/auth'
 
 const Maintenance = () => {
@@ -9,7 +9,7 @@ const Maintenance = () => {
   const isMaintainer = role === 'Maintainer'
   const canExport = isAdmin || isMaintainer
 
-  const iconColor = 'rgba(209,223,246,0.85)'
+  const iconColor = '#A14000'
   const cards = [
     {
       icon: <UsersThree size={28} weight="bold" color={iconColor} />,
@@ -66,6 +66,14 @@ const Maintenance = () => {
       label: canExport ? 'Open Lucky Draw' : 'Admin/Maintainer only',
       disabled: !canExport,
       onClick: () => navigate('/maintenance/lucky-draw'),
+    },
+    {
+      icon: <QrCode size={28} weight="bold" color={iconColor} />,
+      title: 'QR Tester',
+      description: 'Generate and test booth QR codes.',
+      label: canExport ? 'Open QR Tester' : 'Admin/Maintainer only',
+      disabled: !canExport,
+      onClick: () => navigate('/qr-tester'),
     }
   ];
 
@@ -75,12 +83,12 @@ const Maintenance = () => {
         {/* Header */}
         <header className="mb-8">
           <div className="flex align-items-center gap-3 mb-3">
-            <ShieldCheck size={24} weight="bold" color="rgba(209,223,246,0.9)" />
+            <ShieldCheck size={24} weight="bold" color="#A14000" />
             <div>
               <h1 className="m-0 text-3xl font-black" style={{ color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
                 Maintenance Dashboard
               </h1>
-              <p className="m-0 text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>Welcome, {username || 'User'} · <span style={{ fontWeight: '600', color: 'rgba(209,223,246,0.9)' }}>{role || 'Unknown'}</span></p>
+              <p className="m-0 text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>Welcome, {username || 'User'} · <span style={{ fontWeight: '600', color: '#A14000' }}>{role || 'Unknown'}</span></p>
             </div>
           </div>
         </header>

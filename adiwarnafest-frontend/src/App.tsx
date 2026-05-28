@@ -99,7 +99,7 @@ function App() {
         <Route
           path="qr-tester"
           element={
-            <RequireRole allowedRoles={['Admin']}>
+            <RequireRole allowedRoles={['Admin', 'Maintainer']}>
               <QRCodeTester />
             </RequireRole>
           }
