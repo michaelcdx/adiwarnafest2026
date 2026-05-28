@@ -395,10 +395,10 @@ const LuckyDraw: React.FC = () => {
             <Trophy size={16} weight="fill" color="#FFD700" />
             <span className="text-[10px] font-black uppercase tracking-widest text-white">Adiwarna Fest 2026</span>
           </div>
-          <h1 className="m-0 text-4xl md:text-5xl font-black text-white line-height-1">LUCKY DRAW</h1>
+          <h1 className="m-0 text-4xl md:text-5xl font-black line-height-1" style={{ color: '#3a1800' }}>LUCKY DRAW</h1>
           <div className="flex align-items-center gap-2 mt-1">
-            <UserCircle size={18} weight="fill" color="rgba(255,255,255,0.7)" />
-            <p className="m-0 text-white-alpha-80 text-sm font-bold uppercase tracking-widest">
+            <UserCircle size={18} weight="fill" color="rgba(58,24,0,0.7)" />
+            <p className="m-0 text-sm font-bold uppercase tracking-widest" style={{ color: 'rgba(58,24,0,0.85)' }}>
               {username || 'Participant'}
             </p>
           </div>
@@ -542,7 +542,7 @@ const LuckyDraw: React.FC = () => {
                 <div className="flex-1 flex flex-column justify-content-between">
                   <div>
                     <div className="flex align-items-center gap-2 mb-2">
-                      <div className="border-round-lg px-2 py-1 text-[8px] font-bold uppercase tracking-wider" style={{ background: 'rgba(209,223,246,0.1)', color: 'rgba(168,192,232,0.9)' }}>Booth {index + 1}</div>
+                      <div className="border-round-lg px-2 py-1 text-[8px] font-bold uppercase tracking-wider" style={{ background: 'rgba(161,64,0,0.1)', color: '#A14000' }}>Booth {index + 1}</div>
                       {isScanned && (
                         <div className="bg-green-100 border-round-lg px-2 py-1 text-[8px] font-bold text-green-700 uppercase tracking-wider">Completed</div>
                       )}
@@ -562,8 +562,8 @@ const LuckyDraw: React.FC = () => {
                       <CheckCircle size={24} weight="fill" color="#ffffff" />
                     </div>
                   ) : (
-                    <div className="border-round-xl flex align-items-center justify-content-center" style={{ background: 'rgba(209,223,246,0.12)', backdropFilter: 'blur(8px)', border: '1px solid rgba(209,223,246,0.2)', width: 'min(50px, 12vw)', height: 'min(50px, 12vw)', minWidth: '50px', minHeight: '50px' }}>
-                      <QrCode size={24} color="rgba(209,223,246,0.85)" weight="bold" />
+                    <div className="border-round-xl flex align-items-center justify-content-center" style={{ background: 'rgba(161,64,0,0.12)', backdropFilter: 'blur(8px)', border: '1px solid rgba(161,64,0,0.25)', width: 'min(50px, 12vw)', height: 'min(50px, 12vw)', minWidth: '50px', minHeight: '50px' }}>
+                      <QrCode size={24} color="#A14000" weight="bold" />
                     </div>
                   )}
                 </div>

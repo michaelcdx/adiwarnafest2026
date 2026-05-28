@@ -1,6 +1,6 @@
 ﻿import { useMemo, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { House, Trophy, MapTrifold, UsersThree, X, User, Wrench, Sparkle } from '@phosphor-icons/react';
+import { House, Trophy, MapTrifold, UsersThree, X, User, Wrench, Sparkle, List } from '@phosphor-icons/react';
 import adiwarnaLogo from '../image/Adiwarna_Logo_NoBackground.png';
 import { useAuth } from '../store/auth';
 
@@ -172,56 +172,21 @@ const TopNavbar = () => {
 
         {/* MOBILE top bar */}
         <div className="md:hidden flex justify-content-between align-items-center px-4 w-full">
-          {/* Hamburger */}
-          <button
-            onClick={() => setIsMenuOpen(o => !o)}
-            style={{
-              width: '40px',
-              height: '40px',
-              background: isMenuOpen ? 'rgba(209,223,246,0.1)' : 'white',
-              border: 'none',
-              borderRadius: '12px',
-              cursor: 'pointer',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '4px',
-              padding: 0,
-              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-              zIndex: 110,
-              position: 'relative',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
-            }}
-            aria-label="Menu"
-          >
-            <span style={{
-              display: 'block',
-              width: '20px', height: '2px',
-              background: 'var(--color-primary)',
-              borderRadius: '2px',
-              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-              transform: isMenuOpen ? 'translateY(6px) rotate(45deg)' : 'none',
-            }} />
-            <span style={{
-              display: 'block',
-              width: isMenuOpen ? '0' : '14px', height: '2px',
-              background: 'var(--color-primary)',
-              borderRadius: '2px',
-              alignSelf: 'flex-start',
-              marginLeft: isMenuOpen ? '0' : '10px',
-              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-              opacity: isMenuOpen ? 0 : 1,
-            }} />
-            <span style={{
-              display: 'block',
-              width: '20px', height: '2px',
-              background: 'var(--color-primary)',
-              borderRadius: '2px',
-              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-              transform: isMenuOpen ? 'translateY(-6px) rotate(-45deg)' : 'none',
-            }} />
-          </button>
+          {/* Menu button */}
+          <div className="button-wrap" style={{ fontSize: '13px', zIndex: 110 }}>
+            <button
+              onClick={() => setIsMenuOpen(o => !o)}
+              className="premium-btn"
+              style={{ fontFamily: 'Epilogue, sans-serif' }}
+              aria-label="Menu"
+            >
+              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <List size={16} weight="bold" />
+                Menu
+              </span>
+            </button>
+            <div className="button-shadow" />
+          </div>
 
           {/* Logo centered */}
           <button
@@ -242,31 +207,26 @@ const TopNavbar = () => {
             <img src={adiwarnaLogo} alt="Adiwarna" style={{ height: '32px', width: 'auto' }} />
           </button>
 
-          {/* Login icon/button for mobile top bar */}
-          <button
-            onClick={() => {
-              if (isAuthenticated) {
-                setIsMenuOpen(true);
-              } else {
-                navigate('/login');
-              }
-            }}
-            style={{
-              width: '40px',
-              height: '40px',
-              background: 'white',
-              border: 'none',
-              borderRadius: '12px',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'var(--color-primary)',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
-            }}
-          >
-            <User size={20} weight="bold" />
-          </button>
+          {/* Login / Profile button for mobile top bar */}
+          <div className="button-wrap" style={{ fontSize: '13px' }}>
+            <button
+              onClick={() => {
+                if (isAuthenticated) {
+                  setIsMenuOpen(true);
+                } else {
+                  navigate('/login');
+                }
+              }}
+              className="premium-btn"
+              style={{ fontFamily: 'Epilogue, sans-serif' }}
+            >
+              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <User size={16} weight="bold" />
+                {isAuthenticated ? 'Profile' : 'Login'}
+              </span>
+            </button>
+            <div className="button-shadow" />
+          </div>
         </div>
       </header>
 
@@ -368,9 +328,16 @@ const TopNavbar = () => {
                   alignItems: 'center',
                   gap: '14px',
                   padding: '14px 16px',
-                  borderRadius: '14px',
-                  background: isActive ? 'rgba(254,178,70,0.18)' : 'transparent',
-                  border: isActive ? '1px solid rgba(161,64,0,0.25)' : '1px solid transparent',
+                  borderRadius: '999px',
+                  background: isActive
+                    ? 'linear-gradient(-75deg, rgba(161,64,0,0.12), rgba(254,178,70,0.45), rgba(161,64,0,0.12))'
+                    : 'transparent',
+                  border: isActive ? '1px solid rgba(161,64,0,0.4)' : '1px solid transparent',
+                  boxShadow: isActive
+                    ? 'inset 0 2px 2px rgba(255,255,255,0.6), inset 0 -2px 2px rgba(161,64,0,0.15), 0 4px 12px rgba(161,64,0,0.2)'
+                    : 'none',
+                  backdropFilter: isActive ? 'blur(8px)' : 'none',
+                  WebkitBackdropFilter: isActive ? 'blur(8px)' : 'none',
                   color: isActive ? '#3a1800' : '#3d3d3d',
                   fontFamily: 'Epilogue, sans-serif',
                   fontWeight: 700,
@@ -429,27 +396,19 @@ const TopNavbar = () => {
                 <span style={{ fontSize: '13px', color: '#1b1c1c', fontWeight: 800, wordBreak: 'break-all' }}>{email || username}</span>
               </div>
               
-              <button
-                onClick={() => {
-                  closeMenu();
-                  signOut().then(() => navigate('/'));
-                }}
-                style={{
-                  padding: '12px',
-                  borderRadius: '12px',
-                  backgroundColor: '#d1dff6',
-                  color: '#0f1829',
-                  border: 'none',
-                  fontFamily: 'Epilogue, sans-serif',
-                  fontWeight: 800,
-                  fontSize: '14px',
-                  cursor: 'pointer',
-                  textAlign: 'center',
-                  boxShadow: '0 4px 12px rgba(209,223,246,0.4)',
-                }}
-              >
-                Sign Out
-              </button>
+              <div className="button-wrap" style={{ fontSize: '14px', display: 'block' }}>
+                <button
+                  onClick={() => {
+                    closeMenu();
+                    signOut().then(() => navigate('/'));
+                  }}
+                  className="premium-btn"
+                  style={{ fontFamily: 'Epilogue, sans-serif', display: 'block', width: '100%' }}
+                >
+                  <span style={{ textAlign: 'center' }}>Sign Out</span>
+                </button>
+                <div className="button-shadow" />
+              </div>
             </div>
           )}
 
