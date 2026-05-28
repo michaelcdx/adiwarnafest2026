@@ -52,7 +52,7 @@ namespace AdiwarnaBackend.Controllers.Games
                     if (!tournamentTeamIds.Contains(team1Id.Value))
                         return BadRequest($"Team with ID {team1Id} is not part of this tournament.");
                     var t1 = tournamentForTeams.TournamentTeams.First(tt => tt.TeamId == team1Id).Team;
-                    if (t1.GameType != tournamentForTeams.GameType)
+                    if (!GameType.ValuesMatch(t1.GameType, tournamentForTeams.GameType))
                         return BadRequest($"Team '{t1.Name}' GameType does not match tournament.");
                 }
                 if (team2Id.HasValue)
@@ -60,7 +60,7 @@ namespace AdiwarnaBackend.Controllers.Games
                     if (!tournamentTeamIds.Contains(team2Id.Value))
                         return BadRequest($"Team with ID {team2Id} is not part of this tournament.");
                     var t2 = tournamentForTeams.TournamentTeams.First(tt => tt.TeamId == team2Id).Team;
-                    if (t2.GameType != tournamentForTeams.GameType)
+                    if (!GameType.ValuesMatch(t2.GameType, tournamentForTeams.GameType))
                         return BadRequest($"Team '{t2.Name}' GameType does not match tournament.");
                 }
 
