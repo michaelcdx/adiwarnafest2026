@@ -705,9 +705,7 @@ const Home: React.FC = () => {
               ].map((sponsor, idx) => (
                 <div key={idx} className="col-6 md:col-4 p-2">
                   <div
-                    className="flex flex-column align-items-center justify-content-start gap-2 transition-all duration-300 h-full"
-                    onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-4px)'; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.transform = ''; }}
+                    className="flex flex-column align-items-center justify-content-start gap-2 h-full"
                   >
                     <div
                       className="flex align-items-center justify-content-center w-full"
@@ -766,17 +764,17 @@ const Home: React.FC = () => {
                   onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-5px)"; e.currentTarget.style.borderColor = "rgba(255,0,0,0.6)"; e.currentTarget.style.boxShadow = "0 12px 30px rgba(255,0,0,0.2)"; }}
                   onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = "rgba(255,0,0,0.25)"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(0,0,0,0.3)"; }}
                 >
-                  <Eye size={130} weight="fill" className="absolute" style={{ right: "-20px", bottom: "-20px", opacity: 0.04, color: "#FF0000", transform: "rotate(-10deg)" }} />
+                  <Eye size={130} weight="fill" className="absolute" style={{ right: "-20px", bottom: "-20px", opacity: 0.04, color: "#FFFFFF", transform: "rotate(-10deg)" }} />
                   <div className="flex align-items-center justify-content-between relative z-1 mb-3">
                     <div className="flex align-items-center justify-content-center border-circle" style={{ width: "42px", height: "42px", backgroundColor: "rgba(255,0,0,0.15)", border: "1px solid rgba(255,0,0,0.3)" }}>
                       <Eye size={24} weight="fill" color="#FF0000" />
                     </div>
-                    <span className="text-[9px] font-black uppercase text-400" style={{ letterSpacing: "0.15em" }}>Official Channel</span>
+                    <span className="text-[9px] uppercase text-white" style={{ letterSpacing: "0.15em" }}>Official Channel</span>
                   </div>
                   <div className="relative z-1">
                     <h3 className="m-0 text-xl font-bold text-white mb-2" style={{ fontFamily: "Epilogue, sans-serif" }}>YouTube</h3>
-                    <p className="m-0 text-xs text-400 line-height-3 mb-4">Watch the Mobile Legends live competition streams right here on our official channel!</p>
-                    <span className="inline-flex align-items-center gap-2 text-xs font-bold" style={{ color: "#FF3B30" }}>Subscribe Now ➜</span>
+                    <p className="m-0 text-xs text-white line-height-3 mb-4">Watch the Mobile Legends live competition streams right here on our official channel!</p>
+                    <span className="inline-flex align-items-center gap-2 text-xs font-bold" style={{ color: "#FFFFFF" }}>Subscribe Now ➜</span>
                   </div>
                 </a>
               </div>
@@ -792,17 +790,17 @@ const Home: React.FC = () => {
                   onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-5px)"; e.currentTarget.style.borderColor = "rgba(228,64,95,0.6)"; e.currentTarget.style.boxShadow = "0 12px 30px rgba(228,64,95,0.2)"; }}
                   onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = "rgba(228,64,95,0.25)"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(0,0,0,0.3)"; }}
                 >
-                  <InstagramLogo size={130} weight="fill" className="absolute" style={{ right: "-20px", bottom: "-20px", opacity: 0.04, color: "#E4405F", transform: "rotate(10deg)" }} />
+                  <InstagramLogo size={130} weight="fill" className="absolute" style={{ right: "-20px", bottom: "-20px", opacity: 0.04, color: "#d62976", transform: "rotate(10deg)" }} />
                   <div className="flex align-items-center justify-content-between relative z-1 mb-3">
                     <div className="flex align-items-center justify-content-center border-circle" style={{ width: "42px", height: "42px", backgroundColor: "rgba(228,64,95,0.15)", border: "1px solid rgba(228,64,95,0.3)" }}>
-                      <InstagramLogo size={24} weight="fill" color="#E4405F" />
+                      <InstagramLogo size={24} weight="fill" color="#d62976" />
                     </div>
-                    <span className="text-[9px] font-black uppercase text-400" style={{ letterSpacing: "0.15em" }}>Latest Updates</span>
+                    <span className="text-[9px] uppercase text-white" style={{ letterSpacing: "0.15em" }}>Latest Updates</span>
                   </div>
                   <div className="relative z-1">
                     <h3 className="m-0 text-xl font-bold text-white mb-2" style={{ fontFamily: "Epilogue, sans-serif" }}>Instagram</h3>
-                    <p className="m-0 text-xs text-400 line-height-3 mb-4">Catch daily snapshot updates, behind-the-scenes committee interviews, vibrant event photos, and direct story feeds!</p>
-                    <span className="inline-flex align-items-center gap-2 text-xs font-bold" style={{ color: "#E4405F" }}>Follow Us ➜</span>
+                    <p className="m-0 text-xs text-white line-height-3 mb-4">Catch daily snapshot updates, behind-the-scenes committee interviews, vibrant event photos, and direct story feeds!</p>
+                    <span className="inline-flex align-items-center gap-2 text-xs font-bold" style={{ color: "#FFFFFF" }}>Follow Us ➜</span>
                   </div>
                 </a>
               </div>
