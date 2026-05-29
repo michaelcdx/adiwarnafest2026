@@ -446,7 +446,7 @@ export const UpsertGameSidebar = ({
           </>
         )}
 
-        {team1Id && (
+        {/* {team1Id && (
           <div className="flex flex-column gap-2">
             <Message
               severity="info"
@@ -488,7 +488,7 @@ export const UpsertGameSidebar = ({
               {statColumn('foul2', 'Foul 2', 'team2')}
             </DataTable>
           </div>
-        )}
+        )} */}
 
         <div className="flex gap-2">
           <Button
