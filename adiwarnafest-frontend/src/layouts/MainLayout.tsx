@@ -14,7 +14,8 @@ function MainLayout() {
   return (
     <div className="app-shell">
       <TopNavbar />
-      <main className="page" style={{ paddingBottom: 'calc(80px + env(safe-area-inset-bottom))' }}>
+      <main className="page">
+        {/* removed style above from main: style={{ paddingBottom: 'calc(80px + env(safe-area-inset-bottom))' }} */}
         <Outlet />
       </main>
       <BottomNavbar />
