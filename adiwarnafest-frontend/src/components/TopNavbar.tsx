@@ -1,6 +1,6 @@
 ﻿import { useMemo, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { House, Trophy, MapTrifold, UsersThree, X, User, Wrench, Sparkle, List, IdentificationCard } from '@phosphor-icons/react';
+import { House, Trophy, MapTrifold, UsersThree, X, User, Wrench, Sparkle, List, IdentificationBadge } from '@phosphor-icons/react';
 import adiwarnaLogo from '../image/Adiwarna_Logo_NoBackground.png';
 import { useAuth } from '../store/auth';
 
@@ -17,7 +17,7 @@ const TopNavbar = () => {
       { label: 'Lucky Draw', path: '/lucky-draw', icon: Sparkle },
       { label: 'Map', path: '/map', icon: MapTrifold },
       { label: 'Committee', path: '/committee', icon: UsersThree },
-      { label: 'Visitor Pass', path: '/visitor-pass', icon: IdentificationCard },
+      { label: 'Visitor Pass', path: '/visitor-pass', icon: IdentificationBadge },
     ];
     if (isAuthenticated && (role === 'Admin' || role === 'Maintainer')) {
       items.push({ label: 'Maintenance', path: '/maintenance', icon: Wrench });
