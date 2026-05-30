@@ -16,6 +16,7 @@ import MaintenanceTournaments from './pages/MaintenanceTournaments'
 import MaintenanceGames from './pages/MaintenanceGames'
 import MaintenanceLiveYoutube from './pages/MaintenanceLiveYoutube'
 import MaintenanceLuckyDraw from './pages/MaintenanceLuckyDraw'
+import VisitorPass from './pages/VisitorPass'
 import QRCodeTester from './pages/QRCodeTester'
 import RequireRole from './components/RequireRole'
 
@@ -30,6 +31,7 @@ function App() {
           <Route path="committee" element={<Committee />} />
           <Route path="lucky-draw" element={<LuckyDraw />} />
           <Route path="live" element={<Live />} />
+          <Route path="visitor-pass" element={<VisitorPass />} />
           <Route
             path="maintenance"
             element={
