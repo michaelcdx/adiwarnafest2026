@@ -1,13 +1,13 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { House, Trophy, MapTrifold, Sparkle, Ticket } from '@phosphor-icons/react';
+import { House, Trophy, MapTrifold, Sparkle, User } from '@phosphor-icons/react';
 
 const navItems = [
   { id: 'home', label: 'Home', icon: House, path: '/' },
   { id: 'competition', label: 'Competition', icon: Trophy, path: '/competition' },
   { id: 'lucky-draw', label: 'Lucky Draw', icon: Sparkle, path: '/lucky-draw' },
   { id: 'map', label: 'Map', icon: MapTrifold, path: '/map' },
-  { id: 'visitor-pass', label: 'Visitor Pass', icon: Ticket, path: '/visitor-pass' },
+  { id: 'visitor-pass', label: 'Visitor Pass', icon: User, path: '/visitor-pass' },
 ];
 
 const getActivePath = (pathname: string) => {
